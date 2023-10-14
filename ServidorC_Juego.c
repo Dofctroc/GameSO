@@ -11,30 +11,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int consultaSignUp(char userName[], char password[], char mensajeSignUp[]){
+
+int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSignUp[]){
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
-	MYSQL *conn;
 	int err,n;
 	char ID[10];
 	
-	char consulta [80];
-	//Creamos una conexion al servidor MYSQL 
-	conn = mysql_init(NULL);
-	
-	if (conn==NULL) {
-		printf ("Error al crear la conexion: %u %s\n",
-				mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego",0, NULL, 0);
-	if (conn==NULL) {
-		printf ("Error al inicializar la conexion: %u %s\n",
-				mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	mysql_query(conn, "use Juego;");
-	
+	char consulta [800];
 	strcpy (consulta, "select exists(SELECT Jugador.userName FROM Jugador WHERE Jugador.userName = '");
 	strcat (consulta, userName); 
 	strcat (consulta, "');");
@@ -76,30 +60,13 @@ int consultaSignUp(char userName[], char password[], char mensajeSignUp[]){
 	return 0;
 }
 
-int consultaLogIn(char userName[], char password[], char mensajeLogIn[]){
+int consultaLogIn(MYSQL *conn, char userName[], char password[], char mensajeLogIn[]){
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
-	MYSQL *conn;
 	int err,n;
 	char ID[10];
 	
 	char consulta [800];
-	//Creamos una conexion al servidor MYSQL 
-	conn = mysql_init(NULL);
-	
-	if (conn==NULL) {
-		printf ("Error al crear la conexion: %u %s\n",
-				mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego",0, NULL, 0);
-	if (conn==NULL) {
-		printf ("Error al inicializar la conexion: %u %s\n",
-				mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	mysql_query(conn, "use Juego;");
-	
 	strcpy (consulta, "select exists(SELECT Jugador.userName FROM Jugador WHERE Jugador.userName = '");
 	strcat (consulta, userName); 
 	strcat (consulta, "');");
@@ -127,38 +94,28 @@ int consultaLogIn(char userName[], char password[], char mensajeLogIn[]){
 						mysql_errno(conn), mysql_error(conn));
 				exit (1);
 			}
-			strcpy(mensajeLogIn,"Se ha iniciado sesion correctamente.");
+			strcpy(mensajeLogIn,"0/");
+			strcat(mensajeLogIn,"Se ha iniciado sesion correctamente.");
 		}
 		else{
-			strcpy(mensajeLogIn,"La contrasenya que ha introducido es incorrecta.");
+			strcpy(mensajeLogIn,"1/");
+			strcat(mensajeLogIn,"La contrasenya que ha introducido es incorrecta.");
 		}
 	}
 	else{
-		strcpy(mensajeLogIn,"El usuario no existe, cree un usuario.");
+		strcpy(mensajeLogIn,"2/");
+		strcat(mensajeLogIn,"El usuario no existe, cree un usuario.");
 	}
 	// cerrar la conexion con el servidor MYSQL 
 	mysql_close (conn);
 	return 0;
 }
 
-int consulta1(char nombre[])
+int consulta1(MYSQL *conn, char nombre[])
 {
-	MYSQL *conn;
 	int err;
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
-	
-	conn = mysql_init(NULL);
-	if (conn==NULL) {
-		printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
-	if (conn==NULL){
-		printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	mysql_query(conn, "USE Juego;");
 	
 	char consulta [800];
 	strcpy (consulta,"SELECT SUM(PartidasJugadores.puntuacion) FROM Jugador,Partida,PartidasJugadores WHERE Jugador.userName = '");
@@ -177,24 +134,11 @@ int consulta1(char nombre[])
 	return puntosTotales;
 }
 
-int consulta2(char nombre[],char puntuaciones[])
+int consulta2(MYSQL *conn, char nombre[],char puntuaciones[])
 {
-	MYSQL *conn;
 	int err;
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
-	
-	conn = mysql_init(NULL);
-	if (conn==NULL) {
-		printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
-	if (conn==NULL){
-		printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	mysql_query(conn, "USE Juego;");
 	
 	char consulta [800];
 	strcpy (consulta,"SELECT PartidasJugadores.Puntuacion FROM Jugador,Partida,PartidasJugadores WHERE Jugador.userName = '");
@@ -222,24 +166,10 @@ int consulta2(char nombre[],char puntuaciones[])
 	return 0;
 }
 
-int consulta3(char partidaID[],char ganador[])
+int consulta3(MYSQL *conn, char partidaID[],char ganador[])
 {
-	MYSQL *conn;
-	int err;
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
-	
-	conn = mysql_init(NULL);
-	if (conn==NULL) {
-		printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
-	if (conn==NULL){
-		printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-		exit (1);
-	}
-	mysql_query(conn, "USE Juego;");
 	
 	char consulta [800];
 	strcpy (consulta,"SELECT Partida.ganador FROM Partida WHERE Partida.ID = '");
@@ -264,6 +194,7 @@ int main(int argc, char *argv[])
 {	
 	int sock_conn, sock_listen, ret;
 	struct sockaddr_in serv_adr;
+	MYSQL *conn;
 	char peticion[512];
 	char respuesta[512];
 	char userName[20];
@@ -281,7 +212,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// establecemos el puerto de escucha
-	serv_adr.sin_port = htons(9040);
+	serv_adr.sin_port = htons(9060);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind");
 	
@@ -309,9 +240,7 @@ int main(int argc, char *argv[])
 			
 			// Tenemos que a?adirle la marca de fin de string 
 			// para que no escriba lo que hay despues en el buffer
-			peticion[ret]='\0';
-			
-			
+			peticion[ret]='\0';			
 			printf ("Peticion: %s\n",peticion);
 			
 			// vamos a ver que quieren
@@ -328,6 +257,19 @@ int main(int argc, char *argv[])
 				strcpy (nombre, p);
 				// Ya tenemos el nombre
 				printf ("Codigo: %d, Nombre: %s\n", codigo, nombre);
+				
+				int err;
+				conn = mysql_init(NULL);
+				if (conn==NULL) {
+					printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+					exit (1);
+				}
+				conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
+				if (conn==NULL){
+					printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+					exit (1);
+				}
+				mysql_query(conn, "USE Juego;");
 			}
 			
 			if (codigo ==0) //petici?n de desconexi?n
@@ -338,7 +280,7 @@ int main(int argc, char *argv[])
 				p = strtok( NULL, "/");
 				strcpy (password, p);
 				char mensajeSignUp[80];
-				consultaSignUp(userName, password, mensajeSignUp);
+				consultaSignUp(conn, userName, password, mensajeSignUp);
 				strcpy (respuesta,mensajeSignUp);
 			}
 			else if (codigo ==2) //check logIn
@@ -347,29 +289,26 @@ int main(int argc, char *argv[])
 				p = strtok( NULL, "/");
 				strcpy (password, p);
 				char mensajeLogIn[80];
-				consultaLogIn(userName, password, mensajeLogIn);
+				consultaLogIn(conn, userName, password, mensajeLogIn);
 				strcpy (respuesta,mensajeLogIn);
 			}
 			else if (codigo ==3) //piden la longitd del nombre
 			{
-				int puntosTotales = consulta1(nombre);
+				int puntosTotales = consulta1(conn, nombre);
 				sprintf (respuesta,"%d",puntosTotales);
 			}
 			else if (codigo ==4)
 			{
 				char puntuaciones[20];
-				consulta2(nombre,puntuaciones);
+				consulta2(conn, nombre,puntuaciones);
 				strcpy (respuesta,puntuaciones);				
 			}
 			else if (codigo == 5)//quiere saber si es alto
 			{
 				char ganador[20];
 				char partidaID[10];
-				consulta3(nombre,ganador);
+				consulta3(conn, nombre,ganador);
 				strcpy (respuesta,ganador);
-				
-				printf (ganador);
-				printf (respuesta);
 			}
 			if (codigo !=0)
 				{
