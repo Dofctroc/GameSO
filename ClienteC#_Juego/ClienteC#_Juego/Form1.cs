@@ -15,6 +15,7 @@ namespace ClienteC__Juego
 {
     public partial class Form1 : Form
     {
+        bool conectado_conServer = false;
         Socket server;
         public Form1()
         {
@@ -28,27 +29,7 @@ namespace ClienteC__Juego
 
         private void button_signUp_Click(object sender, EventArgs e)
         {
-            //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
-            //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9040);
-
-
-            //Creamos el socket 
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                server.Connect(ipep);//Intentamos conectar el socket
-                this.BackColor = Color.Green;
-                MessageBox.Show("Conectado");
-
-            }
-            catch (SocketException ex)
-            {
-                //Si hay excepcion imprimimos error y salimos del programa con return 
-                MessageBox.Show("No he podido conectar con el servidor");
-                return;
-            }
+            serverConnect();
 
             string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -65,27 +46,7 @@ namespace ClienteC__Juego
 
         private void button_logIn_Click(object sender, EventArgs e)
         {
-            //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
-            //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9040);
-
-
-            //Creamos el socket 
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                server.Connect(ipep);//Intentamos conectar el socket
-                this.BackColor = Color.Green;
-                MessageBox.Show("Conectado");
-
-            }
-            catch (SocketException ex)
-            {
-                //Si hay excepcion imprimimos error y salimos del programa con return 
-                MessageBox.Show("No he podido conectar con el servidor");
-                return;
-            }
+            serverConnect();
 
             string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -95,26 +56,69 @@ namespace ClienteC__Juego
             server.Receive(msg2);
             mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
 
-            MessageBox.Show(mensaje);
+            string[] mensajeCodificado = mensaje.Split('/');
+            MessageBox.Show(mensajeCodificado[1]);
+            if (Int32.Parse(mensajeCodificado[0]) != 0)
+                serverShutdown();
+            else { 
+                button_enviar.Enabled = true;
+                button_logIn.Enabled = false;
+                button_signUp.Enabled = false;
+            }
+
         }
 
         private void button_Desconectar_Click(object sender, EventArgs e)
         {
             serverShutdown();
+            button_enviar.Enabled = false;
+            button_logIn.Enabled = true;
+            button_signUp.Enabled = true;
+        }
+
+        private void serverConnect()
+        {
+            //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
+            //al que deseamos conectarnos
+            IPAddress direc = IPAddress.Parse("192.168.56.102");
+            IPEndPoint ipep = new IPEndPoint(direc, 9060);
+
+
+            //Creamos el socket 
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                server.Connect(ipep);//Intentamos conectar el socket
+                this.BackColor = Color.Green;
+
+            }
+            catch (SocketException ex)
+            {
+                //Si hay excepcion imprimimos error y salimos del programa con return 
+                MessageBox.Show("No he podido conectar con el servidor");
+                return;
+            }
+            conectado_conServer = true;
+            button_Desconectar.Enabled = true;
         }
 
         private void serverShutdown()
         {
-            //Mensaje de desconexión
-            string mensaje = "0/";
+            if (conectado_conServer)
+            {
+                //Mensaje de desconexión
+                string mensaje = "0/";
 
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
 
-            // Nos desconectamos
-            this.BackColor = Color.Gray;
-            server.Shutdown(SocketShutdown.Both);
-            server.Close();
+                // Nos desconectamos
+                this.BackColor = Color.Gray;
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+                conectado_conServer = false;
+                button_Desconectar.Enabled = false;
+            }
         }
 
         private void button_enviar_Click(object sender, EventArgs e)

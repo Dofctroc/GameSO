@@ -116,10 +116,11 @@
             // 
             this.button_enviar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_enviar.AutoSize = true;
-            this.button_enviar.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_enviar.Location = new System.Drawing.Point(257, 185);
+            this.button_enviar.Enabled = false;
+            this.button_enviar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_enviar.Location = new System.Drawing.Point(266, 188);
             this.button_enviar.Name = "button_enviar";
-            this.button_enviar.Size = new System.Drawing.Size(80, 35);
+            this.button_enviar.Size = new System.Drawing.Size(71, 32);
             this.button_enviar.TabIndex = 2;
             this.button_enviar.Text = "Solicitar";
             this.button_enviar.UseVisualStyleBackColor = true;
@@ -161,6 +162,7 @@
             // 
             this.button_Desconectar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_Desconectar.AutoSize = true;
+            this.button_Desconectar.Enabled = false;
             this.button_Desconectar.Location = new System.Drawing.Point(248, 371);
             this.button_Desconectar.Name = "button_Desconectar";
             this.button_Desconectar.Size = new System.Drawing.Size(102, 26);
@@ -192,8 +194,10 @@
             // textbox_password
             // 
             this.textbox_password.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textbox_password.ForeColor = System.Drawing.SystemColors.WindowText;
             this.textbox_password.Location = new System.Drawing.Point(106, 343);
             this.textbox_password.Name = "textbox_password";
+            this.textbox_password.PasswordChar = '*';
             this.textbox_password.Size = new System.Drawing.Size(100, 22);
             this.textbox_password.TabIndex = 6;
             // 
