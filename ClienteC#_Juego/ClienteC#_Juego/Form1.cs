@@ -170,6 +170,16 @@ namespace ClienteC__Juego
             }
         }
 
-        
+        private void button_listausuarios_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void usuarioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            menuUsuario menuUsuario = new menuUsuario();
+            menuUsuario.Show();
+
+        }
     }
 }

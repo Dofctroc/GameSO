@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <pthread.h>
 
 
 int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSignUp[]){
@@ -190,11 +191,151 @@ int consulta3(MYSQL *conn, char partidaID[],char ganador[])
 	return 0;
 }
 
+int consulta4 (MYSQL *conn, char nombre[], char lista[])
+{
+	int err;
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	
+	char consulta [800];
+	strcpy (consulta,"SELECT Jugador.userName FROM Jugador,Partida,PartidasJugadores");
+	strcat (consulta, nombre);
+	mysql_query (conn, consulta);
+	
+	resultado = mysql_store_result (conn);
+	row = mysql_fetch_row (resultado);
+	
+	if (row == NULL)
+		printf ("Ha habido un error en la consulta de datos \n");
+	else
+	{
+		int i = 0;
+		while (row !=NULL) {
+			strcat (nombre, row[0]);
+			strcat (nombre, "/");
+			row = mysql_fetch_row (resultado);
+			i++;
+		}
+	}
+	mysql_close (conn);
+	return 0;
+}
+
+void AtenderCliente (void *socket)
+{
+	int sock_conn;
+	int *s;
+	s = (int *) socket;
+	sock_conn = *s;
+	MYSQL *conn;
+	
+	char peticion[512];
+	char respuesta[512];
+	int ret;
+	int terminar =0;
+	// Entramos en un bucle para atender todas las peticiones de este cliente
+	//hasta que se desconecte
+	while (terminar ==0)
+	{
+		// Ahora recibimos la petici?n
+		ret=read(sock_conn,peticion, sizeof(peticion));
+		printf ("Recibido\n");
+		
+		// Tenemos que a?adirle la marca de fin de string 
+		// para que no escriba lo que hay despues en el buffer
+		peticion[ret]='\0';			
+		printf ("Peticion: %s\n",peticion);
+		
+		// vamos a ver que quieren
+		char *p = strtok( peticion, "/");
+		int codigo =  atoi (p);
+		// Ya tenemos el c?digo de la petici?n
+		char nombre[20];
+		char userName[20];
+		char password[20];
+		
+		if (codigo !=0)
+		{
+			p = strtok( NULL, "/");
+			strcpy (nombre, p);
+			// Ya tenemos el nombre
+			printf ("Codigo: %d, Nombre: %s\n", codigo, nombre);
+			
+			int err;
+			conn = mysql_init(NULL);
+			if (conn==NULL) {
+				printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+				exit (1);
+			}
+			conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
+			if (conn==NULL){
+				printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+				exit (1);
+			}
+			mysql_query(conn, "USE Juego;");
+		}
+		
+		if (codigo ==0) //peticion de desconexion
+			terminar = 1;
+		else if (codigo ==1) //do signUp
+		{
+			strcpy (userName, nombre);
+			p = strtok( NULL, "/");
+			strcpy (password, p);
+			char mensajeSignUp[80];
+			consultaSignUp(conn, userName, password, mensajeSignUp);
+			strcpy (respuesta,mensajeSignUp);
+		}
+		else if (codigo ==2) //check logIn
+		{
+			strcpy (userName, nombre);
+			p = strtok( NULL, "/");
+			strcpy (password, p);
+			char mensajeLogIn[80];
+			consultaLogIn(conn, userName, password, mensajeLogIn);
+			strcpy (respuesta,mensajeLogIn);
+		}
+		else if (codigo ==3) //piden la longitd del nombre
+		{
+			int puntosTotales = consulta1(conn, nombre);
+			sprintf (respuesta,"%d",puntosTotales);
+		}
+		else if (codigo ==4)
+		{
+			char puntuaciones[20];
+			consulta2(conn, nombre,puntuaciones);
+			strcpy (respuesta,puntuaciones);				
+		}
+		else if (codigo == 5)//quiere saber si es alto
+		{
+			char ganador[20];
+			char partidaID[10];
+			consulta3(conn, nombre,ganador);
+			strcpy (respuesta,ganador);
+		}
+		else if (codigo == 6)
+		{
+			char lista[800];
+			consulta4(conn, nombre, lista);
+			strcpy(respuesta, lista);
+		}
+		if (codigo !=0)
+		{
+			
+			printf ("Respuesta: %s\n", respuesta);
+			// Enviamos respuesta
+			write (sock_conn,respuesta, strlen(respuesta));
+		}
+	}
+	// Se acabo el servicio para este cliente
+	close(sock_conn);
+}
+
+
 int main(int argc, char *argv[])
 {	
 	int sock_conn, sock_listen, ret;
 	struct sockaddr_in serv_adr;
-	MYSQL *conn;
 	char peticion[512];
 	char respuesta[512];
 	char userName[20];
@@ -220,7 +361,9 @@ int main(int argc, char *argv[])
 		printf("Error en el Listen");
 	
 	// Atiende 5 peticiones
-	int i;
+	int i = 0;
+	int sockets[100];
+	pthread_t thread;
 	// Bucle infinito
 	for (;;){
 		printf ("Escuchando\n");
@@ -229,97 +372,10 @@ int main(int argc, char *argv[])
 		printf ("He recibido conexion\n");
 		//sock_conn es el socket que usaremos para este cliente
 		
-		int terminar =0;
-		// Entramos en un bucle para atender todas las peticiones de este cliente
-		//hasta que se desconecte
-		while (terminar ==0)
-		{
-			// Ahora recibimos la petici?n
-			ret=read(sock_conn,peticion, sizeof(peticion));
-			printf ("Recibido\n");
-			
-			// Tenemos que a?adirle la marca de fin de string 
-			// para que no escriba lo que hay despues en el buffer
-			peticion[ret]='\0';			
-			printf ("Peticion: %s\n",peticion);
-			
-			// vamos a ver que quieren
-			char *p = strtok( peticion, "/");
-			int codigo =  atoi (p);
-			// Ya tenemos el c?digo de la petici?n
-			char nombre[20];
-			char userName[20];
-			char password[20];
-			
-			if (codigo !=0)
-			{
-				p = strtok( NULL, "/");
-				strcpy (nombre, p);
-				// Ya tenemos el nombre
-				printf ("Codigo: %d, Nombre: %s\n", codigo, nombre);
-				
-				int err;
-				conn = mysql_init(NULL);
-				if (conn==NULL) {
-					printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-					exit (1);
-				}
-				conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
-				if (conn==NULL){
-					printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-					exit (1);
-				}
-				mysql_query(conn, "USE Juego;");
-			}
-			
-			if (codigo ==0) //petici?n de desconexi?n
-				terminar=1;
-			else if (codigo ==1) //do signUp
-			{
-				strcpy (userName, nombre);
-				p = strtok( NULL, "/");
-				strcpy (password, p);
-				char mensajeSignUp[80];
-				consultaSignUp(conn, userName, password, mensajeSignUp);
-				strcpy (respuesta,mensajeSignUp);
-			}
-			else if (codigo ==2) //check logIn
-			{
-				strcpy (userName, nombre);
-				p = strtok( NULL, "/");
-				strcpy (password, p);
-				char mensajeLogIn[80];
-				consultaLogIn(conn, userName, password, mensajeLogIn);
-				strcpy (respuesta,mensajeLogIn);
-			}
-			else if (codigo ==3) //piden la longitd del nombre
-			{
-				int puntosTotales = consulta1(conn, nombre);
-				sprintf (respuesta,"%d",puntosTotales);
-			}
-			else if (codigo ==4)
-			{
-				char puntuaciones[20];
-				consulta2(conn, nombre,puntuaciones);
-				strcpy (respuesta,puntuaciones);				
-			}
-			else if (codigo == 5)//quiere saber si es alto
-			{
-				char ganador[20];
-				char partidaID[10];
-				consulta3(conn, nombre,ganador);
-				strcpy (respuesta,ganador);
-			}
-			if (codigo !=0)
-				{
-				
-				printf ("Respuesta: %s\n", respuesta);
-				// Enviamos respuesta
-				write (sock_conn,respuesta, strlen(respuesta));
-				}
-		}
-		// Se acabo el servicio para este cliente
-		close(sock_conn);
+		sockets[i] = sock_conn;
+		
+		pthread_create (&thread, NULL, AtenderCliente, &sockets[i]);
+		i = i + 1;
 	}
 	return 0;
 }
