@@ -51,10 +51,10 @@ int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSi
 					mysql_errno(conn), mysql_error(conn));
 			exit (1);
 		}
-		strcpy(mensajeSignUp,"Se ha creado su usuario correctamente.");
+		strcpy(mensajeSignUp,"0/Se ha creado su usuario correctamente.");
 	}
 	else{
-		strcpy(mensajeSignUp,"El usuario ya existe, elija otro username.");
+		strcpy(mensajeSignUp,"1/El usuario ya existe, elija otro username.");
 	}
 	// cerrar la conexion con el servidor MYSQL 
 	mysql_close (conn);
@@ -336,10 +336,10 @@ int main(int argc, char *argv[])
 {	
 	int sock_conn, sock_listen, ret;
 	struct sockaddr_in serv_adr;
-	char peticion[512];
-	char respuesta[512];
-	char userName[20];
-	char password[20];
+	//char peticion[512];
+	//char respuesta[512];
+	//char userName[20];
+	//char password[20];
 	// INICIALITZACIONS
 	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
