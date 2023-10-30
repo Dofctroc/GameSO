@@ -25,9 +25,9 @@ namespace ClienteC__Juego
             this.conectado_conServer = conectado_conServer;
         }
 
-        private void textbox_username_TextChanged(object sender, EventArgs e)
+        private void menuUsuario_Load(object sender, EventArgs e)
         {
-
+            this.Width = 360;
         }
 
         public bool GetconectadoconServer()
@@ -52,9 +52,9 @@ namespace ClienteC__Juego
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
-                server.Connect(ipep);//Intentamos conectar el socket
-                this.BackColor = Color.Green;
-
+                server.Connect(ipep); //Intentamos conectar el socket
+                consoletextbox.AppendText(String.Format("Entry {0}: Te has conectado con el servidor con exito.", entry) + Environment.NewLine);
+                entry++;
             }
             catch (SocketException ex)
             {
@@ -144,9 +144,38 @@ namespace ClienteC__Juego
             serverShutdown();
         }
 
-        private void menuUsuario_Load(object sender, EventArgs e)
+        private void button_listausuarios_Click(object sender, EventArgs e)
         {
+            if (conectado_conServer)
+            {
+                string mensaje = "Asier/In Menu/Julia/Ingame/Gu/Ingame/";
+                string[] mensajeCodificado = mensaje.Split('/');
 
+                this.Width = 850;
+                label_listaUsuarios.Visible = true;
+                dataGrid_listaUsuarios.Visible = true;
+
+                dataGrid_listaUsuarios.ColumnCount = 2;
+                dataGrid_listaUsuarios.ColumnHeadersDefaultCellStyle.Font = new Font(dataGrid_listaUsuarios.Font, FontStyle.Bold);
+
+                dataGrid_listaUsuarios.Columns[0].Name = "column_Username";
+                dataGrid_listaUsuarios.Columns[0].HeaderText = "Username";
+
+                dataGrid_listaUsuarios.Columns[1].Name = "column_Status";
+                dataGrid_listaUsuarios.Columns[1].HeaderText = "Status";
+
+                dataGrid_listaUsuarios.Columns[1].Width = 50;
+                dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
+                for (int i = 0; i < mensajeCodificado.Length - 1; i += 2)
+                {
+                    dataGrid_listaUsuarios.Rows.Add(mensajeCodificado[i], mensajeCodificado[i + 1]);
+                }
+            }
+            else
+            {
+                consoletextbox.AppendText(String.Format("Entry {0}: *ERROR* Inicie sesion para visualizar la lista de usuarios.", entry) + Environment.NewLine);
+                entry++;
+            }
         }
     }
 }

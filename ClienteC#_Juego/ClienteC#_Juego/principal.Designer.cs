@@ -58,39 +58,39 @@
             this.groupBox1.Controls.Add(this.button_enviar);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(8, 42);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.groupBox1.Location = new System.Drawing.Point(11, 52);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.groupBox1.Size = new System.Drawing.Size(276, 181);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox1.Size = new System.Drawing.Size(368, 223);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
+            this.groupBox1.Text = "Formulario Solicitud";
             // 
             // textbox_partida
             // 
-            this.textbox_partida.Location = new System.Drawing.Point(97, 51);
-            this.textbox_partida.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.textbox_partida.Location = new System.Drawing.Point(129, 63);
+            this.textbox_partida.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_partida.Name = "textbox_partida";
-            this.textbox_partida.Size = new System.Drawing.Size(76, 20);
-            this.textbox_partida.TabIndex = 7;
+            this.textbox_partida.Size = new System.Drawing.Size(100, 22);
+            this.textbox_partida.TabIndex = 2;
             // 
             // textbox_nombre
             // 
-            this.textbox_nombre.Location = new System.Drawing.Point(97, 29);
-            this.textbox_nombre.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.textbox_nombre.Location = new System.Drawing.Point(129, 36);
+            this.textbox_nombre.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_nombre.Name = "textbox_nombre";
-            this.textbox_nombre.Size = new System.Drawing.Size(76, 20);
-            this.textbox_nombre.TabIndex = 6;
+            this.textbox_nombre.Size = new System.Drawing.Size(100, 22);
+            this.textbox_nombre.TabIndex = 1;
             // 
             // command_3
             // 
             this.command_3.AutoSize = true;
-            this.command_3.Location = new System.Drawing.Point(18, 131);
-            this.command_3.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.command_3.Location = new System.Drawing.Point(24, 161);
+            this.command_3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.command_3.Name = "command_3";
-            this.command_3.Size = new System.Drawing.Size(152, 17);
-            this.command_3.TabIndex = 5;
+            this.command_3.Size = new System.Drawing.Size(192, 20);
+            this.command_3.TabIndex = 3;
             this.command_3.TabStop = true;
             this.command_3.Text = "Dime ganador de la partida";
             this.command_3.UseVisualStyleBackColor = true;
@@ -98,11 +98,11 @@
             // command_1
             // 
             this.command_1.AutoSize = true;
-            this.command_1.Location = new System.Drawing.Point(18, 90);
-            this.command_1.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.command_1.Location = new System.Drawing.Point(24, 111);
+            this.command_1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.command_1.Name = "command_1";
-            this.command_1.Size = new System.Drawing.Size(183, 17);
-            this.command_1.TabIndex = 4;
+            this.command_1.Size = new System.Drawing.Size(227, 20);
+            this.command_1.TabIndex = 3;
             this.command_1.TabStop = true;
             this.command_1.Text = "Dime puntuacion total del jugador";
             this.command_1.UseVisualStyleBackColor = true;
@@ -110,10 +110,10 @@
             // command_2
             // 
             this.command_2.AutoSize = true;
-            this.command_2.Location = new System.Drawing.Point(18, 110);
-            this.command_2.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.command_2.Location = new System.Drawing.Point(24, 135);
+            this.command_2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.command_2.Name = "command_2";
-            this.command_2.Size = new System.Drawing.Size(247, 17);
+            this.command_2.Size = new System.Drawing.Size(308, 20);
             this.command_2.TabIndex = 3;
             this.command_2.TabStop = true;
             this.command_2.Text = "Dime puntuacion en las partidas que ha jugado";
@@ -125,11 +125,11 @@
             this.button_enviar.AutoSize = true;
             this.button_enviar.Enabled = false;
             this.button_enviar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_enviar.Location = new System.Drawing.Point(210, 153);
-            this.button_enviar.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.button_enviar.Location = new System.Drawing.Point(269, 186);
+            this.button_enviar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_enviar.Name = "button_enviar";
-            this.button_enviar.Size = new System.Drawing.Size(63, 26);
-            this.button_enviar.TabIndex = 2;
+            this.button_enviar.Size = new System.Drawing.Size(95, 34);
+            this.button_enviar.TabIndex = 4;
             this.button_enviar.Text = "Solicitar";
             this.button_enviar.UseVisualStyleBackColor = true;
             this.button_enviar.Click += new System.EventHandler(this.button_enviar_Click);
@@ -138,10 +138,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(29, 49);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(39, 60);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 18);
+            this.label2.Size = new System.Drawing.Size(72, 22);
             this.label2.TabIndex = 1;
             this.label2.Text = "Partida:";
             // 
@@ -149,10 +148,9 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(28, 25);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(37, 31);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 20);
+            this.label1.Size = new System.Drawing.Size(87, 25);
             this.label1.TabIndex = 0;
             this.label1.Text = "Nombre:";
             // 
@@ -161,11 +159,11 @@
             this.button_Desconectar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_Desconectar.AutoSize = true;
             this.button_Desconectar.Enabled = false;
-            this.button_Desconectar.Location = new System.Drawing.Point(240, 276);
-            this.button_Desconectar.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.button_Desconectar.Location = new System.Drawing.Point(320, 340);
+            this.button_Desconectar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Desconectar.Name = "button_Desconectar";
-            this.button_Desconectar.Size = new System.Drawing.Size(78, 23);
-            this.button_Desconectar.TabIndex = 2;
+            this.button_Desconectar.Size = new System.Drawing.Size(104, 28);
+            this.button_Desconectar.TabIndex = 6;
             this.button_Desconectar.Text = "Desconectar";
             this.button_Desconectar.UseVisualStyleBackColor = true;
             this.button_Desconectar.Click += new System.EventHandler(this.button_Desconectar_Click);
@@ -174,14 +172,13 @@
             // 
             this.button_listausuarios.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button_listausuarios.AutoSize = true;
-            this.button_listausuarios.Location = new System.Drawing.Point(235, 249);
-            this.button_listausuarios.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.button_listausuarios.Location = new System.Drawing.Point(313, 306);
+            this.button_listausuarios.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_listausuarios.Name = "button_listausuarios";
-            this.button_listausuarios.Size = new System.Drawing.Size(83, 23);
-            this.button_listausuarios.TabIndex = 10;
+            this.button_listausuarios.Size = new System.Drawing.Size(111, 28);
+            this.button_listausuarios.TabIndex = 5;
             this.button_listausuarios.Text = "Lista usuarios";
             this.button_listausuarios.UseVisualStyleBackColor = true;
-            this.button_listausuarios.Click += new System.EventHandler(this.button_listausuarios_Click);
             // 
             // menuStrip1
             // 
@@ -190,8 +187,8 @@
             this.opcionesToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
-            this.menuStrip1.Size = new System.Drawing.Size(327, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 1, 0, 1);
+            this.menuStrip1.Size = new System.Drawing.Size(436, 26);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -201,35 +198,36 @@
             this.usuarioToolStripMenuItem,
             this.listaUsuariosToolStripMenuItem});
             this.opcionesToolStripMenuItem.Name = "opcionesToolStripMenuItem";
-            this.opcionesToolStripMenuItem.Size = new System.Drawing.Size(69, 22);
+            this.opcionesToolStripMenuItem.Size = new System.Drawing.Size(85, 24);
             this.opcionesToolStripMenuItem.Text = "Opciones";
             // 
             // usuarioToolStripMenuItem
             // 
             this.usuarioToolStripMenuItem.Name = "usuarioToolStripMenuItem";
-            this.usuarioToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.usuarioToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
             this.usuarioToolStripMenuItem.Text = "Menu usuario";
             this.usuarioToolStripMenuItem.Click += new System.EventHandler(this.usuarioToolStripMenuItem_Click);
             // 
             // listaUsuariosToolStripMenuItem
             // 
             this.listaUsuariosToolStripMenuItem.Name = "listaUsuariosToolStripMenuItem";
-            this.listaUsuariosToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.listaUsuariosToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
             this.listaUsuariosToolStripMenuItem.Text = "Lista usuarios";
             // 
             // principal
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(327, 308);
+            this.ClientSize = new System.Drawing.Size(436, 379);
             this.Controls.Add(this.button_listausuarios);
             this.Controls.Add(this.button_Desconectar);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "principal";
-            this.Text = "Form1";
+            this.Text = "Pagina Principal";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.principal_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

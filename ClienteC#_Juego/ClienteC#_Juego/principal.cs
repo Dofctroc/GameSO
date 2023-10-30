@@ -101,11 +101,6 @@ namespace ClienteC__Juego
             }
         }
 
-        private void button_listausuarios_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void usuarioToolStripMenuItem_Click(object sender, EventArgs e)
         {
             menuUsuario menuUsuario = new menuUsuario(conectado_conServer);
@@ -117,6 +112,11 @@ namespace ClienteC__Juego
                 button_Desconectar.Enabled = true;
                 button_enviar.Enabled = true;
             }
+        }
+
+        private void principal_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            serverShutdown();
         }
     }
 }
