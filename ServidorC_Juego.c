@@ -191,15 +191,14 @@ int consulta3(MYSQL *conn, char partidaID[],char ganador[])
 	return 0;
 }
 
-int consulta4 (MYSQL *conn, char nombre[], char lista[])
+int consulta4 (MYSQL *conn, char lista[])
 {
 	int err;
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
 	
 	char consulta [800];
-	strcpy (consulta,"SELECT Jugador.userName FROM Jugador,Partida,PartidasJugadores");
-	strcat (consulta, nombre);
+	strcpy (consulta,"SELECT Jugador.userName, JugadoresConectados.status FROM JugadoresConectados,Jugador WHERE JugadoresConectados.ID_Jugador = Jugador.ID");
 	mysql_query (conn, consulta);
 	
 	resultado = mysql_store_result (conn);
@@ -211,8 +210,10 @@ int consulta4 (MYSQL *conn, char nombre[], char lista[])
 	{
 		int i = 0;
 		while (row !=NULL) {
-			strcat (nombre, row[0]);
-			strcat (nombre, "/");
+			strcat (lista, row[0]);
+			strcat (lista, "/");
+			strcat (lista, row[1]);
+			strcat (lista, "/");
 			row = mysql_fetch_row (resultado);
 			i++;
 		}
@@ -318,7 +319,7 @@ void AtenderCliente (void *socket)
 		else if (codigo == 6)
 		{
 			char lista[800];
-			consulta4(conn, nombre, lista);
+			consulta4(conn, lista);
 			strcpy(respuesta, lista);
 		}
 		if (codigo !=0)

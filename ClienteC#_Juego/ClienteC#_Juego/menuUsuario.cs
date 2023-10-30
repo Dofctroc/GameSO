@@ -146,9 +146,22 @@ namespace ClienteC__Juego
 
         private void button_listausuarios_Click(object sender, EventArgs e)
         {
+
             if (conectado_conServer)
             {
-                string mensaje = "Asier/In Menu/Julia/Ingame/Gu/Ingame/";
+                string mensaje = "6/";
+                // Enviamos al servidor el demana
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+
+                byte[] msg2 = new byte[80];
+                server.Receive(msg2);
+                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
+
+                MessageBox.Show(mensaje);
+                //--------------------------------------------
+
+                //string mensaje = "Asier/In Menu/Julia/Ingame/Gu/Ingame/";
                 string[] mensajeCodificado = mensaje.Split('/');
 
                 this.Width = 850;
