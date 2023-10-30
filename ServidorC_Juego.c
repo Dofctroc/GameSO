@@ -221,6 +221,8 @@ int consulta4 (MYSQL *conn, char nombre[], char lista[])
 	return 0;
 }
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 void AtenderCliente (void *socket)
 {
 	int sock_conn;
@@ -325,6 +327,14 @@ void AtenderCliente (void *socket)
 			printf ("Respuesta: %s\n", respuesta);
 			// Enviamos respuesta
 			write (sock_conn,respuesta, strlen(respuesta));
+		}
+		if ((codigo == 3) && (codigo == 4) && (codigo == 5))
+		{
+			pthread_mutex_lock(&mutex);
+
+			contador = contador + 1;
+
+			pthread_mutex_unlock(&mutex);
 		}
 	}
 	// Se acabo el servicio para este cliente

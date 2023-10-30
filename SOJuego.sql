@@ -26,15 +26,22 @@ CREATE TABLE PartidasJugadores (
   FOREIGN KEY (ID_Partida) REFERENCES Partida(ID)
 )ENGINE = InnoDB;
 
+CREATE TABLE JugadoresConectados (
+  ID_Jugador INTEGER NOT NULL,
+  status INTEGER NOT NULL,
+  horaConectado TEXT NOT NULL,
+  FOREIGN KEY (ID_Jugador) REFERENCES Jugador(ID)
+)ENGINE = InnoDB;
+
 
 INSERT INTO Jugador VALUES (1,'Asier','123');
 INSERT INTO Jugador VALUES (2,'Ivan','222');
 INSERT INTO Jugador VALUES (3,'Julia','444');
 INSERT INTO Jugador VALUES (4,'Jan','312');
-INSERT INTO Jugador VALUES (5,'Angela','321');
+INSERT INTO Jugador VALUES (5,'Gu','777');
 
 INSERT INTO Partida VALUES (1,'01/01/23/07/15',20,'Asier');
-INSERT INTO Partida VALUES (2,'04/01/23/10/30',30,'Jan');
+INSERT INTO Partida VALUES (2,'04/01/23/10/30',30,'Gu');
 INSERT INTO Partida VALUES (3,'26/01/23/13/00',24,'Julia');
 
 INSERT INTO PartidasJugadores VALUES(1,1,1,120);
