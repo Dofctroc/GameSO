@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <pthread.h>
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 typedef struct {
 	char userName[20];
 	int status; //1 for in game, 0 for in menu
@@ -71,8 +73,6 @@ int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSi
 	mysql_close (conn);
 	return 0;
 }
-
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int consultaLogIn(MYSQL *conn, char userName[], char password[], char mensajeLogIn[]){
 	MYSQL_RES *resultado;
@@ -221,9 +221,11 @@ int PonConectado (ListaConectados *lista, char nombre[20])
 		return -1;
 	else
 	{
+		pthread_mutex_lock( &mutex );
 		strcpy (lista->conectados[lista->num].userName, nombre);
 		lista->conectados[lista->num].status = 0;
 		lista->num++;
+		pthread_mutex_unlock ( &mutex );
 		return 0;
 	}
 }
@@ -239,7 +241,7 @@ int EliminarConectado (ListaConectados *lista, char nombre[20])
 			break;
 		}
 	}
-	
+	pthread_mutex_lock( &mutex );
 	if (encontrado == 1){
 		for (int i = 0; i< lista->num-1; i++)
 		{
@@ -248,6 +250,7 @@ int EliminarConectado (ListaConectados *lista, char nombre[20])
 		}
 		lista->num--;
 	}
+	pthread_mutex_unlock ( &mutex );
 	return 0;
 }
 
@@ -365,6 +368,7 @@ void AtenderCliente (void *socket)
 			// Enviamos respuesta
 			write (sock_conn,respuesta, strlen(respuesta));
 		}
+		
 	}
 	// Se acabo el servicio para este cliente
 	close(sock_conn);
