@@ -17,6 +17,7 @@ namespace ClienteC__Juego
     {
         bool conectado_conServer = false;
         Socket server;
+        string username;
         public principal()
         {
             InitializeComponent();
@@ -38,7 +39,7 @@ namespace ClienteC__Juego
             if (conectado_conServer)
             {
                 //Mensaje de desconexión
-                string mensaje = "0/";
+                string mensaje = "0/" + username;
 
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -107,6 +108,7 @@ namespace ClienteC__Juego
             menuUsuario.ShowDialog();
             conectado_conServer = menuUsuario.GetconectadoconServer();
             server = menuUsuario.GetServer();
+            username = menuUsuario.GetUsername();
             if (conectado_conServer == true)
             {
                 button_Desconectar.Enabled = true;

@@ -19,6 +19,7 @@ namespace ClienteC__Juego
         Socket server;
         principal principal;
         int entry;
+        string username;
         public menuUsuario(bool conectado_conServer)
         {
             InitializeComponent();
@@ -40,12 +41,17 @@ namespace ClienteC__Juego
             return this.server;
         }
 
-        public void serverConnect()
+        public string GetUsername()
+        {
+            return this.username;
+        }
+
+        public int serverConnect()
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9060);
+            IPEndPoint ipep = new IPEndPoint(direc, 9070);
 
 
             //Creamos el socket 
@@ -61,9 +67,11 @@ namespace ClienteC__Juego
                 //Si hay excepcion imprimimos error y salimos del programa con return 
                 consoletextbox.AppendText(String.Format("Entry {0}: No se ha podido conectar con el servidor.", entry) + Environment.NewLine);
                 entry++;
-                return;
+                return 1;
             }
             conectado_conServer = true;
+            button_LogOut.Enabled = true;
+            return 0;
         }
 
         public void serverShutdown()
@@ -71,48 +79,52 @@ namespace ClienteC__Juego
             if (conectado_conServer)
             {
                 //Mensaje de desconexión
-                string mensaje = "0/";
+                string mensaje = "0/" + username;
 
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
                 // Nos desconectamos
-                this.BackColor = Color.Gray;
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
                 conectado_conServer = false;
+                button_LogOut.Enabled = false;
             }
         }
 
         private void button_logIn_Click(object sender, EventArgs e)
         {
-            serverConnect();
+            username = textbox_username.Text;
+            int err = serverConnect();
 
-            string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
+            if (err == 0)
+            {
+                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
 
-            byte[] msg2 = new byte[80];
-            server.Receive(msg2);
-            mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
+                byte[] msg2 = new byte[80];
+                server.Receive(msg2);
+                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
 
-            string[] mensajeCodificado = mensaje.Split('/');
-            if (Int32.Parse(mensajeCodificado[0]) == 1)
-            {
-                serverShutdown();
-                consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensajeCodificado[1]) + Environment.NewLine);
-                entry++;
-            }
-            else if (Int32.Parse(mensajeCodificado[0]) == 2)
-            {
-                serverShutdown();
-                consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensajeCodificado[1]) + Environment.NewLine);
-                entry++;
-            }
-            else
-            {
-                consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                entry++;
+                string[] mensajeCodificado = mensaje.Split('/');
+                if (Int32.Parse(mensajeCodificado[0]) == 1)
+                {
+                    serverShutdown();
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensajeCodificado[1]) + Environment.NewLine);
+                    entry++;
+                }
+                else if (Int32.Parse(mensajeCodificado[0]) == 2)
+                {
+                    serverShutdown();
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensajeCodificado[1]) + Environment.NewLine);
+                    entry++;
+                }
+                else
+                {
+                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    entry++;
+                }
             }
         }
 
@@ -146,7 +158,6 @@ namespace ClienteC__Juego
 
         private void button_listausuarios_Click(object sender, EventArgs e)
         {
-
             if (conectado_conServer)
             {
                 string mensaje = "6/";
@@ -157,11 +168,6 @@ namespace ClienteC__Juego
                 byte[] msg2 = new byte[80];
                 server.Receive(msg2);
                 mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                MessageBox.Show(mensaje);
-                //--------------------------------------------
-
-                //string mensaje = "Asier/In Menu/Julia/Ingame/Gu/Ingame/";
                 string[] mensajeCodificado = mensaje.Split('/');
 
                 this.Width = 850;
@@ -179,16 +185,38 @@ namespace ClienteC__Juego
 
                 dataGrid_listaUsuarios.Columns[1].Width = 50;
                 dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
+                dataGrid_listaUsuarios.Rows.Clear();
+
+                string status;
                 for (int i = 0; i < mensajeCodificado.Length - 1; i += 2)
                 {
-                    dataGrid_listaUsuarios.Rows.Add(mensajeCodificado[i], mensajeCodificado[i + 1]);
+                    if (Int32.Parse(mensajeCodificado[i + 1]) == 0)
+                        status = "InMenu";
+                    else
+                        status = "InGame";
+                    dataGrid_listaUsuarios.Rows.Add(mensajeCodificado[i], status);
                 }
+
+                consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
+                entry++;
             }
             else
             {
                 consoletextbox.AppendText(String.Format("Entry {0}: *ERROR* Inicie sesion para visualizar la lista de usuarios.", entry) + Environment.NewLine);
                 entry++;
             }
+        }
+
+        private void button_LogOut_Click(object sender, EventArgs e)
+        {
+            serverShutdown();
+
+            this.Width = 360;
+            label_listaUsuarios.Visible = false;
+            dataGrid_listaUsuarios.Visible = false;
+
+            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
+            entry++;
         }
     }
 }

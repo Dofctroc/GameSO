@@ -61,13 +61,15 @@ int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSi
 	return 0;
 }
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 int consultaLogIn(MYSQL *conn, char userName[], char password[], char mensajeLogIn[]){
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
+	char consulta [800];
 	int err,n;
 	char ID[10];
 	
-	char consulta [800];
 	strcpy (consulta, "select exists(SELECT Jugador.userName FROM Jugador WHERE Jugador.userName = '");
 	strcat (consulta, userName); 
 	strcat (consulta, "');");
@@ -203,6 +205,7 @@ int consulta4 (MYSQL *conn, char lista[])
 	
 	resultado = mysql_store_result (conn);
 	row = mysql_fetch_row (resultado);
+	strcpy(lista,"");
 	
 	if (row == NULL)
 		printf ("Ha habido un error en la consulta de datos \n");
@@ -222,8 +225,6 @@ int consulta4 (MYSQL *conn, char lista[])
 	return 0;
 }
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
 void AtenderCliente (void *socket)
 {
 	int sock_conn;
@@ -240,6 +241,9 @@ void AtenderCliente (void *socket)
 	//hasta que se desconecte
 	while (terminar ==0)
 	{
+		char nombre[20];
+		char userName[20];
+		char password[20];
 		// Ahora recibimos la petici?n
 		ret=read(sock_conn,peticion, sizeof(peticion));
 		printf ("Recibido\n");
@@ -253,33 +257,36 @@ void AtenderCliente (void *socket)
 		char *p = strtok( peticion, "/");
 		int codigo =  atoi (p);
 		// Ya tenemos el c?digo de la petici?n
-		char nombre[20];
-		char userName[20];
-		char password[20];
 		
-		if (codigo !=0)
+		int err;
+		conn = mysql_init(NULL);
+		if (conn==NULL) {
+			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+			exit (1);
+		}
+		conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
+		if (conn==NULL){
+			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+			exit (1);
+		}
+		
+		if ((codigo !=0) && (codigo != 6) && (codigo != -1))
 		{
 			p = strtok( NULL, "/");
 			strcpy (nombre, p);
 			// Ya tenemos el nombre
 			printf ("Codigo: %d, Nombre: %s\n", codigo, nombre);
-			
-			int err;
-			conn = mysql_init(NULL);
-			if (conn==NULL) {
-				printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-				exit (1);
-			}
-			conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
-			if (conn==NULL){
-				printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-				exit (1);
-			}
-			mysql_query(conn, "USE Juego;");
 		}
-		
-		if (codigo ==0) //peticion de desconexion
+		if (codigo == -1)
+		{
 			terminar = 1;
+		}
+		else if (codigo ==0) //peticion de desconexion
+		{
+			p = strtok( NULL, "/");
+			strcpy (userName, p);
+			terminar = 1;
+		}
 		else if (codigo ==1) //do signUp
 		{
 			strcpy (userName, nombre);
@@ -324,18 +331,9 @@ void AtenderCliente (void *socket)
 		}
 		if (codigo !=0)
 		{
-			
 			printf ("Respuesta: %s\n", respuesta);
 			// Enviamos respuesta
 			write (sock_conn,respuesta, strlen(respuesta));
-		}
-		if ((codigo == 3) && (codigo == 4) && (codigo == 5))
-		{
-			pthread_mutex_lock(&mutex);
-
-			contador = contador + 1;
-
-			pthread_mutex_unlock(&mutex);
 		}
 	}
 	// Se acabo el servicio para este cliente
@@ -364,7 +362,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// establecemos el puerto de escucha
-	serv_adr.sin_port = htons(9060);
+	serv_adr.sin_port = htons(9070);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind");
 	

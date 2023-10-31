@@ -37,7 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.consoletextbox = new System.Windows.Forms.TextBox();
             this.dataGrid_listaUsuarios = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button_LogOut = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label_listaUsuarios = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaUsuarios)).BeginInit();
@@ -151,16 +151,17 @@
             this.dataGrid_listaUsuarios.TabIndex = 19;
             this.dataGrid_listaUsuarios.Visible = false;
             // 
-            // button1
+            // button_LogOut
             // 
-            this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(212, 322);
-            this.button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 28);
-            this.button1.TabIndex = 20;
-            this.button1.Text = "Log out";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button_LogOut.AutoSize = true;
+            this.button_LogOut.Location = new System.Drawing.Point(212, 322);
+            this.button_LogOut.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button_LogOut.Name = "button_LogOut";
+            this.button_LogOut.Size = new System.Drawing.Size(75, 28);
+            this.button_LogOut.TabIndex = 20;
+            this.button_LogOut.Text = "Log Out";
+            this.button_LogOut.UseVisualStyleBackColor = true;
+            this.button_LogOut.Click += new System.EventHandler(this.button_LogOut_Click);
             // 
             // label2
             // 
@@ -189,7 +190,7 @@
             this.ClientSize = new System.Drawing.Size(832, 413);
             this.Controls.Add(this.label_listaUsuarios);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.button_LogOut);
             this.Controls.Add(this.dataGrid_listaUsuarios);
             this.Controls.Add(this.consoletextbox);
             this.Controls.Add(this.label1);
@@ -219,7 +220,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox consoletextbox;
         private System.Windows.Forms.DataGridView dataGrid_listaUsuarios;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_LogOut;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label_listaUsuarios;
     }
