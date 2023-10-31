@@ -22,6 +22,8 @@ typedef struct {
 	int num;
 } ListaConectados;
 
+ListaConectados lista_Conectados;
+
 int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSignUp[]){
 	MYSQL_RES *resultado;
 	MYSQL_ROW row;
@@ -262,10 +264,6 @@ void AtenderCliente (void *socket)
 	int ret;
 	int terminar =0;
 	
-	ListaConectados lista_Conectados;
-	lista_Conectados.num = 0;
-	
-	
 	// Entramos en un bucle para atender todas las peticiones de este cliente
 	//hasta que se desconecte
 	while (terminar ==0)
@@ -404,8 +402,8 @@ int main(int argc, char *argv[])
 	
 	if (listen(sock_listen, 3) < 0)
 		printf("Error en el Listen");
-	
-	// Atiende 5 peticiones
+
+	lista_Conectados.num = 0;
 	int i = 0;
 	int sockets[100];
 	pthread_t thread;
