@@ -51,7 +51,7 @@ namespace ClienteC__Juego
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9070);
+            IPEndPoint ipep = new IPEndPoint(direc, 9080);
 
 
             //Creamos el socket 
@@ -169,6 +169,7 @@ namespace ClienteC__Juego
                 server.Receive(msg2);
                 mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 string[] mensajeCodificado = mensaje.Split('/');
+
 
                 this.Width = 850;
                 label_listaUsuarios.Visible = true;

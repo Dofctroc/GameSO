@@ -12,6 +12,15 @@
 #include <stdio.h>
 #include <pthread.h>
 
+typedef struct {
+	char userName[20];
+	int status; //1 for in game, 0 for in menu
+} Conectado;
+
+typedef struct {
+	Conectado conectados [100];
+	int num;
+} ListaConectados;
 
 int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSignUp[]){
 	MYSQL_RES *resultado;
@@ -76,6 +85,7 @@ int consultaLogIn(MYSQL *conn, char userName[], char password[], char mensajeLog
 	mysql_query(conn, consulta);
 	resultado = mysql_store_result (conn);
 	row = mysql_fetch_row (resultado);
+	int i;
 	
 	if (atoi(row[0]) == 1)
 	{
@@ -99,19 +109,22 @@ int consultaLogIn(MYSQL *conn, char userName[], char password[], char mensajeLog
 			}
 			strcpy(mensajeLogIn,"0/");
 			strcat(mensajeLogIn,"Se ha iniciado sesion correctamente.");
+			i = 0;
 		}
 		else{
 			strcpy(mensajeLogIn,"1/");
 			strcat(mensajeLogIn,"La contrasenya que ha introducido es incorrecta.");
+			i = 1;
 		}
 	}
 	else{
 		strcpy(mensajeLogIn,"2/");
 		strcat(mensajeLogIn,"El usuario no existe, cree un usuario.");
+		i = 2;
 	}
 	// cerrar la conexion con el servidor MYSQL 
 	mysql_close (conn);
-	return 0;
+	return i;
 }
 
 int consulta1(MYSQL *conn, char nombre[])
@@ -193,35 +206,46 @@ int consulta3(MYSQL *conn, char partidaID[],char ganador[])
 	return 0;
 }
 
-int consulta4 (MYSQL *conn, char lista[])
+void consultaConectados (ListaConectados *lista, char conectados[300]){
+	//sprintf (conectados, "%d", lista->num);
+	strcpy(conectados, "");
+	for (int i = 0; i<lista->num; i++)
+		sprintf (conectados, "%s%s/%d/", conectados, lista->conectados[i].userName, lista->conectados[i].status);
+}
+
+int PonConectado (ListaConectados *lista, char nombre[20])
 {
-	int err;
-	MYSQL_RES *resultado;
-	MYSQL_ROW row;
-	
-	char consulta [800];
-	strcpy (consulta,"SELECT Jugador.userName, JugadoresConectados.status FROM JugadoresConectados,Jugador WHERE JugadoresConectados.ID_Jugador = Jugador.ID");
-	mysql_query (conn, consulta);
-	
-	resultado = mysql_store_result (conn);
-	row = mysql_fetch_row (resultado);
-	strcpy(lista,"");
-	
-	if (row == NULL)
-		printf ("Ha habido un error en la consulta de datos \n");
+	if (lista->num == 100)
+		return -1;
 	else
 	{
-		int i = 0;
-		while (row !=NULL) {
-			strcat (lista, row[0]);
-			strcat (lista, "/");
-			strcat (lista, row[1]);
-			strcat (lista, "/");
-			row = mysql_fetch_row (resultado);
-			i++;
+		strcpy (lista->conectados[lista->num].userName, nombre);
+		lista->conectados[lista->num].status = 0;
+		lista->num++;
+		return 0;
+	}
+}
+
+int EliminarConectado (ListaConectados *lista, char nombre[20])
+{
+	int encontrado = 0;
+	for (int i = 0; i<lista->num;i ++)
+	{
+		if (strcmp (lista->conectados[i].userName, nombre) == 0)
+		{
+			encontrado = 1;
+			break;
 		}
 	}
-	mysql_close (conn);
+	
+	if (encontrado == 1){
+		for (int i = 0; i< lista->num-1; i++)
+		{
+			if (strcmp (lista->conectados[i].userName, nombre) == 0)
+				lista->conectados[i] = lista->conectados[i+1];
+		}
+		lista->num--;
+	}
 	return 0;
 }
 
@@ -237,6 +261,11 @@ void AtenderCliente (void *socket)
 	char respuesta[512];
 	int ret;
 	int terminar =0;
+	
+	ListaConectados lista_Conectados;
+	lista_Conectados.num = 0;
+	
+	
 	// Entramos en un bucle para atender todas las peticiones de este cliente
 	//hasta que se desconecte
 	while (terminar ==0)
@@ -285,6 +314,7 @@ void AtenderCliente (void *socket)
 		{
 			p = strtok( NULL, "/");
 			strcpy (userName, p);
+			EliminarConectado(&lista_Conectados, userName);
 			terminar = 1;
 		}
 		else if (codigo ==1) //do signUp
@@ -302,8 +332,10 @@ void AtenderCliente (void *socket)
 			p = strtok( NULL, "/");
 			strcpy (password, p);
 			char mensajeLogIn[80];
-			consultaLogIn(conn, userName, password, mensajeLogIn);
+			int login = consultaLogIn(conn, userName, password, mensajeLogIn);
 			strcpy (respuesta,mensajeLogIn);
+			if (login == 0)
+				PonConectado(&lista_Conectados, userName);
 		}
 		else if (codigo ==3) //piden la longitd del nombre
 		{
@@ -325,9 +357,9 @@ void AtenderCliente (void *socket)
 		}
 		else if (codigo == 6)
 		{
-			char lista[800];
-			consulta4(conn, lista);
-			strcpy(respuesta, lista);
+			char conectados[800];
+			consultaConectados(&lista_Conectados, conectados);
+			strcpy(respuesta, conectados);
 		}
 		if (codigo !=0)
 		{
@@ -339,6 +371,8 @@ void AtenderCliente (void *socket)
 	// Se acabo el servicio para este cliente
 	close(sock_conn);
 }
+
+
 
 
 int main(int argc, char *argv[])
@@ -355,6 +389,8 @@ int main(int argc, char *argv[])
 		printf("Error creant socket");
 	// Fem el bind al port
 	
+	
+	
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
 	
@@ -362,7 +398,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// establecemos el puerto de escucha
-	serv_adr.sin_port = htons(9070);
+	serv_adr.sin_port = htons(9080);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind");
 	
