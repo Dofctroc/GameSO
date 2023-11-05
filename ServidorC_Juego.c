@@ -64,10 +64,10 @@ int consultaSignUp(MYSQL *conn, char userName[], char password[], char mensajeSi
 					mysql_errno(conn), mysql_error(conn));
 			exit (1);
 		}
-		strcpy(mensajeSignUp,"0/Se ha creado su usuario correctamente.");
+		strcpy(mensajeSignUp,"1/Se ha creado su usuario correctamente.");
 	}
 	else{
-		strcpy(mensajeSignUp,"1/El usuario ya existe, elija otro username.");
+		strcpy(mensajeSignUp,"2/El usuario ya existe, elija otro username.");
 	}
 	// cerrar la conexion con el servidor MYSQL 
 	mysql_close (conn);
@@ -109,18 +109,18 @@ int consultaLogIn(MYSQL *conn, char userName[], char password[], char mensajeLog
 						mysql_errno(conn), mysql_error(conn));
 				exit (1);
 			}
-			strcpy(mensajeLogIn,"0/");
+			strcpy(mensajeLogIn,"3/");
 			strcat(mensajeLogIn,"Se ha iniciado sesion correctamente.");
 			i = 0;
 		}
 		else{
-			strcpy(mensajeLogIn,"1/");
+			strcpy(mensajeLogIn,"4/");
 			strcat(mensajeLogIn,"La contrasenya que ha introducido es incorrecta.");
 			i = 1;
 		}
 	}
 	else{
-		strcpy(mensajeLogIn,"2/");
+		strcpy(mensajeLogIn,"5/");
 		strcat(mensajeLogIn,"El usuario no existe, cree un usuario.");
 		i = 2;
 	}
@@ -172,7 +172,7 @@ int consulta2(MYSQL *conn, char nombre[],char puntuaciones[])
 	else
 	{
 		int i = 0;
-		strcpy(puntuaciones,"");
+		strcpy(puntuaciones,"12/");
 		while (row !=NULL) {
 			strcat (puntuaciones, row[0]);
 			strcat (puntuaciones, "/");
@@ -201,7 +201,8 @@ int consulta3(MYSQL *conn, char partidaID[],char ganador[])
 	if (row == NULL)
 		printf ("Ha habido un error en la consulta de datos \n");
 	else{
-		strcpy(ganador,row[0]);
+		strcpy(ganador, "13/");
+		strcat(ganador, row[0]);
 	}
 	
 	mysql_close (conn);
@@ -210,9 +211,9 @@ int consulta3(MYSQL *conn, char partidaID[],char ganador[])
 
 void consultaConectados (ListaConectados *lista, char conectados[300]){
 	//sprintf (conectados, "%d", lista->num);
-	strcpy(conectados, "");
+	strcpy(conectados, "14/");
 	for (int i = 0; i<lista->num; i++)
-		sprintf (conectados, "%s%s/%d/", conectados, lista->conectados[i].userName, lista->conectados[i].status);
+		sprintf (conectados, "%s%s.%d.", conectados, lista->conectados[i].userName, lista->conectados[i].status);
 }
 
 int PonConectado (ListaConectados *lista, char nombre[20])
@@ -300,7 +301,7 @@ void AtenderCliente (void *socket)
 			exit (1);
 		}
 		
-		if ((codigo !=0) && (codigo != 6) && (codigo != -1))
+		if ((codigo !=0) && (codigo != 6))
 		{
 			p = strtok( NULL, "/");
 			strcpy (nombre, p);
@@ -341,7 +342,7 @@ void AtenderCliente (void *socket)
 		else if (codigo ==3) //piden la longitd del nombre
 		{
 			int puntosTotales = consulta1(conn, nombre);
-			sprintf (respuesta,"%d",puntosTotales);
+			sprintf (respuesta,"11/%d",puntosTotales);
 		}
 		else if (codigo ==4)
 		{

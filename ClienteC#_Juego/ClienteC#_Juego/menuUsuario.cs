@@ -10,6 +10,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ClienteC__Juego
 {
@@ -17,12 +18,14 @@ namespace ClienteC__Juego
     {
         bool conectado_conServer;
         Socket server;
+        Thread atender;
         principal principal;
         int entry;
         string username;
         public menuUsuario(bool conectado_conServer)
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
             this.conectado_conServer = conectado_conServer;
         }
 
@@ -71,6 +74,9 @@ namespace ClienteC__Juego
             }
             conectado_conServer = true;
             button_LogOut.Enabled = true;
+            ThreadStart ts = delegate { AtenderServidor();};
+            atender = new Thread(ts);
+            atender.Start();
             return 0;
         }
 
@@ -89,9 +95,92 @@ namespace ClienteC__Juego
                 server.Close();
                 conectado_conServer = false;
                 button_LogOut.Enabled = false;
+                atender.Abort();
             }
         }
+        private void listaConectados(string mensaje)
+        {
+            string[] mensajeCodificado = mensaje.Split('.');
 
+
+            this.Width = 850;
+            label_listaUsuarios.Visible = true;
+            dataGrid_listaUsuarios.Visible = true;
+
+            dataGrid_listaUsuarios.ColumnCount = 2;
+            dataGrid_listaUsuarios.ColumnHeadersDefaultCellStyle.Font = new Font(dataGrid_listaUsuarios.Font, FontStyle.Bold);
+
+            dataGrid_listaUsuarios.Columns[0].Name = "column_Username";
+            dataGrid_listaUsuarios.Columns[0].HeaderText = "Username";
+
+            dataGrid_listaUsuarios.Columns[1].Name = "column_Status";
+            dataGrid_listaUsuarios.Columns[1].HeaderText = "Status";
+
+            dataGrid_listaUsuarios.Columns[1].Width = 50;
+            dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
+            dataGrid_listaUsuarios.Rows.Clear();
+
+            string status;
+            for (int i = 0; i < mensajeCodificado.Length - 1; i += 2)
+            {
+                if (Int32.Parse(mensajeCodificado[i + 1]) == 0)
+                    status = "InMenu";
+                else
+                    status = "InGame";
+                dataGrid_listaUsuarios.Rows.Add(mensajeCodificado[i], status);
+            }
+
+            consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
+            entry++;
+        }
+
+        private void AtenderServidor()
+        {
+            while (true)
+            {
+                //Recibimos el mensaje del servidor
+                byte[] msg2 = new byte[80];
+                server.Receive(msg2);
+                string[] mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0].Split('/');
+                int codigo = Convert.ToInt32(mensaje[0]);
+                
+
+                switch (codigo)
+                {
+                    case 1:
+                        serverShutdown();
+                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                        entry++;
+                        break;
+
+                    case 2:
+                        serverShutdown();
+                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        entry++;
+                        break;
+
+                    case 3:
+                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                        entry++;
+                        break;
+                    case 4:
+                        serverShutdown();
+                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        entry++;
+                        break;
+
+                    case 5:
+                        serverShutdown();
+                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        entry++;
+                        break;
+
+                    case 14:
+                        listaConectados(mensaje[1]);
+                        break;
+                }
+            }
+        }
         private void button_logIn_Click(object sender, EventArgs e)
         {
             username = textbox_username.Text;
@@ -102,29 +191,6 @@ namespace ClienteC__Juego
                 string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                string[] mensajeCodificado = mensaje.Split('/');
-                if (Int32.Parse(mensajeCodificado[0]) == 1)
-                {
-                    serverShutdown();
-                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensajeCodificado[1]) + Environment.NewLine);
-                    entry++;
-                }
-                else if (Int32.Parse(mensajeCodificado[0]) == 2)
-                {
-                    serverShutdown();
-                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensajeCodificado[1]) + Environment.NewLine);
-                    entry++;
-                }
-                else
-                {
-                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                    entry++;
-                }
             }
         }
 
@@ -135,25 +201,6 @@ namespace ClienteC__Juego
             string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
-
-            byte[] msg2 = new byte[80];
-            server.Receive(msg2);
-            mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-            string[] mensajeCodificado = mensaje.Split('/');
-            if (Int32.Parse(mensajeCodificado[0]) == 1)
-            {
-                serverShutdown();
-                consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensajeCodificado[1]) + Environment.NewLine);
-                entry++;
-            }
-            else
-            {
-                consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                entry++;
-            }
-
-            serverShutdown();
         }
 
         private void button_listausuarios_Click(object sender, EventArgs e)
@@ -164,42 +211,6 @@ namespace ClienteC__Juego
                 // Enviamos al servidor el demana
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                string[] mensajeCodificado = mensaje.Split('/');
-
-
-                this.Width = 850;
-                label_listaUsuarios.Visible = true;
-                dataGrid_listaUsuarios.Visible = true;
-
-                dataGrid_listaUsuarios.ColumnCount = 2;
-                dataGrid_listaUsuarios.ColumnHeadersDefaultCellStyle.Font = new Font(dataGrid_listaUsuarios.Font, FontStyle.Bold);
-
-                dataGrid_listaUsuarios.Columns[0].Name = "column_Username";
-                dataGrid_listaUsuarios.Columns[0].HeaderText = "Username";
-
-                dataGrid_listaUsuarios.Columns[1].Name = "column_Status";
-                dataGrid_listaUsuarios.Columns[1].HeaderText = "Status";
-
-                dataGrid_listaUsuarios.Columns[1].Width = 50;
-                dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
-                dataGrid_listaUsuarios.Rows.Clear();
-
-                string status;
-                for (int i = 0; i < mensajeCodificado.Length - 1; i += 2)
-                {
-                    if (Int32.Parse(mensajeCodificado[i + 1]) == 0)
-                        status = "InMenu";
-                    else
-                        status = "InGame";
-                    dataGrid_listaUsuarios.Rows.Add(mensajeCodificado[i], status);
-                }
-
-                consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
-                entry++;
             }
             else
             {
