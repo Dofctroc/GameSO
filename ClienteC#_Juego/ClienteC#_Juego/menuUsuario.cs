@@ -54,7 +54,7 @@ namespace ClienteC__Juego
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
             IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9080);
+            IPEndPoint ipep = new IPEndPoint(direc, 9070);
 
 
             //Creamos el socket 
@@ -229,6 +229,11 @@ namespace ClienteC__Juego
 
             consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
             entry++;
+        }
+
+        private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            atender.Abort();
         }
     }
 }

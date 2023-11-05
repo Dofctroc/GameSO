@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ClienteC__Juego
 {
@@ -17,10 +18,12 @@ namespace ClienteC__Juego
     {
         bool conectado_conServer = false;
         Socket server;
+        Thread atender;
         string username;
         public principal()
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -50,6 +53,39 @@ namespace ClienteC__Juego
                 server.Close();
                 conectado_conServer = false;
                 button_Desconectar.Enabled = false;
+                atender.Abort();
+            }
+        }
+
+        private void AtenderServidor()
+        {
+            while (true)
+            {
+                //Recibimos el mensaje del servidor
+                byte[] msg2 = new byte[80];
+                server.Receive(msg2);
+                string[] mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0].Split('/');
+                int codigo = Convert.ToInt32(mensaje[0]);
+
+
+                switch (codigo)
+                {
+                    case 11:
+                        MessageBox.Show(mensaje[1]);
+                        break;
+
+                    case 12:
+                        for (int i = 1; i < mensaje.Length - 1; i++)
+                        {
+                            MessageBox.Show("Puntuacion partida " + (i + 1) + ": " + mensaje[i]);
+                        }
+                        break;
+
+                    case 13:
+                        MessageBox.Show(mensaje[1]);
+                        break;
+                    
+                }
             }
         }
 
@@ -61,12 +97,6 @@ namespace ClienteC__Juego
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                MessageBox.Show(mensaje);
             }
             else if (command_2.Checked)
             {
@@ -74,17 +104,6 @@ namespace ClienteC__Juego
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                string[] mensajePuntos = mensaje.Split('/');
-                for (int i = 0; i < mensajePuntos.Length - 1; i++)
-                {
-                    MessageBox.Show("Puntuacion partida " + (i+1) + ": " + mensajePuntos[i]);
-                }
-
             }
             else if (command_3.Checked)
             {
@@ -93,12 +112,6 @@ namespace ClienteC__Juego
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                MessageBox.Show(mensaje);
             }
         }
 
@@ -111,6 +124,9 @@ namespace ClienteC__Juego
             username = menuUsuario.GetUsername();
             if (conectado_conServer == true)
             {
+                ThreadStart ts = delegate { AtenderServidor(); };
+                atender = new Thread(ts);
+                atender.Start();
                 button_Desconectar.Enabled = true;
                 button_enviar.Enabled = true;
             }
@@ -119,6 +135,7 @@ namespace ClienteC__Juego
         private void principal_FormClosing(object sender, FormClosingEventArgs e)
         {
             serverShutdown();
+            atender.Abort();
         }
 
        
