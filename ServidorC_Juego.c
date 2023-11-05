@@ -294,7 +294,7 @@ void AtenderCliente (void *socket)
 			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit (1);
 		}
-		conn = mysql_real_connect (conn, "localhost","root", "mysql", "Juego", 0, NULL, 0);
+		conn = mysql_real_connect (conn, "localhost","root", "mysql", "T6_Juego", 0, NULL, 0);
 		if (conn==NULL){
 			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit (1);
@@ -392,6 +392,8 @@ int main(int argc, char *argv[])
 	// Fem el bind al port
 	
 	
+	int puerto = 9075 //9075-9079
+	
 	
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
@@ -400,7 +402,7 @@ int main(int argc, char *argv[])
 	//htonl formatea el numero que recibe al formato necesario
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
 	// establecemos el puerto de escucha
-	serv_adr.sin_port = htons(9080);
+	serv_adr.sin_port = htons(puerto);
 	if (bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
 		printf ("Error al bind");
 	

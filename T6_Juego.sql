@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS Juego;
-CREATE DATABASE Juego;
-USE Juego;
+DROP DATABASE IF EXISTS T6_Juego;
+CREATE DATABASE T6_Juego;
+USE T6_Juego;
 
 CREATE TABLE Jugador (
   ID INTEGER PRIMARY KEY NOT NULL,
@@ -25,6 +25,14 @@ CREATE TABLE PartidasJugadores (
   FOREIGN KEY (ID_Jugador) REFERENCES Jugador(ID),
   FOREIGN KEY (ID_Partida) REFERENCES Partida(ID)
 )ENGINE = InnoDB;
+
+CREATE TABLE JugadoresConectados (
+  ID_Jugador INTEGER NOT NULL,
+  status INTEGER NOT NULL,
+  horaConectado TEXT NOT NULL,
+  FOREIGN KEY (ID_Jugador) REFERENCES Jugador(ID)
+)ENGINE = InnoDB;
+
 
 INSERT INTO Jugador VALUES (1,'Asier','123');
 INSERT INTO Jugador VALUES (2,'Ivan','222');
