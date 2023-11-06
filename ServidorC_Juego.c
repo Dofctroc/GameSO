@@ -295,7 +295,7 @@ void AtenderCliente (void *socket)
 			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit (1);
 		}
-		conn = mysql_real_connect (conn, "localhost","root", "mysql", "T6_Juego", 0, NULL, 0);
+		conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "T6_Juego", 0, NULL, 0);
 		if (conn==NULL){
 			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit (1);
@@ -393,7 +393,7 @@ int main(int argc, char *argv[])
 	// Fem el bind al port
 	
 	
-	int puerto = 9075 //9075-9079
+	int puerto = 9075; //9075-9079
 	
 	
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
