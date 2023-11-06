@@ -53,8 +53,12 @@ namespace ClienteC__Juego
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
             //al que deseamos conectarnos
-            IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9070);
+
+            string IP = "10.4.119.5";
+            int puerto = 50075; // des de 50075 hasta 50079
+            
+            IPAddress direc = IPAddress.Parse(IP);
+            IPEndPoint ipep = new IPEndPoint(direc, puerto);
 
 
             //Creamos el socket 

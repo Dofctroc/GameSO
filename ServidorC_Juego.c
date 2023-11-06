@@ -393,7 +393,7 @@ int main(int argc, char *argv[])
 	// Fem el bind al port
 	
 	
-	int puerto = 9075; //9075-9079
+	int puerto = 50075; //50075-50090
 	
 	
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
