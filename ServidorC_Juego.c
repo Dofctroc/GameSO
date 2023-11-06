@@ -17,6 +17,7 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 typedef struct {
 	char userName[20];
 	int status; //1 for in game, 0 for in menu
+	int socket;
 } Conectado;
 
 typedef struct {
@@ -204,19 +205,22 @@ int consulta3(MYSQL *conn, char partidaID[],char ganador[])
 		strcpy(ganador, "13/");
 		strcat(ganador, row[0]);
 	}
-	
 	mysql_close (conn);
 	return 0;
 }
 
 void consultaConectados (ListaConectados *lista, char conectados[300]){
-	//sprintf (conectados, "%d", lista->num);
+	char sockets[100];
 	strcpy(conectados, "14/");
-	for (int i = 0; i<lista->num; i++)
+	strcpy(sockets,"Sockets:/");
+	for (int i = 0; i<lista->num; i++){
 		sprintf (conectados, "%s%s.%d.", conectados, lista->conectados[i].userName, lista->conectados[i].status);
+		sprintf (sockets, "%s%s.%d.%d.", sockets, lista->conectados[i].userName, lista->conectados[i].status, lista->conectados[i].socket);
+	}
+	printf(sockets);
 }
 
-int PonConectado (ListaConectados *lista, char nombre[20])
+int PonConectado (ListaConectados *lista, char nombre[20], int socket)
 {
 	if (lista->num == 100)
 		return -1;
@@ -225,6 +229,7 @@ int PonConectado (ListaConectados *lista, char nombre[20])
 		pthread_mutex_lock( &mutex );
 		strcpy (lista->conectados[lista->num].userName, nombre);
 		lista->conectados[lista->num].status = 0;
+		lista->conectados[lista->num].socket = socket;
 		lista->num++;
 		pthread_mutex_unlock ( &mutex );
 		return 0;
@@ -295,7 +300,8 @@ void AtenderCliente (void *socket)
 			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit (1);
 		}
-		conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "T6_Juego", 0, NULL, 0);
+		// conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "T6_Juego", 0, NULL, 0);	//Shiva
+		conn = mysql_real_connect (conn, "localhost","root", "mysql", "T6_Juego", 0, NULL, 0);			//Linux
 		if (conn==NULL){
 			printf ("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit (1);
@@ -337,7 +343,7 @@ void AtenderCliente (void *socket)
 			int login = consultaLogIn(conn, userName, password, mensajeLogIn);
 			strcpy (respuesta,mensajeLogIn);
 			if (login == 0)
-				PonConectado(&lista_Conectados, userName);
+				PonConectado(&lista_Conectados, userName, sock_conn);
 		}
 		else if (codigo ==3) //piden la longitd del nombre
 		{
@@ -369,7 +375,6 @@ void AtenderCliente (void *socket)
 			// Enviamos respuesta
 			write (sock_conn,respuesta, strlen(respuesta));
 		}
-		
 	}
 	// Se acabo el servicio para este cliente
 	close(sock_conn);
@@ -382,19 +387,12 @@ int main(int argc, char *argv[])
 {	
 	int sock_conn, sock_listen, ret;
 	struct sockaddr_in serv_adr;
-	//char peticion[512];
-	//char respuesta[512];
-	//char userName[20];
-	//char password[20];
-	// INICIALITZACIONS
-	// Obrim el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		printf("Error creant socket");
 	// Fem el bind al port
 	
-	
-	int puerto = 50075; //50075-50090
-	
+	// int puerto = 50075;  //50075-50090 for Shiva
+	int puerto = 9075; 		//Linux
 	
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
@@ -422,8 +420,7 @@ int main(int argc, char *argv[])
 		printf ("He recibido conexion\n");
 		//sock_conn es el socket que usaremos para este cliente
 		
-		sockets[i] = sock_conn;
-		
+		sockets[i] = sock_conn; 
 		pthread_create (&thread, NULL, AtenderCliente, &sockets[i]);
 		i = i + 1;
 	}

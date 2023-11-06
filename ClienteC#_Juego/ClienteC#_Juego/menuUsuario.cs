@@ -51,15 +51,14 @@ namespace ClienteC__Juego
 
         public int serverConnect()
         {
-            //Creamos un IPEndPoint con el ip del servidor y puerto del servidor 
-            //al que deseamos conectarnos
+            //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos
+            //Puertos de acceso a Shiva des de 50075 hasta 50079
 
-            string IP = "10.4.119.5";
-            int puerto = 50075; // des de 50075 hasta 50079
-            
+            //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
+            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
+
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
-
 
             //Creamos el socket 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -78,7 +77,7 @@ namespace ClienteC__Juego
             }
             conectado_conServer = true;
             button_LogOut.Enabled = true;
-            ThreadStart ts = delegate { AtenderServidor();};
+            ThreadStart ts = delegate { AtenderServidor(); };
             atender = new Thread(ts);
             atender.Start();
             return 0;
@@ -90,16 +89,15 @@ namespace ClienteC__Juego
             {
                 //Mensaje de desconexión
                 string mensaje = "0/" + username;
-
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
                 // Nos desconectamos
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
+                atender.Abort();
                 conectado_conServer = false;
                 button_LogOut.Enabled = false;
-                atender.Abort();
             }
         }
         private void listaConectados(string mensaje)
@@ -152,14 +150,14 @@ namespace ClienteC__Juego
                 switch (codigo)
                 {
                     case 1:
+                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
                         serverShutdown();
-                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
                         entry++;
                         break;
 
                     case 2:
-                        serverShutdown();
                         consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        serverShutdown();
                         entry++;
                         break;
 
@@ -168,14 +166,14 @@ namespace ClienteC__Juego
                         entry++;
                         break;
                     case 4:
-                        serverShutdown();
                         consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        serverShutdown();
                         entry++;
                         break;
 
                     case 5:
-                        serverShutdown();
                         consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        serverShutdown();
                         entry++;
                         break;
 
@@ -200,11 +198,15 @@ namespace ClienteC__Juego
 
         private void button_signUp_Click(object sender, EventArgs e)
         {
-            serverConnect();
+            username = textbox_username.Text;
+            int err = serverConnect();
 
-            string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
+            if (err == 0)
+            {
+                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
         }
 
         private void button_listausuarios_Click(object sender, EventArgs e)
@@ -237,7 +239,6 @@ namespace ClienteC__Juego
 
         private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
-            atender.Abort();
         }
     }
 }

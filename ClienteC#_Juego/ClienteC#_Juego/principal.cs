@@ -67,7 +67,6 @@ namespace ClienteC__Juego
                 string[] mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0].Split('/');
                 int codigo = Convert.ToInt32(mensaje[0]);
 
-
                 switch (codigo)
                 {
                     case 11:
@@ -127,6 +126,7 @@ namespace ClienteC__Juego
                 ThreadStart ts = delegate { AtenderServidor(); };
                 atender = new Thread(ts);
                 atender.Start();
+                MessageBox.Show("Hola");
                 button_Desconectar.Enabled = true;
                 button_enviar.Enabled = true;
             }
@@ -135,7 +135,6 @@ namespace ClienteC__Juego
         private void principal_FormClosing(object sender, FormClosingEventArgs e)
         {
             serverShutdown();
-            atender.Abort();
         }
 
        
