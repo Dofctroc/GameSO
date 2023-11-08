@@ -30,7 +30,6 @@ C:\Users\julia\Documents\SO\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\Cli
 C:\Users\julia\Documents\SO\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.csproj.CoreCompileInputs.cache
 C:\Users\julia\Documents\SO\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.exe
 C:\Users\julia\Documents\SO\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.pdb
-C:\Users\julia\Documents\SO\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.principal.resources
 C:\Users\julia\Documents\SO\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.menuUsuario.resources
 C:\Users\G513\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\bin\Debug\ClienteC#_Juego.exe.config
 C:\Users\G513\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\bin\Debug\ClienteC#_Juego.exe
@@ -55,3 +54,4 @@ E:\git\clone\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.cs
 E:\git\clone\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.csproj.CoreCompileInputs.cache
 E:\git\clone\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.exe
 E:\git\clone\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.pdb
+C:\Users\julia\Documents\SO\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.consultas.resources

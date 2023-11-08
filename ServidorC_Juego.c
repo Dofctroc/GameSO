@@ -302,8 +302,8 @@ void AtenderCliente(void* socket)
 			printf("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit(1);
 		}
-		// conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "T6_Juego", 0, NULL, 0);	//Shiva
-		conn = mysql_real_connect(conn, "localhost", "root", "mysql", "T6_Juego", 0, NULL, 0);			//Linux
+		conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "T6_Juego", 0, NULL, 0);	//Shiva
+		//conn = mysql_real_connect(conn, "localhost", "root", "mysql", "T6_Juego", 0, NULL, 0);			//Linux
 		if (conn == NULL) {
 			printf("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
 			exit(1);
@@ -404,8 +404,8 @@ int main(int argc, char* argv[])
 		printf("Error creant socket");
 	// Fem el bind al port
 
-	// int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9075; 		//Linux
+	 int puerto = 50075;  //50075-50090 for Shiva
+	//int puerto = 9075; 		//Linux
 
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;

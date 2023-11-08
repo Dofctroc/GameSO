@@ -19,7 +19,7 @@ namespace ClienteC__Juego
         bool conectado_conServer = false;
         Socket server;
         Thread atender;
-        principal principal;
+        consultas principal;
         int entry;
         string username;
         string password;
@@ -230,17 +230,18 @@ namespace ClienteC__Juego
             entry++;
         }
 
-        private void button_Consultas_Click(object sender, EventArgs e)
-        {
-            if (conectado_conServer) {
-                principal = new principal(conectado_conServer, server);
-                principal.ShowDialog();
-            }
-        }
-
         private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
             serverShutdown();
+        }
+
+        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (conectado_conServer)
+            {
+                principal = new consultas(conectado_conServer, server);
+                principal.ShowDialog();
+            }
         }
     }
 }
