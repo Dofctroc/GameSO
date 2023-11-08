@@ -16,37 +16,40 @@ namespace ClienteC__Juego
 {
     public partial class menuUsuario : Form
     {
-        bool conectado_conServer;
+        bool conectado_conServer = false;
         Socket server;
         Thread atender;
         principal principal;
         int entry;
         string username;
-        public menuUsuario(bool conectado_conServer)
+        string password;
+
+        public menuUsuario()
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
-            this.conectado_conServer = conectado_conServer;
         }
 
         private void menuUsuario_Load(object sender, EventArgs e)
         {
-            this.Width = 360;
-        }
+            textbox_password.Text = password;
+            textbox_username.Text = username;
 
-        public bool GetconectadoconServer()
-        {
-            return this.conectado_conServer;
-        }
+            label_listaUsuarios.Visible = true;
+            dataGrid_listaUsuarios.Visible = true;
 
-        public Socket GetServer()
-        {
-            return this.server;
-        }
+            dataGrid_listaUsuarios.ColumnCount = 2;
+            dataGrid_listaUsuarios.ColumnHeadersDefaultCellStyle.Font = new Font(dataGrid_listaUsuarios.Font, FontStyle.Bold);
 
-        public string GetUsername()
-        {
-            return this.username;
+            dataGrid_listaUsuarios.Columns[0].Name = "column_Username";
+            dataGrid_listaUsuarios.Columns[0].HeaderText = "Username";
+
+            dataGrid_listaUsuarios.Columns[1].Name = "column_Status";
+            dataGrid_listaUsuarios.Columns[1].HeaderText = "Status";
+
+            dataGrid_listaUsuarios.Columns[1].Width = 50;
+            dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
+            dataGrid_listaUsuarios.Rows.Clear();
         }
 
         public int serverConnect()
@@ -54,8 +57,8 @@ namespace ClienteC__Juego
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
-            //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
+            string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
+            //string IP = "192.168.56.102"; int puerto = 9075;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -96,6 +99,7 @@ namespace ClienteC__Juego
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
                 atender.Abort();
+
                 conectado_conServer = false;
                 button_LogOut.Enabled = false;
             }
@@ -103,23 +107,6 @@ namespace ClienteC__Juego
         private void listaConectados(string mensaje)
         {
             string[] mensajeCodificado = mensaje.Split('.');
-
-
-            this.Width = 850;
-            label_listaUsuarios.Visible = true;
-            dataGrid_listaUsuarios.Visible = true;
-
-            dataGrid_listaUsuarios.ColumnCount = 2;
-            dataGrid_listaUsuarios.ColumnHeadersDefaultCellStyle.Font = new Font(dataGrid_listaUsuarios.Font, FontStyle.Bold);
-
-            dataGrid_listaUsuarios.Columns[0].Name = "column_Username";
-            dataGrid_listaUsuarios.Columns[0].HeaderText = "Username";
-
-            dataGrid_listaUsuarios.Columns[1].Name = "column_Status";
-            dataGrid_listaUsuarios.Columns[1].HeaderText = "Status";
-
-            dataGrid_listaUsuarios.Columns[1].Width = 50;
-            dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
             dataGrid_listaUsuarios.Rows.Clear();
 
             string status;
@@ -176,7 +163,15 @@ namespace ClienteC__Juego
                         serverShutdown();
                         entry++;
                         break;
-
+                    case 11:
+                        principal.responseReceived(mensaje, codigo);
+                        break;
+                    case 12:
+                        principal.responseReceived(mensaje, codigo);
+                        break;
+                    case 13:
+                        principal.responseReceived(mensaje, codigo);
+                        break;
                     case 14:
                         listaConectados(mensaje[1]);
                         break;
@@ -186,6 +181,7 @@ namespace ClienteC__Juego
         private void button_logIn_Click(object sender, EventArgs e)
         {
             username = textbox_username.Text;
+            password = textbox_password.Text;
             int err = serverConnect();
 
             if (err == 0)
@@ -228,17 +224,23 @@ namespace ClienteC__Juego
         private void button_LogOut_Click(object sender, EventArgs e)
         {
             serverShutdown();
-
-            this.Width = 360;
-            label_listaUsuarios.Visible = false;
-            dataGrid_listaUsuarios.Visible = false;
+            dataGrid_listaUsuarios.Rows.Clear();
 
             consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
             entry++;
         }
 
+        private void button_Consultas_Click(object sender, EventArgs e)
+        {
+            if (conectado_conServer) {
+                principal = new principal(conectado_conServer, server);
+                principal.ShowDialog();
+            }
+        }
+
         private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
+            serverShutdown();
         }
     }
 }
