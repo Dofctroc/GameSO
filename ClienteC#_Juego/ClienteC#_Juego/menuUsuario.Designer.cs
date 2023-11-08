@@ -31,7 +31,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.textbox_password = new System.Windows.Forms.TextBox();
             this.textbox_username = new System.Windows.Forms.TextBox();
-            this.button_listausuarios = new System.Windows.Forms.Button();
             this.button_signUp = new System.Windows.Forms.Button();
             this.button_logIn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -40,6 +39,7 @@
             this.button_LogOut = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label_listaUsuarios = new System.Windows.Forms.Label();
+            this.button_Consultas = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaUsuarios)).BeginInit();
             this.SuspendLayout();
             // 
@@ -47,7 +47,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(22, 25);
+            this.label3.Location = new System.Drawing.Point(21, 25);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 20);
             this.label3.TabIndex = 12;
@@ -57,7 +57,7 @@
             // 
             this.textbox_password.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textbox_password.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.textbox_password.Location = new System.Drawing.Point(177, 50);
+            this.textbox_password.Location = new System.Drawing.Point(177, 51);
             this.textbox_password.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_password.Name = "textbox_password";
             this.textbox_password.PasswordChar = '*';
@@ -67,31 +67,19 @@
             // textbox_username
             // 
             this.textbox_username.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textbox_username.Location = new System.Drawing.Point(26, 50);
+            this.textbox_username.Location = new System.Drawing.Point(27, 51);
             this.textbox_username.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_username.Name = "textbox_username";
             this.textbox_username.Size = new System.Drawing.Size(125, 22);
             this.textbox_username.TabIndex = 1;
             // 
-            // button_listausuarios
-            // 
-            this.button_listausuarios.AutoSize = true;
-            this.button_listausuarios.Location = new System.Drawing.Point(103, 358);
-            this.button_listausuarios.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.button_listausuarios.Name = "button_listausuarios";
-            this.button_listausuarios.Size = new System.Drawing.Size(111, 28);
-            this.button_listausuarios.TabIndex = 5;
-            this.button_listausuarios.Text = "Lista usuarios";
-            this.button_listausuarios.UseVisualStyleBackColor = true;
-            this.button_listausuarios.Click += new System.EventHandler(this.button_listausuarios_Click);
-            // 
             // button_signUp
             // 
             this.button_signUp.AutoSize = true;
-            this.button_signUp.Location = new System.Drawing.Point(34, 322);
+            this.button_signUp.Location = new System.Drawing.Point(35, 323);
             this.button_signUp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_signUp.Name = "button_signUp";
-            this.button_signUp.Size = new System.Drawing.Size(75, 28);
+            this.button_signUp.Size = new System.Drawing.Size(76, 29);
             this.button_signUp.TabIndex = 3;
             this.button_signUp.Text = "Sign Up";
             this.button_signUp.UseVisualStyleBackColor = true;
@@ -100,10 +88,10 @@
             // button_logIn
             // 
             this.button_logIn.AutoSize = true;
-            this.button_logIn.Location = new System.Drawing.Point(123, 322);
+            this.button_logIn.Location = new System.Drawing.Point(123, 323);
             this.button_logIn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_logIn.Name = "button_logIn";
-            this.button_logIn.Size = new System.Drawing.Size(75, 28);
+            this.button_logIn.Size = new System.Drawing.Size(75, 29);
             this.button_logIn.TabIndex = 4;
             this.button_logIn.Text = "Log In";
             this.button_logIn.UseVisualStyleBackColor = true;
@@ -122,7 +110,7 @@
             // consoletextbox
             // 
             this.consoletextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.consoletextbox.Location = new System.Drawing.Point(26, 124);
+            this.consoletextbox.Location = new System.Drawing.Point(27, 124);
             this.consoletextbox.Margin = new System.Windows.Forms.Padding(4);
             this.consoletextbox.Multiline = true;
             this.consoletextbox.Name = "consoletextbox";
@@ -140,7 +128,7 @@
             this.dataGrid_listaUsuarios.AllowUserToResizeRows = false;
             this.dataGrid_listaUsuarios.ColumnHeadersHeight = 25;
             this.dataGrid_listaUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dataGrid_listaUsuarios.Location = new System.Drawing.Point(400, 50);
+            this.dataGrid_listaUsuarios.Location = new System.Drawing.Point(400, 51);
             this.dataGrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4);
             this.dataGrid_listaUsuarios.Name = "dataGrid_listaUsuarios";
             this.dataGrid_listaUsuarios.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
@@ -154,10 +142,10 @@
             // button_LogOut
             // 
             this.button_LogOut.AutoSize = true;
-            this.button_LogOut.Location = new System.Drawing.Point(212, 322);
+            this.button_LogOut.Location = new System.Drawing.Point(212, 323);
             this.button_LogOut.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_LogOut.Name = "button_LogOut";
-            this.button_LogOut.Size = new System.Drawing.Size(75, 28);
+            this.button_LogOut.Size = new System.Drawing.Size(76, 29);
             this.button_LogOut.TabIndex = 20;
             this.button_LogOut.Text = "Log Out";
             this.button_LogOut.UseVisualStyleBackColor = true;
@@ -183,18 +171,28 @@
             this.label_listaUsuarios.Text = "Lista Usuarios";
             this.label_listaUsuarios.Visible = false;
             // 
+            // button_Consultas
+            // 
+            this.button_Consultas.Location = new System.Drawing.Point(35, 383);
+            this.button_Consultas.Name = "button_Consultas";
+            this.button_Consultas.Size = new System.Drawing.Size(186, 28);
+            this.button_Consultas.TabIndex = 23;
+            this.button_Consultas.Text = "Entrar en Consultas";
+            this.button_Consultas.UseVisualStyleBackColor = true;
+            this.button_Consultas.Click += new System.EventHandler(this.button_Consultas_Click);
+            // 
             // menuUsuario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(832, 413);
+            this.ClientSize = new System.Drawing.Size(832, 423);
+            this.Controls.Add(this.button_Consultas);
             this.Controls.Add(this.label_listaUsuarios);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button_LogOut);
             this.Controls.Add(this.dataGrid_listaUsuarios);
             this.Controls.Add(this.consoletextbox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button_listausuarios);
             this.Controls.Add(this.button_signUp);
             this.Controls.Add(this.button_logIn);
             this.Controls.Add(this.label3);
@@ -203,6 +201,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "menuUsuario";
             this.Text = "menuUsuario";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.menuUsuario_FormClosing);
             this.Load += new System.EventHandler(this.menuUsuario_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaUsuarios)).EndInit();
             this.ResumeLayout(false);
@@ -214,7 +213,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textbox_password;
         private System.Windows.Forms.TextBox textbox_username;
-        private System.Windows.Forms.Button button_listausuarios;
         private System.Windows.Forms.Button button_signUp;
         private System.Windows.Forms.Button button_logIn;
         private System.Windows.Forms.Label label1;
@@ -223,5 +221,6 @@
         private System.Windows.Forms.Button button_LogOut;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label_listaUsuarios;
+        private System.Windows.Forms.Button button_Consultas;
     }
 }

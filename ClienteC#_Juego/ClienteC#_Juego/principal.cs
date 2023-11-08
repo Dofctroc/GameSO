@@ -10,17 +10,21 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ClienteC__Juego
 {
     public partial class principal : Form
     {
-        bool conectado_conServer = false;
+        bool conectado_conServer;
         Socket server;
         string username;
-        public principal()
+        public principal(bool conectado_conServer, Socket server)
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
+            this.conectado_conServer = conectado_conServer;
+            this.server = server;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -28,29 +32,15 @@ namespace ClienteC__Juego
 
         }
 
-        private void button_Desconectar_Click(object sender, EventArgs e)
+        public void responseReceived(string[] mensaje, int caso)
         {
-            serverShutdown();
-            button_enviar.Enabled = false;
-        }
-
-        public void serverShutdown()
-        {
-            if (conectado_conServer)
-            {
-                //Mensaje de desconexión
-                string mensaje = "0/" + username;
-
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-
-                // Nos desconectamos
-                this.BackColor = Color.Gray;
-                server.Shutdown(SocketShutdown.Both);
-                server.Close();
-                conectado_conServer = false;
-                button_Desconectar.Enabled = false;
-            }
+            if (caso == 11)
+                consoleTextBox.AppendText(String.Format("Puntuacion total de {0}: {1}", textbox_nombre.Text, mensaje[1]) + Environment.NewLine);
+            if (caso == 12)
+                for (int i = 1; i < mensaje.Length - 1; i++)
+                    consoleTextBox.AppendText(String.Format("Puntuacion en la partida {0}: {1}", i, mensaje[i]) + Environment.NewLine);
+            if (caso == 13)
+                consoleTextBox.AppendText(String.Format("Ganador de la partida {0}: {1}", textbox_partida.Text, mensaje[1]) + Environment.NewLine);
         }
 
         private void button_enviar_Click(object sender, EventArgs e)
@@ -61,12 +51,6 @@ namespace ClienteC__Juego
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                MessageBox.Show(mensaje);
             }
             else if (command_2.Checked)
             {
@@ -74,17 +58,6 @@ namespace ClienteC__Juego
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                string[] mensajePuntos = mensaje.Split('/');
-                for (int i = 0; i < mensajePuntos.Length - 1; i++)
-                {
-                    MessageBox.Show("Puntuacion partida " + (i+1) + ": " + mensajePuntos[i]);
-                }
-
             }
             else if (command_3.Checked)
             {
@@ -93,34 +66,7 @@ namespace ClienteC__Juego
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
-                MessageBox.Show(mensaje);
             }
         }
-
-        private void usuarioToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            menuUsuario menuUsuario = new menuUsuario(conectado_conServer);
-            menuUsuario.ShowDialog();
-            conectado_conServer = menuUsuario.GetconectadoconServer();
-            server = menuUsuario.GetServer();
-            username = menuUsuario.GetUsername();
-            if (conectado_conServer == true)
-            {
-                button_Desconectar.Enabled = true;
-                button_enviar.Enabled = true;
-            }
-        }
-
-        private void principal_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            serverShutdown();
-        }
-
-       
     }
 }
