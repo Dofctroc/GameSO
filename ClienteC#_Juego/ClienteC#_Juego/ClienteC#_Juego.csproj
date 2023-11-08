@@ -61,11 +61,11 @@
     <Compile Include="menuUsuario.Designer.cs">
       <DependentUpon>menuUsuario.cs</DependentUpon>
     </Compile>
-    <Compile Include="principal.cs">
+    <Compile Include="menuPartida.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="principal.Designer.cs">
-      <DependentUpon>principal.cs</DependentUpon>
+    <Compile Include="menuPartida.Designer.cs">
+      <DependentUpon>menuPartida.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,8 +75,8 @@
     <EmbeddedResource Include="menuUsuario.resx">
       <DependentUpon>menuUsuario.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="principal.resx">
-      <DependentUpon>principal.cs</DependentUpon>
+    <EmbeddedResource Include="menuPartida.resx">
+      <DependentUpon>menuPartida.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

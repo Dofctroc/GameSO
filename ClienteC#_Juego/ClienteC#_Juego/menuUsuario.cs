@@ -19,7 +19,8 @@ namespace ClienteC__Juego
         bool conectado_conServer = false;
         Socket server;
         Thread atender;
-        consultas principal;
+        consultas consultas;
+        menuPartida menuPartida;
         int entry;
         string username;
         string password;
@@ -34,22 +35,6 @@ namespace ClienteC__Juego
         {
             textbox_password.Text = password;
             textbox_username.Text = username;
-
-            label_listaUsuarios.Visible = true;
-            dataGrid_listaUsuarios.Visible = true;
-
-            dataGrid_listaUsuarios.ColumnCount = 2;
-            dataGrid_listaUsuarios.ColumnHeadersDefaultCellStyle.Font = new Font(dataGrid_listaUsuarios.Font, FontStyle.Bold);
-
-            dataGrid_listaUsuarios.Columns[0].Name = "column_Username";
-            dataGrid_listaUsuarios.Columns[0].HeaderText = "Username";
-
-            dataGrid_listaUsuarios.Columns[1].Name = "column_Status";
-            dataGrid_listaUsuarios.Columns[1].HeaderText = "Status";
-
-            dataGrid_listaUsuarios.Columns[1].Width = 50;
-            dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
-            dataGrid_listaUsuarios.Rows.Clear();
         }
 
         public int serverConnect()
@@ -104,24 +89,6 @@ namespace ClienteC__Juego
                 button_LogOut.Enabled = false;
             }
         }
-        private void listaConectados(string mensaje)
-        {
-            string[] mensajeCodificado = mensaje.Split('.');
-            dataGrid_listaUsuarios.Rows.Clear();
-
-            string status;
-            for (int i = 0; i < mensajeCodificado.Length - 1; i += 2)
-            {
-                if (Int32.Parse(mensajeCodificado[i + 1]) == 0)
-                    status = "InMenu";
-                else
-                    status = "InGame";
-                dataGrid_listaUsuarios.Rows.Add(mensajeCodificado[i], status);
-            }
-
-            consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
-            entry++;
-        }
 
         private void AtenderServidor()
         {
@@ -164,16 +131,18 @@ namespace ClienteC__Juego
                         entry++;
                         break;
                     case 11:
-                        principal.responseReceived(mensaje, codigo);
+                        consultas.responseReceived(mensaje, codigo);
                         break;
                     case 12:
-                        principal.responseReceived(mensaje, codigo);
+                        consultas.responseReceived(mensaje, codigo);
                         break;
                     case 13:
-                        principal.responseReceived(mensaje, codigo);
+                        consultas.responseReceived(mensaje, codigo);
                         break;
                     case 14:
-                        listaConectados(mensaje[1]);
+                        menuPartida.listaConectados(mensaje[1]);
+                        consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
+                        entry++;
                         break;
                 }
             }
@@ -190,6 +159,9 @@ namespace ClienteC__Juego
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
+            menuPartida = new menuPartida();
+            menuPartida.ShowDialog();
+            serverShutdown();
         }
 
         private void button_signUp_Click(object sender, EventArgs e)
@@ -224,8 +196,7 @@ namespace ClienteC__Juego
         private void button_LogOut_Click(object sender, EventArgs e)
         {
             serverShutdown();
-            dataGrid_listaUsuarios.Rows.Clear();
-
+            Close();
             consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
             entry++;
         }
@@ -239,8 +210,8 @@ namespace ClienteC__Juego
         {
             if (conectado_conServer)
             {
-                principal = new consultas(conectado_conServer, server);
-                principal.ShowDialog();
+                consultas = new consultas(conectado_conServer, server);
+                consultas.ShowDialog();
             }
         }
     }
