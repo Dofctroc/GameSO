@@ -47,14 +47,14 @@ namespace ClienteC__Juego
         {
             if (command_1.Checked)
             {
-                string mensaje = "3/" + textbox_nombre.Text;
+                string mensaje = "11/" + textbox_nombre.Text;
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
             else if (command_2.Checked)
             {
-                string mensaje = "4/" + textbox_nombre.Text;
+                string mensaje = "12/" + textbox_nombre.Text;
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -62,7 +62,7 @@ namespace ClienteC__Juego
             else if (command_3.Checked)
             {
                 // Enviamos nombre y altura
-                string mensaje = "5/" + textbox_partida.Text;
+                string mensaje = "13/" + textbox_partida.Text;
                 // Enviamos al servidor el nombre tecleado
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);

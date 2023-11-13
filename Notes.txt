@@ -1,0 +1,58 @@
+Shiva ports: 75-79
+
+
+Codigos mensaje que envia Cliente:
+
+0 - Desconectar
+1 - Peticion de SignUp
+2 - Peticion de LogIn
+
+3 - Invitacion a partida		3/Host/4(numero de invitados)/Asier/Gu/Julia/Ivan
+4 - Respuesta a invitacion a partida	4/Host/Jo soc Asier/Dic que Si
+5 - Crear una partida			5/Qui la crea
+
+10 - Peticion ListaUsuarios
+11 - ComandoInd1 (puntuacion total jugador)
+12 - ComandoInd2 (puntuacion partidas jugadas)
+13 - ComandoInd3 (ganador de partida)
+
+
+Codigos mensaje que envia Servidor:
+
+1 - SignUp correcto
+2 - SignUp error
+
+3 - LogIn correcto
+4 - LogIn error contra
+5 - LogIn error usuario
+
+6 - Invitacion a partida		6/T'ha invitat l'Asier
+7 - Respuesta a invitacion a partida	7/L'usuario Asier/Diu que Si
+8 - Respuesta a creacion de partida	8/0 -> S'ha creat bé 	8/-1 -> S'ha creat malament
+9 - Respuesta a invitacion a partida	9/0 -> S'ha invitat bé	
+
+10 - ConsultaConectados
+11 - Consulta1
+12 - Consulta2
+13 - Consulta3
+
+
+
+
+
+sockets_receptores: 4/
+
+0 1 2 3 4 ... 15 16 ... 99
+
+4 -> Socket que conecta Asier amb el servidor
+16 -> Socket que conecta Julia amb el servidor
+Si persona del socket 4 conectada -> retorn 
+
+
+Asier -> Invitacio
+
+Server ho rep i mira qui esta i qui no
+Server -> contesta a Asier qui esta i qui no, per saber qui ha rebut la invitacio
+
+Julia/Gu -> reben la invitacio (si estan conectats/inMenu)
+Julia/Gu -> responen la invitacio

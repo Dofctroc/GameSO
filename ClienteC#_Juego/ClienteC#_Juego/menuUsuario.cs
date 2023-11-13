@@ -37,6 +37,15 @@ namespace ClienteC__Juego
             textbox_username.Text = username;
         }
 
+        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (conectado_conServer)
+            {
+                consultas = new consultas(conectado_conServer, server);
+                consultas.ShowDialog();
+            }
+        }
+
         public int serverConnect()
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos
@@ -147,6 +156,20 @@ namespace ClienteC__Juego
                 }
             }
         }
+
+        private void button_signUp_Click(object sender, EventArgs e)
+        {
+            username = textbox_username.Text;
+            int err = serverConnect();
+
+            if (err == 0)
+            {
+                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+        }
+
         private void button_logIn_Click(object sender, EventArgs e)
         {
             username = textbox_username.Text;
@@ -164,35 +187,6 @@ namespace ClienteC__Juego
             serverShutdown();
         }
 
-        private void button_signUp_Click(object sender, EventArgs e)
-        {
-            username = textbox_username.Text;
-            int err = serverConnect();
-
-            if (err == 0)
-            {
-                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-        }
-
-        private void button_listausuarios_Click(object sender, EventArgs e)
-        {
-            if (conectado_conServer)
-            {
-                string mensaje = "6/";
-                // Enviamos al servidor el demana
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-            else
-            {
-                consoletextbox.AppendText(String.Format("Entry {0}: *ERROR* Inicie sesion para visualizar la lista de usuarios.", entry) + Environment.NewLine);
-                entry++;
-            }
-        }
-
         private void button_LogOut_Click(object sender, EventArgs e)
         {
             serverShutdown();
@@ -205,13 +199,18 @@ namespace ClienteC__Juego
         {
             serverShutdown();
         }
-
-        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
+        private void panelDeControlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (conectado_conServer)
+            if (!consoletextbox.Visible)
             {
-                consultas = new consultas(conectado_conServer, server);
-                consultas.ShowDialog();
+                consoletextbox.Visible = true;
+                lbl_panelControl.Visible = true;
+            }
+
+            else
+            {
+                consoletextbox.Visible = false;
+                lbl_panelControl.Visible = false;
             }
         }
     }
