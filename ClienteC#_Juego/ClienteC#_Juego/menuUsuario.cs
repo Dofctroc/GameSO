@@ -37,22 +37,13 @@ namespace ClienteC__Juego
             textbox_username.Text = username;
         }
 
-        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (conectado_conServer)
-            {
-                consultas = new consultas(conectado_conServer, server);
-                consultas.ShowDialog();
-            }
-        }
-
         public int serverConnect()
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
-            string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            //string IP = "192.168.56.102"; int puerto = 9075;     //Linux
+            //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
+            string IP = "192.168.56.102"; int puerto = 9070;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -112,31 +103,51 @@ namespace ClienteC__Juego
 
                 switch (codigo)
                 {
-                    case 1:
+                    case 1:     // Sign up correct
                         consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
                         serverShutdown();
                         entry++;
                         break;
 
-                    case 2:
+                    case 2:     // Sign up incorrecto
                         consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
                         serverShutdown();
                         entry++;
                         break;
 
-                    case 3:
+                    case 3:     // Log in correcto
                         consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
                         entry++;
                         break;
-                    case 4:
+                    case 4:     // Log in incorrecto
                         consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
                         serverShutdown();
                         entry++;
                         break;
 
-                    case 5:
+                    case 5:     // Log in incorrecto
                         consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
                         serverShutdown();
+                        entry++;
+                        break;
+                    case 20:    // Has podido crear partida bien o no
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 21:    // Has podido invitar bien o no
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 22:    // Te han invitado
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 23:    // Te han respondido la invitacion
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 24:    // Te has unido o no a la partida
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 10:
+                        menuPartida.listaConectados(mensaje[1]);
+                        consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
                         entry++;
                         break;
                     case 11:
@@ -148,13 +159,24 @@ namespace ClienteC__Juego
                     case 13:
                         consultas.responseReceived(mensaje, codigo);
                         break;
-                    case 14:
-                        menuPartida.listaConectados(mensaje[1]);
-                        consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
-                        entry++;
-                        break;
                 }
             }
+        }
+        private void button_logIn_Click(object sender, EventArgs e)
+        {
+            username = textbox_username.Text;
+            password = textbox_password.Text;
+            int err = serverConnect();
+
+            if (err == 0)
+            {
+                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+            menuPartida = new menuPartida(server, username);
+            menuPartida.ShowDialog();
+            serverShutdown();
         }
 
         private void button_signUp_Click(object sender, EventArgs e)
@@ -170,21 +192,20 @@ namespace ClienteC__Juego
             }
         }
 
-        private void button_logIn_Click(object sender, EventArgs e)
+        private void button_listausuarios_Click(object sender, EventArgs e)
         {
-            username = textbox_username.Text;
-            password = textbox_password.Text;
-            int err = serverConnect();
-
-            if (err == 0)
+            if (conectado_conServer)
             {
-                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
+                string mensaje = "6/";
+                // Enviamos al servidor el demana
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
-            menuPartida = new menuPartida();
-            menuPartida.ShowDialog();
-            serverShutdown();
+            else
+            {
+                consoletextbox.AppendText(String.Format("Entry {0}: *ERROR* Inicie sesion para visualizar la lista de usuarios.", entry) + Environment.NewLine);
+                entry++;
+            }
         }
 
         private void button_LogOut_Click(object sender, EventArgs e)
@@ -199,18 +220,13 @@ namespace ClienteC__Juego
         {
             serverShutdown();
         }
-        private void panelDeControlToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!consoletextbox.Visible)
-            {
-                consoletextbox.Visible = true;
-                lbl_panelControl.Visible = true;
-            }
 
-            else
+        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (conectado_conServer)
             {
-                consoletextbox.Visible = false;
-                lbl_panelControl.Visible = false;
+                consultas = new consultas(conectado_conServer, server);
+                consultas.ShowDialog();
             }
         }
     }
