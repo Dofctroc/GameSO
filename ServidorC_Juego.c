@@ -69,8 +69,7 @@ int consultaSignUp(MYSQL* conn, char userName[], char password[], char mensajeSi
 		strcat(consulta, "','");
 		strcat(consulta, password);
 		strcat(consulta, "');");
-
-		printf("consulta = %s\n", consulta);
+		
 		// Ahora ya podemos realizar la insercion 
 		err = mysql_query(conn, consulta);
 		if (err != 0) {
@@ -327,7 +326,6 @@ int PonJugadorPartida(ListaConectados* listaC, ListaPartidas* listaP, char nombr
 	int socketUsuario;
 	for (int i = 0; i < listaP->num; i++) {
 		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0){
-			printf("Host: %s\n", host);
 			pthread_mutex_lock(&mutex);
 			strcpy(listaP->partidas[i].jugadores[listaP->partidas[i].numJugadores].userName, nombre);
 			listaP->partidas[i].jugadores[listaP->partidas[i].numJugadores].status = 1;
@@ -373,8 +371,8 @@ int BuscarSocket(ListaConectados* listaC, char persona[])
 			socketUsuario = listaC->conectados[i].socket;
 			break;
 		}
-	return socketUsuario;
 	}
+	return socketUsuario;
 }
 	
 int PartidaActualizada(ListaPartidas* listaP, char sockets_receptores[], char host[], char infoJugadoresPartida[])
@@ -520,8 +518,10 @@ void AtenderCliente(void* socket)
 			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
+			printf("Host: %s \n", host);
 			
 			socketHost = BuscarSocket(&lista_Conectados, host);
+			printf("socketHost: %d \n", socketHost);
 			if (socketHost != -1)
 			{
 				p = strtok(NULL, "/");
@@ -618,7 +618,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9074; 		//Linux
+	int puerto = 9072; 		//Linux
 
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;

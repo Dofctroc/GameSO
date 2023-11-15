@@ -25,6 +25,7 @@ namespace ClienteC__Juego
             InitializeComponent();
             this.server = server;
             this.username = username;
+
         }
 
         private void principal_Load(object sender, EventArgs e)
@@ -87,9 +88,27 @@ namespace ClienteC__Juego
 
         private void button_Invitar_Click(object sender, EventArgs e)
         {
-            string mensaje = "3/" + username + ".Gu";
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
+            if (dataGrid_listaInvitar.RowCount > 0)
+            {
+                string jugador;
+                string jugadoresInvitar = "";
+                string jugadoresInvitar1 = ".";
+                foreach (DataGridViewRow fila in dataGrid_listaInvitar.Rows)
+                {
+                    if (fila.Cells[0].Value != null)
+                    {
+                        jugador = fila.Cells[0].Value.ToString();
+                        jugadoresInvitar = jugadoresInvitar1 + jugador + ".";
+                        jugadoresInvitar1 = jugadoresInvitar;
+                    }
+                }
+
+                string mensaje = "3/" + username + jugadoresInvitar;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+            else
+                MessageBox.Show("No hay nadie seleccionado a invitar");
         }
 
         public void listaConectados(string mensaje)
@@ -133,20 +152,32 @@ namespace ClienteC__Juego
             {
                 DataGridViewRow filaSeleccionada = dataGrid_listaUsuarios.Rows[e.RowIndex];
                 contenido = filaSeleccionada.Cells[0].Value.ToString();
-
-                dataGrid_listaInvitar.Rows.Add(contenido);
-                foreach (DataGridViewRow fila in dataGrid_listaInvitar.Rows)
+                if (contenido != username)
                 {
-                    if (fila.Cells[0].Value != null)
+                    foreach (DataGridViewRow fila in dataGrid_listaInvitar.Rows)
                     {
-                        string valorCelda = fila.Cells[0].Value.ToString();
-                        if (valorCelda == contenido)
-                            nuevo = false;
+                        if (fila.Cells[0].Value != null)
+                        {
+                            string valorCelda = fila.Cells[0].Value.ToString();
+                            if (valorCelda == contenido)
+                                nuevo = false;
+                        }
                     }
+                    if (nuevo == true)
+                        dataGrid_listaInvitar.Rows.Add(contenido);
                 }
-                if (nuevo == true)
-                    dataGrid_listaInvitar.Rows.Add(contenido);
             }
+            datagrid_miPartida.ClearSelection();
+        }
+
+        private void dataGrid_listaInvitar_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                if (e.RowIndex < dataGrid_listaInvitar.Rows[e.RowIndex].Height / 2)
+                    dataGrid_listaInvitar.Rows.RemoveAt(e.RowIndex);
+            }
+            datagrid_miPartida.ClearSelection();
         }
 
         public void onResponse(string[] mensaje)
@@ -162,7 +193,7 @@ namespace ClienteC__Juego
 
             else if (Convert.ToInt32(mensaje[0]) == 21)
             {
-                MessageBox.Show("Se ha invitado a los usuarios seleccionados");
+                dataGrid_listaInvitar.Rows.Clear();
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 22)

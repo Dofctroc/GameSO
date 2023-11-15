@@ -57,6 +57,7 @@
             this.dataGrid_listaInvitar.Location = new System.Drawing.Point(674, 35);
             this.dataGrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4);
             this.dataGrid_listaInvitar.Name = "dataGrid_listaInvitar";
+            this.dataGrid_listaInvitar.ReadOnly = true;
             this.dataGrid_listaInvitar.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGrid_listaInvitar.RowHeadersVisible = false;
             this.dataGrid_listaInvitar.RowHeadersWidth = 50;
@@ -64,6 +65,7 @@
             this.dataGrid_listaInvitar.Size = new System.Drawing.Size(150, 200);
             this.dataGrid_listaInvitar.TabIndex = 20;
             this.dataGrid_listaInvitar.Visible = false;
+            this.dataGrid_listaInvitar.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_listaInvitar_CellClick);
             // 
             // button_partidanueva
             // 
@@ -120,6 +122,7 @@
             this.datagrid_miPartida.Location = new System.Drawing.Point(324, 35);
             this.datagrid_miPartida.Margin = new System.Windows.Forms.Padding(4);
             this.datagrid_miPartida.Name = "datagrid_miPartida";
+            this.datagrid_miPartida.ReadOnly = true;
             this.datagrid_miPartida.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.datagrid_miPartida.RowHeadersVisible = false;
             this.datagrid_miPartida.RowHeadersWidth = 50;
@@ -148,6 +151,7 @@
             this.datagrid_otrasPartidas.Location = new System.Drawing.Point(324, 290);
             this.datagrid_otrasPartidas.Margin = new System.Windows.Forms.Padding(4);
             this.datagrid_otrasPartidas.Name = "datagrid_otrasPartidas";
+            this.datagrid_otrasPartidas.ReadOnly = true;
             this.datagrid_otrasPartidas.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.datagrid_otrasPartidas.RowHeadersVisible = false;
             this.datagrid_otrasPartidas.RowHeadersWidth = 50;
@@ -203,6 +207,7 @@
             this.dataGrid_listaUsuarios.Location = new System.Drawing.Point(891, 35);
             this.dataGrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4);
             this.dataGrid_listaUsuarios.Name = "dataGrid_listaUsuarios";
+            this.dataGrid_listaUsuarios.ReadOnly = true;
             this.dataGrid_listaUsuarios.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGrid_listaUsuarios.RowHeadersVisible = false;
             this.dataGrid_listaUsuarios.RowHeadersWidth = 50;
