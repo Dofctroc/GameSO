@@ -26,15 +26,15 @@ Codigos mensaje que envia Servidor:
 4 - LogIn error contra
 5 - LogIn error usuario
 
-6 - Invitacion a partida		6/T'ha invitat l'Asier
-7 - Respuesta a invitacion a partida	7/L'usuario Asier/Diu que Si
-8 - Respuesta a creacion de partida	8/0 -> S'ha creat bé 	8/-1 -> S'ha creat malament
-9 - Respuesta a invitacion a partida	9/0 -> S'ha invitat bé	
-
 10 - ConsultaConectados
 11 - Consulta1
 12 - Consulta2
 13 - Consulta3
+
+20 - Respuesta a creacion de partida	8/0 -> S'ha creat bé 	8/-1 -> S'ha creat malament
+21 - Respuesta a invitacion a partida	9/0 -> S'ha invitat bé	
+22 - Invitacion a partida		6/T'ha invitat l'Asier
+23 - Respuesta a invitacion a partida	7/L'usuario Asier/Diu que Si
 
 
 
