@@ -16,6 +16,10 @@ Codigos mensaje que envia Cliente:
 12 - ComandoInd2 (puntuacion partidas jugadas)
 13 - ComandoInd3 (ganador de partida)
 
+20 - Crear una partida			20/Qui la crea
+21 - Invitacion a partida		21/Host/4(numero de invitados)/Asier/Gu/Julia/Ivan
+23 - Respuesta a invitacion a partida	22/Host/Jo soc Asier/Dic que Si
+24 - Expulsar a jugador de partida	24/Host/Elimino a "..."
 
 Codigos mensaje que envia Servidor:
 
@@ -35,24 +39,17 @@ Codigos mensaje que envia Servidor:
 21 - Respuesta a invitacion a partida	9/0 -> S'ha invitat bé	
 22 - Invitacion a partida		6/T'ha invitat l'Asier
 23 - Respuesta a invitacion a partida	7/L'usuario Asier/Diu que Si
+24 - Respuesta a expulsion jugador
 
 
 
+------------------ Control de errores: ------------------
+MenuUsuario:
 
-
-sockets_receptores: 4/
-
-0 1 2 3 4 ... 15 16 ... 99
-
-4 -> Socket que conecta Asier amb el servidor
-16 -> Socket que conecta Julia amb el servidor
-Si persona del socket 4 conectada -> retorn 
-
-
-Asier -> Invitacio
-
-Server ho rep i mira qui esta i qui no
-Server -> contesta a Asier qui esta i qui no, per saber qui ha rebut la invitacio
-
-Julia/Gu -> reben la invitacio (si estan conectats/inMenu)
-Julia/Gu -> responen la invitacio
+MenuPartida:
+- No puedes invitar a alguien que ya has invitado
+- No puedes invitar si ya esta en la partida
+- Si te desconectas, se cierra la partida y se expulsa a todos
+- La partida creada debe aparecer al resto de usuarios que no la juegan
+- El host pot eliminar a qui vulgui de la partida
+- Un invitat por sortir de la partida si vol

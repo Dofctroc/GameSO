@@ -31,15 +31,15 @@
             this.dataGrid_listaInvitar = new System.Windows.Forms.DataGridView();
             this.button_partidanueva = new System.Windows.Forms.Button();
             this.button_LogOut = new System.Windows.Forms.Button();
-            this.lbl_listaInvitar = new System.Windows.Forms.Label();
             this.lbl_miPartida = new System.Windows.Forms.Label();
             this.datagrid_miPartida = new System.Windows.Forms.DataGridView();
             this.lbl_otrasPartridas = new System.Windows.Forms.Label();
             this.datagrid_otrasPartidas = new System.Windows.Forms.DataGridView();
             this.button_Jugar = new System.Windows.Forms.Button();
             this.button_Invitar = new System.Windows.Forms.Button();
-            this.lbl_listaConectados = new System.Windows.Forms.Label();
             this.dataGrid_listaUsuarios = new System.Windows.Forms.DataGridView();
+            this.btt_controlListaConectados = new System.Windows.Forms.Button();
+            this.btt_eliminarInvitado = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaInvitar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.datagrid_miPartida)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.datagrid_otrasPartidas)).BeginInit();
@@ -54,7 +54,7 @@
             this.dataGrid_listaInvitar.AllowUserToResizeRows = false;
             this.dataGrid_listaInvitar.ColumnHeadersHeight = 25;
             this.dataGrid_listaInvitar.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dataGrid_listaInvitar.Location = new System.Drawing.Point(674, 35);
+            this.dataGrid_listaInvitar.Location = new System.Drawing.Point(796, 269);
             this.dataGrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4);
             this.dataGrid_listaInvitar.Name = "dataGrid_listaInvitar";
             this.dataGrid_listaInvitar.ReadOnly = true;
@@ -62,7 +62,7 @@
             this.dataGrid_listaInvitar.RowHeadersVisible = false;
             this.dataGrid_listaInvitar.RowHeadersWidth = 50;
             this.dataGrid_listaInvitar.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGrid_listaInvitar.Size = new System.Drawing.Size(150, 200);
+            this.dataGrid_listaInvitar.Size = new System.Drawing.Size(100, 200);
             this.dataGrid_listaInvitar.TabIndex = 20;
             this.dataGrid_listaInvitar.Visible = false;
             this.dataGrid_listaInvitar.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_listaInvitar_CellClick);
@@ -93,15 +93,6 @@
             this.button_LogOut.UseVisualStyleBackColor = true;
             this.button_LogOut.Click += new System.EventHandler(this.button_LogOut_Click);
             // 
-            // lbl_listaInvitar
-            // 
-            this.lbl_listaInvitar.AutoSize = true;
-            this.lbl_listaInvitar.Location = new System.Drawing.Point(689, 15);
-            this.lbl_listaInvitar.Name = "lbl_listaInvitar";
-            this.lbl_listaInvitar.Size = new System.Drawing.Size(114, 16);
-            this.lbl_listaInvitar.TabIndex = 23;
-            this.lbl_listaInvitar.Text = "Personas a Invitar";
-            // 
             // lbl_miPartida
             // 
             this.lbl_miPartida.AutoSize = true;
@@ -130,6 +121,7 @@
             this.datagrid_miPartida.Size = new System.Drawing.Size(310, 200);
             this.datagrid_miPartida.TabIndex = 24;
             this.datagrid_miPartida.Visible = false;
+            this.datagrid_miPartida.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.datagrid_miPartida_CellClick);
             // 
             // lbl_otrasPartridas
             // 
@@ -176,24 +168,16 @@
             // button_Invitar
             // 
             this.button_Invitar.AutoSize = true;
-            this.button_Invitar.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_Invitar.Location = new System.Drawing.Point(692, 243);
+            this.button_Invitar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Invitar.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
+            this.button_Invitar.Location = new System.Drawing.Point(796, 242);
             this.button_Invitar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Invitar.Name = "button_Invitar";
-            this.button_Invitar.Size = new System.Drawing.Size(116, 39);
+            this.button_Invitar.Size = new System.Drawing.Size(100, 28);
             this.button_Invitar.TabIndex = 29;
             this.button_Invitar.Text = "Invitar";
             this.button_Invitar.UseVisualStyleBackColor = true;
             this.button_Invitar.Click += new System.EventHandler(this.button_Invitar_Click);
-            // 
-            // lbl_listaConectados
-            // 
-            this.lbl_listaConectados.AutoSize = true;
-            this.lbl_listaConectados.Location = new System.Drawing.Point(888, 15);
-            this.lbl_listaConectados.Name = "lbl_listaConectados";
-            this.lbl_listaConectados.Size = new System.Drawing.Size(191, 16);
-            this.lbl_listaConectados.TabIndex = 31;
-            this.lbl_listaConectados.Text = "Lista de personas conectadas:";
             // 
             // dataGrid_listaUsuarios
             // 
@@ -204,7 +188,7 @@
             this.dataGrid_listaUsuarios.ColumnHeadersHeight = 25;
             this.dataGrid_listaUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGrid_listaUsuarios.GridColor = System.Drawing.SystemColors.ActiveBorder;
-            this.dataGrid_listaUsuarios.Location = new System.Drawing.Point(891, 35);
+            this.dataGrid_listaUsuarios.Location = new System.Drawing.Point(902, 28);
             this.dataGrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4);
             this.dataGrid_listaUsuarios.Name = "dataGrid_listaUsuarios";
             this.dataGrid_listaUsuarios.ReadOnly = true;
@@ -212,17 +196,46 @@
             this.dataGrid_listaUsuarios.RowHeadersVisible = false;
             this.dataGrid_listaUsuarios.RowHeadersWidth = 50;
             this.dataGrid_listaUsuarios.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGrid_listaUsuarios.Size = new System.Drawing.Size(200, 400);
+            this.dataGrid_listaUsuarios.Size = new System.Drawing.Size(200, 441);
             this.dataGrid_listaUsuarios.TabIndex = 30;
             this.dataGrid_listaUsuarios.Visible = false;
             this.dataGrid_listaUsuarios.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_listaUsuarios_CellClick);
+            this.dataGrid_listaUsuarios.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_listaUsuarios_CellMouseEnter);
+            this.dataGrid_listaUsuarios.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_listaUsuarios_CellMouseLeave);
+            // 
+            // btt_controlListaConectados
+            // 
+            this.btt_controlListaConectados.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btt_controlListaConectados.Location = new System.Drawing.Point(901, 3);
+            this.btt_controlListaConectados.Name = "btt_controlListaConectados";
+            this.btt_controlListaConectados.Size = new System.Drawing.Size(201, 23);
+            this.btt_controlListaConectados.TabIndex = 31;
+            this.btt_controlListaConectados.Text = "Mostrar Conectados:";
+            this.btt_controlListaConectados.UseVisualStyleBackColor = true;
+            this.btt_controlListaConectados.Click += new System.EventHandler(this.btt_controlListaConectados_Click);
+            // 
+            // btt_eliminarInvitado
+            // 
+            this.btt_eliminarInvitado.AutoSize = true;
+            this.btt_eliminarInvitado.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btt_eliminarInvitado.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
+            this.btt_eliminarInvitado.Location = new System.Drawing.Point(534, 207);
+            this.btt_eliminarInvitado.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btt_eliminarInvitado.Name = "btt_eliminarInvitado";
+            this.btt_eliminarInvitado.Size = new System.Drawing.Size(100, 28);
+            this.btt_eliminarInvitado.TabIndex = 32;
+            this.btt_eliminarInvitado.Text = "Eliminar";
+            this.btt_eliminarInvitado.UseVisualStyleBackColor = true;
+            this.btt_eliminarInvitado.Visible = false;
+            this.btt_eliminarInvitado.Click += new System.EventHandler(this.btt_eliminarInvitado_Click);
             // 
             // menuPartida
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1104, 471);
-            this.Controls.Add(this.lbl_listaConectados);
+            this.Controls.Add(this.btt_eliminarInvitado);
+            this.Controls.Add(this.btt_controlListaConectados);
             this.Controls.Add(this.dataGrid_listaUsuarios);
             this.Controls.Add(this.button_Invitar);
             this.Controls.Add(this.button_Jugar);
@@ -230,13 +243,13 @@
             this.Controls.Add(this.datagrid_otrasPartidas);
             this.Controls.Add(this.lbl_miPartida);
             this.Controls.Add(this.datagrid_miPartida);
-            this.Controls.Add(this.lbl_listaInvitar);
             this.Controls.Add(this.button_LogOut);
             this.Controls.Add(this.button_partidanueva);
             this.Controls.Add(this.dataGrid_listaInvitar);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "menuPartida";
             this.Text = "principal";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.menuPartida_FormClosing);
             this.Load += new System.EventHandler(this.principal_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaInvitar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.datagrid_miPartida)).EndInit();
@@ -252,14 +265,14 @@
         private System.Windows.Forms.DataGridView dataGrid_listaInvitar;
         private System.Windows.Forms.Button button_partidanueva;
         private System.Windows.Forms.Button button_LogOut;
-        private System.Windows.Forms.Label lbl_listaInvitar;
         private System.Windows.Forms.Label lbl_miPartida;
         private System.Windows.Forms.DataGridView datagrid_miPartida;
         private System.Windows.Forms.Label lbl_otrasPartridas;
         private System.Windows.Forms.DataGridView datagrid_otrasPartidas;
         private System.Windows.Forms.Button button_Jugar;
         private System.Windows.Forms.Button button_Invitar;
-        private System.Windows.Forms.Label lbl_listaConectados;
         private System.Windows.Forms.DataGridView dataGrid_listaUsuarios;
+        private System.Windows.Forms.Button btt_controlListaConectados;
+        private System.Windows.Forms.Button btt_eliminarInvitado;
     }
 }

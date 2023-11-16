@@ -40,6 +40,32 @@ typedef struct {
 ListaConectados lista_Conectados;
 ListaPartidas lista_Partidas;
 
+int BuscarConectado(ListaConectados* listaC, char persona[])
+{
+	int conectado = -1;
+	for (int i = 0; i < listaC->num; i++) {
+		if (strcmp(listaC->conectados[i].userName, persona) == 0) {
+			conectado = i;
+			break;
+		}
+	}
+	return conectado;
+}
+
+int BuscarSocket(ListaConectados* listaC, char persona[])
+{
+	int socketUsuario = -1;
+	for (int i = 0; i < listaC->num; i++) {
+		if (strcmp(listaC->conectados[i].userName, persona) == 0) {
+			socketUsuario = listaC->conectados[i].socket;
+			break;
+		}
+	}
+	return socketUsuario;
+}
+
+// -------------------------------------- CONSULTAS -------------------------------------
+
 int consultaSignUp(MYSQL* conn, char userName[], char password[], char mensajeSignUp[]) {
 	MYSQL_RES* resultado;
 	MYSQL_ROW row;
@@ -251,18 +277,15 @@ int PonConectado(ListaConectados* lista, char nombre[20], int socketUsuario)
 int EliminarConectado(ListaConectados* lista, char nombre[20])
 {
 	int encontrado = 0;
-	for (int i = 0; i < lista->num; i++)
-	{
-		if (strcmp(lista->conectados[i].userName, nombre) == 0)
-		{
+	for (int i = 0; i < lista->num; i++) {
+		if (strcmp(lista->conectados[i].userName, nombre) == 0) {
 			encontrado = 1;
 			break;
 		}
 	}
 	pthread_mutex_lock(&mutex);
 	if (encontrado == 1) {
-		for (int i = 0; i < lista->num - 1; i++)
-		{
+		for (int i = 0; i < lista->num - 1; i++) {
 			if (strcmp(lista->conectados[i].userName, nombre) == 0)
 				for (int j = i; j < lista->num-1; j++)
 					lista->conectados[j] = lista->conectados[j + 1];
@@ -344,41 +367,36 @@ int PonJugadorPartida(ListaConectados* listaC, ListaPartidas* listaP, char nombr
 	return 0;
 }
 
+int BuscarPartidaHost(ListaPartidas* listaP, char host[20])
+{
+	for (int i = 0; i < listaP->num; i++)
+		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0)
+			return i;
+	return -1;
+}
+
 int EliminarJugadorPartida(ListaPartidas* listaP, char nombre[20], char host[20])
 {
-	for (int i = 0; i < listaP->num; i++) {
-		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0)
+	int partida = BuscarPartidaHost(listaP, host);
+	if (partida != -1)
+	{
+		pthread_mutex_lock(&mutex);
+		for (int j = 0; j < listaP->partidas[partida].numJugadores; j++)
 		{
-			pthread_mutex_lock(&mutex);
-			for (int j = 0; j < listaP->partidas[i].numJugadores; j++)
-			{
-				if (strcmp(listaP->partidas[i].jugadores[j].userName, nombre) == 0)
-					for (int k = j; k < listaP->partidas[i].numJugadores - 1; k++)
-						listaP->partidas[i].jugadores[k] = listaP->partidas[i].jugadores[k + 1];
-			}
-			listaP->partidas[i].numJugadores--;
-			pthread_mutex_unlock(&mutex);
+			if (strcmp(listaP->partidas[partida].jugadores[j].userName, nombre) == 0)
+				for (int k = j; k < listaP->partidas[partida].numJugadores - 1; k++)
+					listaP->partidas[partida].jugadores[k] = listaP->partidas[partida].jugadores[k + 1];
 		}
+		listaP->partidas[partida].numJugadores--;
+		pthread_mutex_unlock(&mutex);
 	}
 	return 0;
 }
-
-int BuscarSocket(ListaConectados* listaC, char persona[])
-{
-	int socketUsuario = -1;
-	for (int i = 0; i < listaC->num; i++) {
-		if (strcmp(listaC->conectados[i].userName, persona) == 0) {
-			socketUsuario = listaC->conectados[i].socket;
-			break;
-		}
-	}
-	return socketUsuario;
-}
 	
-int PartidaActualizada(ListaPartidas* listaP, char sockets_receptores[], char host[], char infoJugadoresPartida[])
+int JugadoresEnPartida(ListaPartidas* listaP, char sockets_receptores[], char host[], char infoJugadoresPartida[])
 {
 	strcpy(sockets_receptores, "");
-	strcpy(infoJugadoresPartida, "24/");
+	strcpy(infoJugadoresPartida, "23/");
 	
 	for (int i = 0; i < listaP->num; i++) {
 		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0) 
@@ -425,10 +443,11 @@ void AtenderCliente(void* socket)
 		char host[20];
 		char userName[20];
 		char password[20];
+		char sockets_receptores[20];
 		// Ahora recibimos la petici?n
 		ret = read(sock_conn, peticion, sizeof(peticion));
 		printf("Recibido\n");
-
+		printf("Socket: %d\n", sock_conn);
 		// Tenemos que a?adirle la marca de fin de string 
 		// para que no escriba lo que hay despues en el buffer
 		peticion[ret] = '\0';
@@ -454,9 +473,11 @@ void AtenderCliente(void* socket)
 
 		if (codigo == 0) //peticion de desconexion
 		{
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			EliminarConectado(&lista_Conectados, userName);
+			if (BuscarConectado(&lista_Conectados,userName) != -1) {
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				EliminarConectado(&lista_Conectados, userName);
+			}
 			terminar = 1;
 		}
 		else if (codigo == 1) //do signUp
@@ -477,11 +498,18 @@ void AtenderCliente(void* socket)
 			strcpy(password, p);
 			char mensajeLogIn[80];
 			int login = consultaLogIn(conn, userName, password, mensajeLogIn);
-			strcpy(respuesta, mensajeLogIn);
 			if (login == 0)
 				PonConectado(&lista_Conectados, userName, sock_conn);
+			strcpy(respuesta, mensajeLogIn);
 		}
-		else if (codigo == 3)		// 3/Host/Asier/Julia/Gu... tots els invitados (fins a 8)
+		else if (codigo == 20)
+		{
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			int err = CrearPartida(&lista_Partidas, userName, sock_conn);
+			sprintf(respuesta, "20/%d", err);
+		}
+		else if (codigo == 21)		// 3/Host/Asier/Julia/Gu... tots els invitados (fins a 8)
 		{
 			char invitacion[20];
 			char sockets_receptores[20];
@@ -505,57 +533,89 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 			}
 		}
-		else if (codigo == 4)
+		else if (codigo == 23)
 		{
 			char invitado[20];
 			char decision[20];
 			char actualizacion[20];
-			char sockets_receptores[20];
-			char infoJugadoresPartida[100];
 			int socketHost;
+			char infoJugadoresPartida[200];
 			strcpy (sockets_receptores,"");
 			strcpy (actualizacion,"");
 			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
-			printf("Host: %s \n", host);
 			
 			socketHost = BuscarSocket(&lista_Conectados, host);
-			printf("socketHost: %d \n", socketHost);
 			if (socketHost != -1)
 			{
 				p = strtok(NULL, "/");
 				strcpy(invitado, p);
 				p = strtok(NULL, "/");
 				strcpy(decision, p);
-				printf("Decision: %s \n", decision);
+				sprintf(actualizacion, "23/%s/%s", invitado, decision);
 				
 				if (strcmp(decision,"Yes") == 0)
-				{
 					PonJugadorPartida(&lista_Conectados, &lista_Partidas, invitado, host);
-					PartidaActualizada(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-					
-					int socketUsuario;
-					p = strtok(sockets_receptores, "/");
-					while (p != NULL)
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				
+				int socketUsuario;
+				p = strtok(sockets_receptores, "/");
+				printf("Sockets: %s \n", sockets_receptores);
+				while (p != NULL)
+				{
+					printf ("Socket invitado: %d y enviado por: %d \n", socketUsuario,sock_conn);
+					if (socketUsuario != sock_conn)
 					{
 						socketUsuario = atoi(p);
-						printf("InfoJugadoresPartida: %s \n", infoJugadoresPartida);
-						write(socketUsuario, infoJugadoresPartida, strlen(infoJugadoresPartida));
+						write(socketUsuario, actualizacion, strlen(actualizacion));
 						p = strtok(NULL, "/");
+						printf ("Mensaje: %s \n", actualizacion);
 					}
 				}
 				
-				sprintf(actualizacion, "23/%s/%s", invitado, decision);
-				write(socketHost, actualizacion, strlen(actualizacion));
+				if (strcmp(decision,"Yes") == 0)
+				{
+					strcpy(respuesta, infoJugadoresPartida);
+				}
+				else 
+				{
+					strcpy(respuesta, "23/0");
+				}
 			}
 		}
-		else if (codigo == 5)
+		else if (codigo == 24)
 		{
+			char invitado[20];
+			char expulsion[20];
+			char actualizacion[20];
+			char infoJugadoresPartida[200];
+			int socketInvitado;
+			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
-			int err = CrearPartida(&lista_Partidas, userName, sock_conn);
-			sprintf(respuesta, "20/%d", err);
+			p = strtok(NULL, "/");
+			strcpy(invitado, p);
+			sprintf(actualizacion, "24/%s", invitado);
+			
+			EliminarJugadorPartida(&lista_Partidas,invitado,host);
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			
+			int socketUsuario;
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				write(socketUsuario, actualizacion, strlen(actualizacion));
+				p = strtok(NULL, "/");
+			}
+			
+			socketInvitado = BuscarSocket(&lista_Conectados,invitado);
+			sprintf(expulsion, "25/%s", host);
+			write(socketInvitado, actualizacion, strlen(actualizacion));
+			
+			strcpy(respuesta, actualizacion);
 		}
 		else if (codigo == 10)
 		{
@@ -591,18 +651,19 @@ void AtenderCliente(void* socket)
 		{
 			printf("Respuesta: %s\n", respuesta);
 			// Enviamos respuesta
-			write(sock_conn, respuesta, strlen(respuesta));
+			write(sock_conn, respuesta, strlen(respuesta));		// sock_conn es el socket del host
 		}
 		if ((codigo == 0) || (codigo == 2))
 		{
-			char conectados[800];
-			consultaConectados(&lista_Conectados, conectados);
-			char notificacion[800];
-			strcpy(notificacion, conectados);
-			int j;
-			for (j = 0; j < i; j++)
-				write(sockets[j], notificacion, strlen(notificacion));
-
+			if (BuscarConectado(&lista_Conectados,userName) != -1) {
+				char conectados[800];
+				consultaConectados(&lista_Conectados, conectados);
+				char notificacion[800];
+				strcpy(notificacion, conectados);
+				int j;
+				for (j = 0; j < i; j++)
+					write(sockets[j], notificacion, strlen(notificacion));
+			}
 		}
 	}
 	// Se acabo el servicio para este cliente
@@ -618,7 +679,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9072; 		//Linux
+	int puerto = 9079; 		//Linux
 
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
