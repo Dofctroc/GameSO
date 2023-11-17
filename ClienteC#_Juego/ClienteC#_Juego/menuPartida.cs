@@ -35,6 +35,8 @@ namespace ClienteC__Juego
 
         private void principal_Load(object sender, EventArgs e)
         {
+            lbl_userName.Text = "Usuario: " + username;
+
             // Data grid de la lista de usuarios
             dataGrid_listaUsuarios.Visible = true;
 
@@ -73,6 +75,7 @@ namespace ClienteC__Juego
 
             dataGrid_listaInvitar.Columns[0].Name = "username";
             dataGrid_listaInvitar.Columns[0].HeaderText = "Username";
+            dataGrid_listaInvitar.ColumnHeadersHeight = 20;
 
             dataGrid_listaInvitar.Columns[0].Width = dataGrid_listaInvitar.Width - 2;
             dataGrid_listaInvitar.Rows.Clear();
@@ -86,6 +89,7 @@ namespace ClienteC__Juego
         }
 
         // -------------------- Acciones de Button Click --------------------
+        // ------------------------------------------------------------------
 
         private void button_LogOut_Click(object sender, EventArgs e)
         {
@@ -149,6 +153,7 @@ namespace ClienteC__Juego
         }
 
         // -------------------- Respuestas a mensajes servidor --------------------
+        // ------------------------------------------------------------------------
 
         public void onResponse(string[] mensaje)
         {
@@ -193,7 +198,8 @@ namespace ClienteC__Juego
                     string decision = mensaje[2];
                     if (decision == "Yes")
                     {
-                        DialogResult result = MessageBox.Show("El usuario " + invitado + " se ha unido a la partida",
+                        listaMiPartida(invitado, true);
+                        DialogResult result = MessageBox.Show(username + ", El usuario " + invitado + " se ha unido a la partida",
                             "Incoming Message", MessageBoxButtons.OK);
                     }
                     else if (username == datagrid_miPartida.Rows[0].Cells[1].Value.ToString())
@@ -204,7 +210,7 @@ namespace ClienteC__Juego
                 }
                 else if (mensaje[1] != "0")
                 {
-                    listaMiPartida2(mensaje[1]);
+                    listaMiPartida(mensaje[1]);
                 }
 
             }
@@ -225,6 +231,7 @@ namespace ClienteC__Juego
         }
 
         // -------------------- Actualizaciones de Datagrid --------------------
+        // ---------------------------------------------------------------------
 
         public void listaConectados(string mensaje)
         {
@@ -260,7 +267,7 @@ namespace ClienteC__Juego
             datagrid_miPartida.ClearSelection();
         }
 
-        public void listaMiPartida2(string jugadores)
+        public void listaMiPartida(string jugadores)
         {
             string[] vectorJugadores = jugadores.Split('.');       
             datagrid_miPartida.Rows.Clear();
@@ -274,6 +281,7 @@ namespace ClienteC__Juego
         }
 
         // -------------------- Interacciones con Datagrid --------------------
+        // --------------------------------------------------------------------
 
         private void dataGrid_listaUsuarios_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -299,6 +307,7 @@ namespace ClienteC__Juego
                 }
             }
             dataGrid_listaUsuarios.ClearSelection();
+            dataGrid_listaInvitar.ClearSelection();
         }
 
         private void dataGrid_listaInvitar_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -308,7 +317,7 @@ namespace ClienteC__Juego
                 if (e.RowIndex < dataGrid_listaInvitar.Rows[e.RowIndex].Height / 2)
                     dataGrid_listaInvitar.Rows.RemoveAt(e.RowIndex);
             }
-            datagrid_miPartida.ClearSelection();
+            dataGrid_listaInvitar.ClearSelection();
         }
 
         private void dataGrid_listaUsuarios_CellMouseEnter(object sender, DataGridViewCellEventArgs e)

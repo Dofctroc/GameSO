@@ -1,7 +1,7 @@
 Shiva ports: 75-79
 
 
-Codigos mensaje que envia Cliente:
+Codigos mensaje que envia Cliente: _______________________________________________________
 
 0 - Desconectar
 1 - Peticion de SignUp
@@ -19,9 +19,11 @@ Codigos mensaje que envia Cliente:
 20 - Crear una partida			20/Qui la crea
 21 - Invitacion a partida		21/Host/4(numero de invitados)/Asier/Gu/Julia/Ivan
 23 - Respuesta a invitacion a partida	22/Host/Jo soc Asier/Dic que Si
-24 - Expulsar a jugador de partida	24/Host/Elimino a "..."
+25 - Expulsar a invitado de partida	25/Host/A quien expulsa
 
-Codigos mensaje que envia Servidor:
+2X - Eliminar la partida
+
+Codigos mensaje que envia Servidor: ______________________________________________________
 
 1 - SignUp correcto
 2 - SignUp error
@@ -38,18 +40,28 @@ Codigos mensaje que envia Servidor:
 20 - Respuesta a creacion de partida	8/0 -> S'ha creat bé 	8/-1 -> S'ha creat malament
 21 - Respuesta a invitacion a partida	9/0 -> S'ha invitat bé	
 22 - Invitacion a partida		6/T'ha invitat l'Asier
-23 - Respuesta a invitacion a partida	7/L'usuario Asier/Diu que Si
-24 - Respuesta a expulsion jugador
+23 - Respuesta a invitacion a partida	23/Host/L'usuario Asier/Diu que Si (Li arriba al host i tambe a la resta de jugadors de la partida)
+24 - Respuesta a expulsion jugador	24/0 -> S'ha expulsat be
+25 - El host te ha expulsado		25/Host (Te ha expulsado)
 
+2X - El host se ha desconectado/ha eliminado la partida
 
 
 ------------------ Control de errores: ------------------
 MenuUsuario:
+- Try-Catch para desconexion/error del server
 
 MenuPartida:
 - No puedes invitar a alguien que ya has invitado
 - No puedes invitar si ya esta en la partida
 - Si te desconectas, se cierra la partida y se expulsa a todos
-- La partida creada debe aparecer al resto de usuarios que no la juegan
 - El host pot eliminar a qui vulgui de la partida
 - Un invitat por sortir de la partida si vol
+- No pots invitar si no has creat una partida
+
+Server:
+- Incorporar uso de Actualizar status y simplificacion de codigo en funciones de introduccion a partida y otrasç
+- La partida creada debe aparecer al resto de usuarios que no la juegan
+- No heu arreglat la gestio del buffer de sockets que es pot arribar a desbordar
+- Compta amb els mysql_close(conn) a les funcions de consulta
+- Compta amb l'exclusion mutua. (Està molt bé intentar minimitzar el temps d'exclusió mútua, però a EliminarConectado pot passar que un cop has trobat 	que està el jugador arribi un canvi de contexte que ho canviï. Millor la exclusió mútua cubreixi la consulta i la modificació posterior.)

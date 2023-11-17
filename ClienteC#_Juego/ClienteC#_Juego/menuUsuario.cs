@@ -37,6 +37,60 @@ namespace ClienteC__Juego
             textbox_username.Text = username;
         }
 
+        private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            serverShutdown();
+        }
+
+        // -------------------- Acciones de Button Click --------------------
+        // ------------------------------------------------------------------
+        private void button_logIn_Click(object sender, EventArgs e)
+        {
+            username = textbox_username.Text;
+            password = textbox_password.Text;
+            int err = serverConnect();
+
+            if (err == 0)
+            {
+                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+        }
+
+        private void button_signUp_Click(object sender, EventArgs e)
+        {
+            username = textbox_username.Text;
+            int err = serverConnect();
+
+            if (err == 0)
+            {
+                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+        }
+
+        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (conectado_conServer)
+            {
+                consultas = new consultas(conectado_conServer, server);
+                consultas.ShowDialog();
+            }
+        }
+
+        private void button_LogOut_Click(object sender, EventArgs e)
+        {
+            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
+            entry++;
+            serverShutdown();
+            Close();
+        }
+
+        // -------------------- Funciones del formulario --------------------
+        // ------------------------------------------------------------------
+
         public int serverConnect()
         {
             //Creamos un IPEndPoint con el ip del servidor y puerto del servidor al que deseamos conectarnos
@@ -73,7 +127,6 @@ namespace ClienteC__Juego
 
         public void serverShutdown()
         {
-            Console.WriteLine(conectado_conServer);
             if (conectado_conServer)
             {
                 conectado_conServer = false;
@@ -87,8 +140,22 @@ namespace ClienteC__Juego
                 server.Shutdown(SocketShutdown.Both);
                 server.Close();
                 atender.Abort();
+
+                textbox_password.Text = "";
+                textbox_username.Text = "";
             }
         }
+
+        private void OpenNewForm()
+        {
+            // Create and show the new form
+            menuPartida = new menuPartida(this, server, atender, username);
+            menuPartida.Show();
+            this.Hide();
+        }
+
+        // -------------------- Thread general del Programa --------------------
+        // ---------------------------------------------------------------------
 
         private void AtenderServidor()
         {
@@ -163,63 +230,6 @@ namespace ClienteC__Juego
                         consultas.responseReceived(mensaje, codigo);
                         break;
                 }
-            }
-        }
-
-        private void OpenNewForm()
-        {
-            // Create and show the new form
-            menuPartida = new menuPartida(this, server, atender, username);
-            menuPartida.Show();
-            this.Hide();
-        }
-
-        private void button_logIn_Click(object sender, EventArgs e)
-        {
-            username = textbox_username.Text;
-            password = textbox_password.Text;
-            int err = serverConnect();
-
-            if (err == 0)
-            {
-                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-        }
-
-        private void button_signUp_Click(object sender, EventArgs e)
-        {
-            username = textbox_username.Text;
-            int err = serverConnect();
-
-            if (err == 0)
-            {
-                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-        }
-
-        private void button_LogOut_Click(object sender, EventArgs e)
-        {
-            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
-            entry++;
-            serverShutdown();
-            Close();
-        }
-
-        private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            serverShutdown();
-        }
-
-        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (conectado_conServer)
-            {
-                consultas = new consultas(conectado_conServer, server);
-                consultas.ShowDialog();
             }
         }
     }
