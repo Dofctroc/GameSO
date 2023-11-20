@@ -18,7 +18,7 @@ namespace ClienteC__Juego
 {
     public partial class menuPartida : Form
     {
-        string password, username, invitadoEliminado;
+        string password, username, invitadoEliminado, host;
         bool hosting_gameLobby, in_gameLobby;
         menuUsuario menuUsuario;
         Socket server;
@@ -115,6 +115,8 @@ namespace ClienteC__Juego
                 string mensaje = "20/" + username;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
+                host = username;
+                hosting_gameLobby = true;
             }
         }
 
@@ -212,6 +214,7 @@ namespace ClienteC__Juego
                         listaMiPartida(invitado, true);
                         DialogResult result = MessageBox.Show(username + ", El usuario " + invitado + " se ha unido a la partida",
                             "Incoming Message", MessageBoxButtons.OK);
+                        
                     }
                     else if (username == datagrid_miPartida.Rows[0].Cells[1].Value.ToString())
                     {
@@ -222,8 +225,8 @@ namespace ClienteC__Juego
                 else if (mensaje[1] != "0")
                 {
                     listaMiPartida(mensaje[1]);
+                    host = mensaje[1].Split('.')[0];
                 }
-
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 24)
@@ -238,6 +241,17 @@ namespace ClienteC__Juego
                 DialogResult result = MessageBox.Show("El usuario " + host + " te ha expulsado de la partida",
                         "Incoming Message", MessageBoxButtons.OK);
                 datagrid_miPartida.Rows.Clear();
+            }
+
+            else if (Convert.ToInt32(mensaje[0]) == 27)
+            {
+                richTextBox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
+                richTextBox_read.SelectionColor = Color.DarkBlue;
+                richTextBox_read.AppendText(mensaje[2] + ": ");
+                richTextBox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
+                richTextBox_read.SelectionColor = Color.Black;
+                richTextBox_read.AppendText(mensaje[3]);
+                richTextBox_read.AppendText(Environment.NewLine);
             }
         }
 
@@ -329,6 +343,19 @@ namespace ClienteC__Juego
                     dataGrid_listaInvitar.Rows.RemoveAt(e.RowIndex);
             }
             dataGrid_listaInvitar.ClearSelection();
+        }
+
+        private void textBox_write_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.KeyCode == Keys.Enter) && (textBox_write.Text != ""))
+            {
+                string men = textBox_write.Text;
+                string mensaje = "27/" + host + "/" + username + "/" + men;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+                textBox_write.Text = "";
+            }
+
         }
 
         private void dataGrid_listaUsuarios_CellMouseEnter(object sender, DataGridViewCellEventArgs e)

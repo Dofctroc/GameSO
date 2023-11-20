@@ -97,7 +97,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9079;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9077;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -197,6 +197,20 @@ namespace ClienteC__Juego
                         entry++;
                         serverShutdown();
                         break;
+                    case 10:
+                        menuPartida.listaConectados(mensaje[1]);
+                        consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
+                        entry++;
+                        break;
+                    case 11:
+                        consultas.responseReceived(mensaje, codigo);
+                        break;
+                    case 12:
+                        consultas.responseReceived(mensaje, codigo);
+                        break;
+                    case 13:
+                        consultas.responseReceived(mensaje, codigo);
+                        break;
                     case 20:    // Has podido crear partida bien o no
                         menuPartida.onResponse(mensaje);
                         break;
@@ -215,19 +229,8 @@ namespace ClienteC__Juego
                     case 25:
                         menuPartida.onResponse(mensaje);
                         break;
-                    case 10:
-                        menuPartida.listaConectados(mensaje[1]);
-                        consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
-                        entry++;
-                        break;
-                    case 11:
-                        consultas.responseReceived(mensaje, codigo);
-                        break;
-                    case 12:
-                        consultas.responseReceived(mensaje, codigo);
-                        break;
-                    case 13:
-                        consultas.responseReceived(mensaje, codigo);
+                    case 27:
+                        menuPartida.onResponse(mensaje);
                         break;
                 }
             }

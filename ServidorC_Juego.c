@@ -686,6 +686,37 @@ void AtenderCliente(void* socket)
 			
 			strcpy(respuesta, actualizacion);
 		}
+		else if (codigo == 27)
+		{
+			//Jugador envia un mensaje por el chat
+			char expulsion[20];
+			char mensajechat[200];
+			char chat[200];
+			char jugador[20];
+			char infoJugadoresPartida[200];
+			int socketUsuario;
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(jugador, p);
+			p = strtok(NULL, "/");
+			strcpy(chat, p);
+			sprintf(mensajechat, "27/%s/%s/%s", host, jugador, chat);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn)
+				{
+					write(socketUsuario, mensajechat, strlen(mensajechat));
+				}
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, mensajechat);
+		}
 		if ((codigo != 0) && (codigo != 4))
 		{
 			printf("Respuesta: %s\n", respuesta);
@@ -718,7 +749,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9079; 		//Linux
+	int puerto = 9077; 		//Linux
 
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;

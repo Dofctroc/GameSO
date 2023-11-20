@@ -39,6 +39,8 @@
             this.btt_controlListaConectados = new System.Windows.Forms.Button();
             this.btt_eliminarInvitado = new System.Windows.Forms.Button();
             this.lbl_userName = new System.Windows.Forms.Label();
+            this.textBox_write = new System.Windows.Forms.TextBox();
+            this.richTextBox_read = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaInvitar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.datagrid_miPartida)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaUsuarios)).BeginInit();
@@ -52,15 +54,14 @@
             this.dataGrid_listaInvitar.AllowUserToResizeRows = false;
             this.dataGrid_listaInvitar.ColumnHeadersHeight = 25;
             this.dataGrid_listaInvitar.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dataGrid_listaInvitar.Location = new System.Drawing.Point(793, 269);
-            this.dataGrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4);
+            this.dataGrid_listaInvitar.Location = new System.Drawing.Point(595, 219);
             this.dataGrid_listaInvitar.Name = "dataGrid_listaInvitar";
             this.dataGrid_listaInvitar.ReadOnly = true;
             this.dataGrid_listaInvitar.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGrid_listaInvitar.RowHeadersVisible = false;
             this.dataGrid_listaInvitar.RowHeadersWidth = 50;
             this.dataGrid_listaInvitar.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGrid_listaInvitar.Size = new System.Drawing.Size(100, 200);
+            this.dataGrid_listaInvitar.Size = new System.Drawing.Size(75, 162);
             this.dataGrid_listaInvitar.TabIndex = 20;
             this.dataGrid_listaInvitar.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_listaInvitar_CellClick);
             // 
@@ -68,10 +69,10 @@
             // 
             this.button_partidanueva.AutoSize = true;
             this.button_partidanueva.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_partidanueva.Location = new System.Drawing.Point(48, 53);
-            this.button_partidanueva.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button_partidanueva.Location = new System.Drawing.Point(36, 43);
+            this.button_partidanueva.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.button_partidanueva.Name = "button_partidanueva";
-            this.button_partidanueva.Size = new System.Drawing.Size(191, 39);
+            this.button_partidanueva.Size = new System.Drawing.Size(147, 34);
             this.button_partidanueva.TabIndex = 21;
             this.button_partidanueva.Text = "Partida Nueva";
             this.button_partidanueva.UseVisualStyleBackColor = true;
@@ -81,10 +82,10 @@
             // 
             this.button_LogOut.AutoSize = true;
             this.button_LogOut.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_LogOut.Location = new System.Drawing.Point(87, 368);
-            this.button_LogOut.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button_LogOut.Location = new System.Drawing.Point(65, 299);
+            this.button_LogOut.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.button_LogOut.Name = "button_LogOut";
-            this.button_LogOut.Size = new System.Drawing.Size(116, 39);
+            this.button_LogOut.Size = new System.Drawing.Size(92, 34);
             this.button_LogOut.TabIndex = 22;
             this.button_LogOut.Text = "Log Out";
             this.button_LogOut.UseVisualStyleBackColor = true;
@@ -93,9 +94,10 @@
             // lbl_miPartida
             // 
             this.lbl_miPartida.AutoSize = true;
-            this.lbl_miPartida.Location = new System.Drawing.Point(321, 15);
+            this.lbl_miPartida.Location = new System.Drawing.Point(241, 12);
+            this.lbl_miPartida.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbl_miPartida.Name = "lbl_miPartida";
-            this.lbl_miPartida.Size = new System.Drawing.Size(69, 16);
+            this.lbl_miPartida.Size = new System.Drawing.Size(56, 13);
             this.lbl_miPartida.TabIndex = 25;
             this.lbl_miPartida.Text = "Mi partida:";
             // 
@@ -107,15 +109,14 @@
             this.datagrid_miPartida.AllowUserToResizeRows = false;
             this.datagrid_miPartida.ColumnHeadersHeight = 25;
             this.datagrid_miPartida.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.datagrid_miPartida.Location = new System.Drawing.Point(324, 35);
-            this.datagrid_miPartida.Margin = new System.Windows.Forms.Padding(4);
+            this.datagrid_miPartida.Location = new System.Drawing.Point(243, 28);
             this.datagrid_miPartida.Name = "datagrid_miPartida";
             this.datagrid_miPartida.ReadOnly = true;
             this.datagrid_miPartida.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.datagrid_miPartida.RowHeadersVisible = false;
             this.datagrid_miPartida.RowHeadersWidth = 50;
             this.datagrid_miPartida.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.datagrid_miPartida.Size = new System.Drawing.Size(310, 200);
+            this.datagrid_miPartida.Size = new System.Drawing.Size(232, 162);
             this.datagrid_miPartida.TabIndex = 24;
             this.datagrid_miPartida.Visible = false;
             this.datagrid_miPartida.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.datagrid_miPartida_CellClick);
@@ -124,10 +125,10 @@
             // 
             this.button_Jugar.AutoSize = true;
             this.button_Jugar.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_Jugar.Location = new System.Drawing.Point(87, 321);
-            this.button_Jugar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button_Jugar.Location = new System.Drawing.Point(65, 261);
+            this.button_Jugar.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.button_Jugar.Name = "button_Jugar";
-            this.button_Jugar.Size = new System.Drawing.Size(116, 39);
+            this.button_Jugar.Size = new System.Drawing.Size(87, 34);
             this.button_Jugar.TabIndex = 28;
             this.button_Jugar.Text = "Jugar";
             this.button_Jugar.UseVisualStyleBackColor = true;
@@ -138,10 +139,10 @@
             this.button_Invitar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button_Invitar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_Invitar.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
-            this.button_Invitar.Location = new System.Drawing.Point(793, 239);
-            this.button_Invitar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button_Invitar.Location = new System.Drawing.Point(595, 194);
+            this.button_Invitar.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.button_Invitar.Name = "button_Invitar";
-            this.button_Invitar.Size = new System.Drawing.Size(100, 28);
+            this.button_Invitar.Size = new System.Drawing.Size(75, 23);
             this.button_Invitar.TabIndex = 29;
             this.button_Invitar.Text = "Invitar";
             this.button_Invitar.UseVisualStyleBackColor = true;
@@ -156,15 +157,14 @@
             this.dataGrid_listaUsuarios.ColumnHeadersHeight = 25;
             this.dataGrid_listaUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGrid_listaUsuarios.GridColor = System.Drawing.SystemColors.ActiveBorder;
-            this.dataGrid_listaUsuarios.Location = new System.Drawing.Point(898, 29);
-            this.dataGrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4);
+            this.dataGrid_listaUsuarios.Location = new System.Drawing.Point(674, 24);
             this.dataGrid_listaUsuarios.Name = "dataGrid_listaUsuarios";
             this.dataGrid_listaUsuarios.ReadOnly = true;
             this.dataGrid_listaUsuarios.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGrid_listaUsuarios.RowHeadersVisible = false;
             this.dataGrid_listaUsuarios.RowHeadersWidth = 50;
             this.dataGrid_listaUsuarios.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGrid_listaUsuarios.Size = new System.Drawing.Size(200, 440);
+            this.dataGrid_listaUsuarios.Size = new System.Drawing.Size(150, 358);
             this.dataGrid_listaUsuarios.TabIndex = 30;
             this.dataGrid_listaUsuarios.Visible = false;
             this.dataGrid_listaUsuarios.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_listaUsuarios_CellClick);
@@ -174,9 +174,10 @@
             // btt_controlListaConectados
             // 
             this.btt_controlListaConectados.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btt_controlListaConectados.Location = new System.Drawing.Point(898, 3);
+            this.btt_controlListaConectados.Location = new System.Drawing.Point(674, 2);
+            this.btt_controlListaConectados.Margin = new System.Windows.Forms.Padding(2);
             this.btt_controlListaConectados.Name = "btt_controlListaConectados";
-            this.btt_controlListaConectados.Size = new System.Drawing.Size(200, 28);
+            this.btt_controlListaConectados.Size = new System.Drawing.Size(150, 23);
             this.btt_controlListaConectados.TabIndex = 31;
             this.btt_controlListaConectados.Text = "Mostrar Conectados:";
             this.btt_controlListaConectados.UseVisualStyleBackColor = true;
@@ -187,10 +188,10 @@
             this.btt_eliminarInvitado.AutoSize = true;
             this.btt_eliminarInvitado.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btt_eliminarInvitado.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
-            this.btt_eliminarInvitado.Location = new System.Drawing.Point(534, 207);
-            this.btt_eliminarInvitado.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btt_eliminarInvitado.Location = new System.Drawing.Point(400, 168);
+            this.btt_eliminarInvitado.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.btt_eliminarInvitado.Name = "btt_eliminarInvitado";
-            this.btt_eliminarInvitado.Size = new System.Drawing.Size(100, 28);
+            this.btt_eliminarInvitado.Size = new System.Drawing.Size(75, 25);
             this.btt_eliminarInvitado.TabIndex = 32;
             this.btt_eliminarInvitado.Text = "Eliminar";
             this.btt_eliminarInvitado.UseVisualStyleBackColor = true;
@@ -200,17 +201,40 @@
             // lbl_userName
             // 
             this.lbl_userName.AutoSize = true;
-            this.lbl_userName.Location = new System.Drawing.Point(12, 446);
+            this.lbl_userName.Location = new System.Drawing.Point(9, 362);
+            this.lbl_userName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbl_userName.Name = "lbl_userName";
-            this.lbl_userName.Size = new System.Drawing.Size(60, 16);
+            this.lbl_userName.Size = new System.Drawing.Size(49, 13);
             this.lbl_userName.TabIndex = 33;
             this.lbl_userName.Text = "Usuario: ";
             // 
+            // textBox_write
+            // 
+            this.textBox_write.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox_write.Location = new System.Drawing.Point(243, 339);
+            this.textBox_write.Name = "textBox_write";
+            this.textBox_write.Size = new System.Drawing.Size(232, 20);
+            this.textBox_write.TabIndex = 34;
+            this.textBox_write.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_write_KeyDown);
+            // 
+            // richTextBox_read
+            // 
+            this.richTextBox_read.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBox_read.Location = new System.Drawing.Point(244, 199);
+            this.richTextBox_read.Name = "richTextBox_read";
+            this.richTextBox_read.ReadOnly = true;
+            this.richTextBox_read.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richTextBox_read.Size = new System.Drawing.Size(231, 134);
+            this.richTextBox_read.TabIndex = 35;
+            this.richTextBox_read.Text = "";
+            // 
             // menuPartida
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1102, 473);
+            this.ClientSize = new System.Drawing.Size(828, 389);
+            this.Controls.Add(this.richTextBox_read);
+            this.Controls.Add(this.textBox_write);
             this.Controls.Add(this.lbl_userName);
             this.Controls.Add(this.btt_eliminarInvitado);
             this.Controls.Add(this.btt_controlListaConectados);
@@ -222,7 +246,7 @@
             this.Controls.Add(this.button_LogOut);
             this.Controls.Add(this.button_partidanueva);
             this.Controls.Add(this.dataGrid_listaInvitar);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "menuPartida";
             this.Text = "principal";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.menuPartida_FormClosing);
@@ -248,5 +272,7 @@
         private System.Windows.Forms.Button btt_controlListaConectados;
         private System.Windows.Forms.Button btt_eliminarInvitado;
         private System.Windows.Forms.Label lbl_userName;
+        private System.Windows.Forms.TextBox textBox_write;
+        private System.Windows.Forms.RichTextBox richTextBox_read;
     }
 }

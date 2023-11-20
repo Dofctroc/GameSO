@@ -21,12 +21,11 @@ Shiva ports: 75-79
 20 - Crear una partida			20/Host			(Host crea una nueva partida)
 21 - Invitacion a partida		21/Host/Jug1.Jug2.Jug3	(JugX son invitados a partida)
 22
-23 - Respuesta a invitacion a partida	22/Host/JugX/Yes-No	(JugX decide unirse o no)
+23 - Respuesta a invitacion a partida	23/Host/JugX/Yes-No	(JugX decide unirse o no)
 24 - Expulsar a invitado de partida	24/Host/JugX		(JugX sera expulsado)
-25
-26 - Jugador quiere abandonar partida	26/Host/JugX		(JugX abandona la partida)
-27 - Eliminar la partida		27/Host			(Host elimina su partida)
-28 - Jugador envia mensaje por chat	28/JugX/Mensaje		(JugX envia "mensaje" por chat)
+25 - Jugador quiere abandonar partida	25/Host/JugX		(JugX abandona la partida) *
+26 - Eliminar la partida		26/Host			(Host elimina su partida) *
+27 - Jugador envia mensaje por chat	27/Host/JugX/Mensaje	(JugX envia "mensaje" por chat)
  _____________________________________________________________________________________________
 |											      |
 |--------------------------- Codigos mensaje que envia Server: -------------------------------|
