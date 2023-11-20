@@ -19,7 +19,7 @@ namespace ClienteC__Juego
     public partial class menuPartida : Form
     {
         string password, username, invitadoEliminado;
-        bool hosting_game;
+        bool hosting_gameLobby, in_gameLobby;
         menuUsuario menuUsuario;
         Socket server;
         PictureBox pbox_Invite = new PictureBox();
@@ -84,6 +84,17 @@ namespace ClienteC__Juego
 
         private void menuPartida_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (hosting_gameLobby)
+            {
+                string mensaje = "25/" + username;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+                hosting_gameLobby = false;
+            }
+            else if (in_gameLobby)
+            {
+
+            }
             menuUsuario.serverShutdown();
             menuUsuario.Show();
         }
@@ -99,7 +110,7 @@ namespace ClienteC__Juego
 
         private void button_partidanueva_Click(object sender, EventArgs e)
         {
-            if (!hosting_game)
+            if (!hosting_gameLobby)
             {
                 string mensaje = "20/" + username;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -160,7 +171,7 @@ namespace ClienteC__Juego
             if (Convert.ToInt32(mensaje[0]) == 20) {
                 if (Convert.ToInt32(mensaje[1]) == 0) {
                     datagrid_miPartida.Rows.Add("Host", username);
-                    hosting_game = true;
+                    hosting_gameLobby = true;
                 }
                 else
                     MessageBox.Show("Error al crear la partida, vuelva a intentarlo.");

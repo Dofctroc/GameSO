@@ -33,8 +33,6 @@
             this.button_LogOut = new System.Windows.Forms.Button();
             this.lbl_miPartida = new System.Windows.Forms.Label();
             this.datagrid_miPartida = new System.Windows.Forms.DataGridView();
-            this.lbl_otrasPartridas = new System.Windows.Forms.Label();
-            this.datagrid_otrasPartidas = new System.Windows.Forms.DataGridView();
             this.button_Jugar = new System.Windows.Forms.Button();
             this.button_Invitar = new System.Windows.Forms.Button();
             this.dataGrid_listaUsuarios = new System.Windows.Forms.DataGridView();
@@ -43,7 +41,6 @@
             this.lbl_userName = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaInvitar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.datagrid_miPartida)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.datagrid_otrasPartidas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaUsuarios)).BeginInit();
             this.SuspendLayout();
             // 
@@ -122,35 +119,6 @@
             this.datagrid_miPartida.TabIndex = 24;
             this.datagrid_miPartida.Visible = false;
             this.datagrid_miPartida.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.datagrid_miPartida_CellClick);
-            // 
-            // lbl_otrasPartridas
-            // 
-            this.lbl_otrasPartridas.AutoSize = true;
-            this.lbl_otrasPartridas.Location = new System.Drawing.Point(321, 270);
-            this.lbl_otrasPartridas.Name = "lbl_otrasPartridas";
-            this.lbl_otrasPartridas.Size = new System.Drawing.Size(94, 16);
-            this.lbl_otrasPartridas.TabIndex = 27;
-            this.lbl_otrasPartridas.Text = "Otras partidas:";
-            // 
-            // datagrid_otrasPartidas
-            // 
-            this.datagrid_otrasPartidas.AllowUserToAddRows = false;
-            this.datagrid_otrasPartidas.AllowUserToDeleteRows = false;
-            this.datagrid_otrasPartidas.AllowUserToResizeColumns = false;
-            this.datagrid_otrasPartidas.AllowUserToResizeRows = false;
-            this.datagrid_otrasPartidas.ColumnHeadersHeight = 25;
-            this.datagrid_otrasPartidas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.datagrid_otrasPartidas.Location = new System.Drawing.Point(324, 290);
-            this.datagrid_otrasPartidas.Margin = new System.Windows.Forms.Padding(4);
-            this.datagrid_otrasPartidas.Name = "datagrid_otrasPartidas";
-            this.datagrid_otrasPartidas.ReadOnly = true;
-            this.datagrid_otrasPartidas.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.datagrid_otrasPartidas.RowHeadersVisible = false;
-            this.datagrid_otrasPartidas.RowHeadersWidth = 50;
-            this.datagrid_otrasPartidas.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.datagrid_otrasPartidas.Size = new System.Drawing.Size(310, 145);
-            this.datagrid_otrasPartidas.TabIndex = 26;
-            this.datagrid_otrasPartidas.Visible = false;
             // 
             // button_Jugar
             // 
@@ -249,8 +217,6 @@
             this.Controls.Add(this.dataGrid_listaUsuarios);
             this.Controls.Add(this.button_Invitar);
             this.Controls.Add(this.button_Jugar);
-            this.Controls.Add(this.lbl_otrasPartridas);
-            this.Controls.Add(this.datagrid_otrasPartidas);
             this.Controls.Add(this.lbl_miPartida);
             this.Controls.Add(this.datagrid_miPartida);
             this.Controls.Add(this.button_LogOut);
@@ -263,7 +229,6 @@
             this.Load += new System.EventHandler(this.principal_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaInvitar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.datagrid_miPartida)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.datagrid_otrasPartidas)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_listaUsuarios)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -277,8 +242,6 @@
         private System.Windows.Forms.Button button_LogOut;
         private System.Windows.Forms.Label lbl_miPartida;
         private System.Windows.Forms.DataGridView datagrid_miPartida;
-        private System.Windows.Forms.Label lbl_otrasPartridas;
-        private System.Windows.Forms.DataGridView datagrid_otrasPartidas;
         private System.Windows.Forms.Button button_Jugar;
         private System.Windows.Forms.Button button_Invitar;
         private System.Windows.Forms.DataGridView dataGrid_listaUsuarios;

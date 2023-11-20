@@ -100,10 +100,10 @@ int EliminarConectado(ListaConectados* lista, char nombre[])
 
 int EliminarJugadorPartida(ListaPartidas* listaP, char nombre[], char host[])
 {
+	pthread_mutex_lock(&mutex);
 	int partida = BuscarPartidaHost(listaP, host);
 	if (partida != -1)
 	{
-		pthread_mutex_lock(&mutex);
 		for (int j = 0; j < listaP->partidas[partida].numJugadores; j++)
 		{
 			if (strcmp(listaP->partidas[partida].jugadores[j].userName, nombre) == 0)
@@ -111,17 +111,17 @@ int EliminarJugadorPartida(ListaPartidas* listaP, char nombre[], char host[])
 					listaP->partidas[partida].jugadores[k] = listaP->partidas[partida].jugadores[k + 1];
 		}
 		listaP->partidas[partida].numJugadores--;
-		pthread_mutex_unlock(&mutex);
 	}
+	pthread_mutex_unlock(&mutex);
 	return 0;
 }
 
 int EliminarPartida(ListaPartidas* listaP, char host[])
 {
+	pthread_mutex_lock(&mutex);
 	int partida = BuscarPartidaHost(listaP, host);
 	if (partida != -1)
 	{
-		pthread_mutex_lock(&mutex);
 		for (int j = 0; j < listaP->num; j++)
 		{
 			if (strcmp(listaP->partidas[partida].jugadores[j].userName, host) == 0)
@@ -129,8 +129,8 @@ int EliminarPartida(ListaPartidas* listaP, char host[])
 					listaP->partidas[partida] = listaP->partidas[partida + 1];
 		}
 		listaP->partidas[partida].numJugadores--;
-		pthread_mutex_unlock(&mutex);
 	}
+	pthread_mutex_unlock(&mutex);
 	return 0;
 }
 
@@ -151,7 +151,6 @@ int PonConectado(ListaConectados* lista, char nombre[], int socketUsuario)
 		return 0;
 	}
 }
-
 
 int CrearPartida(ListaPartidas* listaP, char nombre[], int socketUsuario)
 {
@@ -174,9 +173,10 @@ int PonJugadorPartida(ListaConectados* listaC, ListaPartidas* listaP, char nombr
 {
 	char datosPartida[200];
 	int socketUsuario;
+	
+	pthread_mutex_lock(&mutex);
 	for (int i = 0; i < listaP->num; i++) {
 		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0){
-			pthread_mutex_lock(&mutex);
 			strcpy(listaP->partidas[i].jugadores[listaP->partidas[i].numJugadores].userName, nombre);
 			listaP->partidas[i].jugadores[listaP->partidas[i].numJugadores].status = 1;
 			for (int i = 0; i < listaC->num; i++) {
@@ -187,10 +187,10 @@ int PonJugadorPartida(ListaConectados* listaC, ListaPartidas* listaP, char nombr
 			}
 			listaP->partidas[i].jugadores[listaP->partidas[i].numJugadores].socket = socketUsuario;
 			listaP->partidas[i].numJugadores++;
-			pthread_mutex_unlock(&mutex);
 			break;
 		}
 	}
+	pthread_mutex_unlock(&mutex);
 	return 0;
 }
 
@@ -250,8 +250,7 @@ int consultaSignUp(MYSQL* conn, char userName[], char password[], char mensajeSi
 	else {
 		strcpy(mensajeSignUp, "2/El usuario ya existe, elija otro username.");
 	}
-	// cerrar la conexion con el servidor MYSQL 
-	mysql_close(conn);
+	// cerrar la conexion con el servidor MYSQL
 	return 0;
 }
 
@@ -305,8 +304,7 @@ int consultaLogIn(MYSQL* conn, char userName[], char password[], char mensajeLog
 		strcat(mensajeLogIn, "El usuario no existe, cree un usuario.");
 		i = 2;
 	}
-	// cerrar la conexion con el servidor MYSQL 
-	mysql_close(conn);
+	// cerrar la conexion con el servidor MYSQL
 	return i;
 }
 
@@ -329,7 +327,6 @@ int consulta1(MYSQL* conn, char nombre[])
 		printf("No se han obtenido datos en la consulta\n");
 
 	int puntosTotales = atoi(row[0]);
-	mysql_close(conn);
 	return puntosTotales;
 }
 
@@ -361,7 +358,6 @@ int consulta2(MYSQL* conn, char nombre[], char puntuaciones[])
 			i++;
 		}
 	}
-	mysql_close(conn);
 	return 0;
 }
 
@@ -385,7 +381,6 @@ int consulta3(MYSQL* conn, char partidaID[], char ganador[])
 		strcpy(ganador, "13/");
 		strcat(ganador, row[0]);
 	}
-	mysql_close(conn);
 	return 0;
 }
 
@@ -472,7 +467,19 @@ void AtenderCliente(void* socket)
 	char respuesta[512];
 	int ret;
 	int terminar = 0;
-
+	
+	int err;
+	conn = mysql_init(NULL);
+	if (conn == NULL) {
+		printf("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+		exit(1);
+	}
+	//conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "T6_Juego", 0, NULL, 0);	//Shiva
+	conn = mysql_real_connect(conn, "localhost", "root", "mysql", "T6_Juego", 0, NULL, 0);			//Linux
+	if (conn == NULL) {
+		printf("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
+		exit(1);
+	}
 	// Entramos en un bucle para atender todas las peticiones de este cliente
 	//hasta que se desconecte
 	while (terminar == 0)
@@ -483,6 +490,7 @@ void AtenderCliente(void* socket)
 		char userName[20];
 		char password[20];
 		char sockets_receptores[20];
+		
 		// Ahora recibimos la petici?n
 		ret = read(sock_conn, peticion, sizeof(peticion));
 		printf("Recibido\n");
@@ -496,19 +504,6 @@ void AtenderCliente(void* socket)
 		char* p = strtok(peticion, "/");
 		int codigo = atoi(p);
 		// Ya tenemos el c?digo de la petici?n
-
-		int err;
-		conn = mysql_init(NULL);
-		if (conn == NULL) {
-			printf("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-			exit(1);
-		}
-		//conn = mysql_real_connect (conn, "shiva2.upc.es","root", "mysql", "T6_Juego", 0, NULL, 0);	//Shiva
-		conn = mysql_real_connect(conn, "localhost", "root", "mysql", "T6_Juego", 0, NULL, 0);			//Linux
-		if (conn == NULL) {
-			printf("Error en conexion: %u %s\n", mysql_errno(conn), mysql_error(conn));
-			exit(1);
-		}
 
 		if (codigo == 0) //peticion de desconexion
 		{

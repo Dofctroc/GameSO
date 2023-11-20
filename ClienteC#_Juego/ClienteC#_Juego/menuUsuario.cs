@@ -151,7 +151,7 @@ namespace ClienteC__Juego
             // Create and show the new form
             menuPartida = new menuPartida(this, server, atender, username);
             menuPartida.Show();
-            this.Hide();
+            //this.Hide();
         }
 
         // -------------------- Thread general del Programa --------------------

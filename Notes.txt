@@ -1,7 +1,9 @@
 Shiva ports: 75-79
 
-
-Codigos mensaje que envia Cliente: _______________________________________________________
+ _____________________________________________________________________________________________
+|											      |
+|--------------------------- Codigos mensaje que envia Cliente: ------------------------------|
+|_____________________________________________________________________________________________|
 
 0 - Desconectar
 1 - Peticion de SignUp
@@ -16,14 +18,19 @@ Codigos mensaje que envia Cliente: _____________________________________________
 12 - ComandoInd2 (puntuacion partidas jugadas)
 13 - ComandoInd3 (ganador de partida)
 
-20 - Crear una partida			20/Qui la crea
-21 - Invitacion a partida		21/Host/4(numero de invitados)/Asier/Gu/Julia/Ivan
-23 - Respuesta a invitacion a partida	22/Host/Jo soc Asier/Dic que Si
-25 - Expulsar a invitado de partida	25/Host/A quien expulsa
-
-2X - Eliminar la partida
-
-Codigos mensaje que envia Servidor: ______________________________________________________
+20 - Crear una partida			20/Host			(Host crea una nueva partida)
+21 - Invitacion a partida		21/Host/Jug1.Jug2.Jug3	(JugX son invitados a partida)
+22
+23 - Respuesta a invitacion a partida	22/Host/JugX/Yes-No	(JugX decide unirse o no)
+24 - Expulsar a invitado de partida	24/Host/JugX		(JugX sera expulsado)
+25
+26 - Jugador quiere abandonar partida	26/Host/JugX		(JugX abandona la partida)
+27 - Eliminar la partida		27/Host			(Host elimina su partida)
+28 - Jugador envia mensaje por chat	28/JugX/Mensaje		(JugX envia "mensaje" por chat)
+ _____________________________________________________________________________________________
+|											      |
+|--------------------------- Codigos mensaje que envia Server: -------------------------------|
+|_____________________________________________________________________________________________|
 
 1 - SignUp correcto
 2 - SignUp error
@@ -37,21 +44,24 @@ Codigos mensaje que envia Servidor: ____________________________________________
 12 - Consulta2
 13 - Consulta3
 
-20 - Respuesta a creacion de partida	8/0 -> S'ha creat bé 	8/-1 -> S'ha creat malament
-21 - Respuesta a invitacion a partida	9/0 -> S'ha invitat bé	
-22 - Invitacion a partida		6/T'ha invitat l'Asier
-23 - Respuesta a invitacion a partida	23/Host/L'usuario Asier/Diu que Si (Li arriba al host i tambe a la resta de jugadors de la partida)
-24 - Respuesta a expulsion jugador	24/0 -> S'ha expulsat be
-25 - El host te ha expulsado		25/Host (Te ha expulsado)
+20 - Respuesta a creacion de partida	20/0 -> Good 	20/-1 -> Error	(SentTo: Host)
+21 - Respuesta a invitacion a partida	21/0 -> Good	21/-1 -> Error	(SentTo: Host)
+22 - Invitacion a partida		22/Host				(SentTo: Invited player)
+23 - Respuesta a aceptar invitacion	23/Host/JugX/Yes-No 		(SentTo: Host + players in game lobby)
+					23/Host.Jug1.Jug2.Jug3...	(SentTo: Invited player if accepts)
+24 - Respuesta a la expulsion		24/Host/JugX	 		(SentTo: Host + players in game lobby + fired player)
+25 - Mensaje jugador abandona partida	25/Host/JugX			(SentTo: All players in game lobby, not who abandons)
+26 - Host ha eliminado la partida	26/Host				(SentTo: Players in game lobby, not host)
+27 - Reenvia mensaje jugador chat	27/Host/JugX/Mensaje		(SentTo: All players in game lobby)
+ _____________________________________________________________________________________________
+|											      |
+|---------------------------------- Control de errores: --------------------------------------|
+|_____________________________________________________________________________________________|
 
-2X - El host se ha desconectado/ha eliminado la partida
-
-
------------------- Control de errores: ------------------
-MenuUsuario:
+1) MenuUsuario:
 - Try-Catch para desconexion/error del server
 
-MenuPartida:
+2) MenuPartida:
 - No puedes invitar a alguien que ya has invitado
 - No puedes invitar si ya esta en la partida
 - Si te desconectas, se cierra la partida y se expulsa a todos
@@ -59,9 +69,8 @@ MenuPartida:
 - Un invitat por sortir de la partida si vol
 - No pots invitar si no has creat una partida
 
-Server:
+3) Server:
 - Incorporar uso de Actualizar status y simplificacion de codigo en funciones de introduccion a partida y otrasç
 - La partida creada debe aparecer al resto de usuarios que no la juegan
 - No heu arreglat la gestio del buffer de sockets que es pot arribar a desbordar
-- Compta amb els mysql_close(conn) a les funcions de consulta
-- Compta amb l'exclusion mutua. (Està molt bé intentar minimitzar el temps d'exclusió mútua, però a EliminarConectado pot passar que un cop has trobat 	que està el jugador arribi un canvi de contexte que ho canviï. Millor la exclusió mútua cubreixi la consulta i la modificació posterior.)
+- Primera consulta no correcta
