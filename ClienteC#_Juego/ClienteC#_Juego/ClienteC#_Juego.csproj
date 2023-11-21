@@ -104,5 +104,17 @@
   <ItemGroup>
     <None Include="Resources\Icono Invitar.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bottonConn2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bottonConn1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fondoDetectiveTile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fondoCluedo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -38,8 +38,6 @@ namespace ClienteC__Juego
             lbl_userName.Text = "Usuario: " + username;
 
             // Data grid de la lista de usuarios
-            dataGrid_listaUsuarios.Visible = true;
-
             dataGrid_listaUsuarios.ColumnCount = 2;
             dataGrid_listaUsuarios.ColumnHeadersDefaultCellStyle.Font = new Font(dataGrid_listaUsuarios.Font, FontStyle.Bold);
 
@@ -48,6 +46,7 @@ namespace ClienteC__Juego
             dataGrid_listaUsuarios.Columns[1].Name = "column_Status";
             dataGrid_listaUsuarios.Columns[1].HeaderText = "Status";
 
+            dataGrid_listaUsuarios.Width = 160;
             dataGrid_listaUsuarios.Columns[0].Width = 80;
             dataGrid_listaUsuarios.Columns[1].Width = dataGrid_listaUsuarios.Width - dataGrid_listaUsuarios.Columns[0].Width - 2;
             dataGrid_listaUsuarios.Rows.Clear();
@@ -80,6 +79,14 @@ namespace ClienteC__Juego
             dataGrid_listaInvitar.Columns[0].Width = dataGrid_listaInvitar.Width - 2;
             dataGrid_listaInvitar.Rows.Clear();
 
+            // Other properties
+            pBox_mostrarConn.Size = new Size(20, 40);
+            dataGrid_listaUsuarios.Location = new Point(pBox_mostrarConn.Location.X + pBox_mostrarConn.Width + 4, pBox_mostrarConn.Location.Y);
+            dataGrid_listaUsuarios.Size = new Size(160,460);
+            dataGrid_listaUsuarios.Visible = false;
+            lbl_write.BackColor = Color.FromArgb(150, Color.White);
+
+            CenterFormOnScreen();
         }
 
         private void menuPartida_FormClosing(object sender, FormClosingEventArgs e)
@@ -97,6 +104,21 @@ namespace ClienteC__Juego
             }
             menuUsuario.serverShutdown();
             menuUsuario.Show();
+        }
+
+        private void CenterFormOnScreen()
+        {
+            // Calculate the center position
+            int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+            int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+            int formWidth = this.Width;
+            int formHeight = this.Height;
+
+            int x = (screenWidth - formWidth) / 2;
+            int y = (screenHeight - formHeight) / 2;
+
+            // Set the form's location
+            this.Location = new Point(x, y);
         }
 
         // -------------------- Acciones de Button Click --------------------
@@ -149,11 +171,6 @@ namespace ClienteC__Juego
         {
         }
 
-        private void btt_controlListaConectados_Click(object sender, EventArgs e)
-        {
-            dataGrid_listaUsuarios.Visible = !dataGrid_listaUsuarios.Visible;
-        }
-
         private void btt_eliminarInvitado_Click(object sender, EventArgs e)
         {
             if (invitadoEliminado != null)
@@ -173,6 +190,7 @@ namespace ClienteC__Juego
             if (Convert.ToInt32(mensaje[0]) == 20) {
                 if (Convert.ToInt32(mensaje[1]) == 0) {
                     datagrid_miPartida.Rows.Add("Host", username);
+                    datagrid_miPartida.ClearSelection();
                     hosting_gameLobby = true;
                 }
                 else
@@ -254,6 +272,7 @@ namespace ClienteC__Juego
                 richTextBox_read.AppendText(Environment.NewLine);
             }
         }
+
 
         // -------------------- Actualizaciones de Datagrid --------------------
         // ---------------------------------------------------------------------
@@ -345,9 +364,36 @@ namespace ClienteC__Juego
             dataGrid_listaInvitar.ClearSelection();
         }
 
+        private void pBox_mostrarConn_Click(object sender, EventArgs e)
+        {
+            PictureBox arrowConn = (PictureBox)sender;
+            if (!dataGrid_listaUsuarios.Visible)
+            {
+                dataGrid_listaUsuarios.Visible = true;
+                arrowConn.BackgroundImage = Properties.Resources.bottonConn2;
+            }
+            else
+            {
+                dataGrid_listaUsuarios.Visible = false;
+                arrowConn.BackgroundImage = Properties.Resources.bottonConn1;
+            }
+        }
+
+        private void pBox_mostrarConn_MouseEnter(object sender, EventArgs e)
+        {
+            PictureBox arrowConn = (PictureBox)sender;
+            arrowConn.BackColor = Color.FromArgb(20, Color.Green);
+        }
+
+        private void pBox_mostrarConn_MouseLeave(object sender, EventArgs e)
+        {
+            PictureBox arrowConn = (PictureBox)sender;
+            arrowConn.BackColor = Color.Transparent;
+        }
+
         private void textBox_write_KeyDown(object sender, KeyEventArgs e)
         {
-            if ((e.KeyCode == Keys.Enter) && (textBox_write.Text != ""))
+            if ((e.KeyCode == Keys.Enter) && (textBox_write.Text != "") && (in_gameLobby))
             {
                 string men = textBox_write.Text;
                 string mensaje = "27/" + host + "/" + username + "/" + men;

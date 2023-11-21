@@ -35,6 +35,14 @@ namespace ClienteC__Juego
         {
             textbox_password.Text = password;
             textbox_username.Text = username;
+
+            lbl_controlPanel.Visible = false;
+            consoletextbox.Visible = false;
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.Size = new Size(1000, 620);
+            CenterFormOnScreen();
         }
 
         private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
@@ -234,6 +242,27 @@ namespace ClienteC__Juego
                         break;
                 }
             }
+        }
+
+        private void controlPanelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lbl_controlPanel.Visible = !lbl_controlPanel.Visible;
+            consoletextbox.Visible = !consoletextbox.Visible;
+        }
+
+        private void CenterFormOnScreen()
+        {
+            // Calculate the center position
+            int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+            int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+            int formWidth = this.Width;
+            int formHeight = this.Height;
+
+            int x = (screenWidth - formWidth) / 2;
+            int y = (screenHeight - formHeight) / 2;
+
+            // Set the form's location
+            this.Location = new Point(x, y);
         }
     }
 }
