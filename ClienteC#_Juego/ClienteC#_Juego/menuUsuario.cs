@@ -24,6 +24,7 @@ namespace ClienteC__Juego
         int entry;
         string username;
         string password;
+        delegate void Delegado(string[] mensaje);
 
         public menuUsuario()
         {
@@ -35,7 +36,69 @@ namespace ClienteC__Juego
         {
             textbox_password.Text = password;
             textbox_username.Text = username;
+
+            lbl_controlPanel.Visible = false;
+            consoletextbox.Visible = false;
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.Size = new Size(1000, 620);
+            CenterFormOnScreen();
         }
+
+        private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            serverShutdown();
+        }
+
+        // -------------------- Acciones de Button Click --------------------
+        // ------------------------------------------------------------------
+        private void button_logIn_Click(object sender, EventArgs e)
+        {
+            username = textbox_username.Text;
+            password = textbox_password.Text;
+            int err = serverConnect();
+
+            if (err == 0)
+            {
+                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+        }
+
+        private void button_signUp_Click(object sender, EventArgs e)
+        {
+            username = textbox_username.Text;
+            int err = serverConnect();
+
+            if (err == 0)
+            {
+                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+        }
+
+        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (conectado_conServer)
+            {
+                consultas = new consultas(conectado_conServer, server);
+                consultas.ShowDialog();
+            }
+        }
+
+        private void button_LogOut_Click(object sender, EventArgs e)
+        {
+            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
+            entry++;
+            serverShutdown();
+            Close();
+        }
+
+        // -------------------- Funciones del formulario --------------------
+        // ------------------------------------------------------------------
 
         public int serverConnect()
         {
@@ -43,7 +106,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9070;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9077;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -75,6 +138,8 @@ namespace ClienteC__Juego
         {
             if (conectado_conServer)
             {
+                conectado_conServer = false;
+
                 //Mensaje de desconexión
                 string mensaje = "0/" + username;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -85,10 +150,54 @@ namespace ClienteC__Juego
                 server.Close();
                 atender.Abort();
 
-                conectado_conServer = false;
-                button_LogOut.Enabled = false;
+                textbox_password.Text = "";
+                textbox_username.Text = "";
             }
         }
+
+        public void textoconsola(string[] mensaje)
+        {
+            int codigo = Convert.ToInt32(mensaje[0]);
+            switch (codigo)
+            {
+                case 1:     // Sign up correct
+                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+
+                case 2:     // Sign up incorrecto
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+                case 3:     // Log in correcto
+                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    break;
+                case 4:     // Log in incorrecto
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+
+                case 5:     // Log in incorrecto
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+                case 10:
+                    consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
+                    break;
+            }
+            entry++;
+        }
+
+        private void OpenNewForm()
+        {
+            // Create and show the new form
+            menuPartida = new menuPartida(this, server, atender, username);
+            menuPartida.Show();
+            //this.Hide();
+        }
+
+        // -------------------- Thread general del Programa --------------------
+        // ---------------------------------------------------------------------
 
         private void AtenderServidor()
         {
@@ -99,36 +208,45 @@ namespace ClienteC__Juego
                 server.Receive(msg2);
                 string[] mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0].Split('/');
                 int codigo = Convert.ToInt32(mensaje[0]);
-                
+                Delegado delegado = new Delegado(textoconsola);
 
                 switch (codigo)
                 {
                     case 1:     // Sign up correct
-                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
-                        entry++;
                         break;
 
                     case 2:     // Sign up incorrecto
-                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
-                        entry++;
                         break;
 
                     case 3:     // Log in correcto
-                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                        entry++;
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
+                        this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
                         break;
                     case 4:     // Log in incorrecto
-                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
-                        entry++;
                         break;
 
                     case 5:     // Log in incorrecto
-                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
-                        entry++;
+                        break;
+                    case 10:
+                        menuPartida.listaConectados(mensaje[1]);
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
+                        break;
+                    case 11:
+                        consultas.responseReceived(mensaje, codigo);
+                        break;
+                    case 12:
+                        consultas.responseReceived(mensaje, codigo);
+                        break;
+                    case 13:
+                        consultas.responseReceived(mensaje, codigo);
                         break;
                     case 20:    // Has podido crear partida bien o no
                         menuPartida.onResponse(mensaje);
@@ -145,89 +263,35 @@ namespace ClienteC__Juego
                     case 24:    // Te has unido o no a la partida
                         menuPartida.onResponse(mensaje);
                         break;
-                    case 10:
-                        menuPartida.listaConectados(mensaje[1]);
-                        consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
-                        entry++;
+                    case 25:
+                        menuPartida.onResponse(mensaje);
                         break;
-                    case 11:
-                        consultas.responseReceived(mensaje, codigo);
-                        break;
-                    case 12:
-                        consultas.responseReceived(mensaje, codigo);
-                        break;
-                    case 13:
-                        consultas.responseReceived(mensaje, codigo);
+                    case 27:
+                        menuPartida.onResponse(mensaje);
                         break;
                 }
             }
         }
-        private void button_logIn_Click(object sender, EventArgs e)
-        {
-            username = textbox_username.Text;
-            password = textbox_password.Text;
-            int err = serverConnect();
 
-            if (err == 0)
-            {
-                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-            menuPartida = new menuPartida(server, username);
-            menuPartida.ShowDialog();
-            serverShutdown();
+        private void controlPanelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lbl_controlPanel.Visible = !lbl_controlPanel.Visible;
+            consoletextbox.Visible = !consoletextbox.Visible;
         }
 
-        private void button_signUp_Click(object sender, EventArgs e)
+        private void CenterFormOnScreen()
         {
-            username = textbox_username.Text;
-            int err = serverConnect();
+            // Calculate the center position
+            int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
+            int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
+            int formWidth = this.Width;
+            int formHeight = this.Height;
 
-            if (err == 0)
-            {
-                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-        }
+            int x = (screenWidth - formWidth) / 2;
+            int y = (screenHeight - formHeight) / 2;
 
-        private void button_listausuarios_Click(object sender, EventArgs e)
-        {
-            if (conectado_conServer)
-            {
-                string mensaje = "6/";
-                // Enviamos al servidor el demana
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-            else
-            {
-                consoletextbox.AppendText(String.Format("Entry {0}: *ERROR* Inicie sesion para visualizar la lista de usuarios.", entry) + Environment.NewLine);
-                entry++;
-            }
-        }
-
-        private void button_LogOut_Click(object sender, EventArgs e)
-        {
-            serverShutdown();
-            Close();
-            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
-            entry++;
-        }
-
-        private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            serverShutdown();
-        }
-
-        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (conectado_conServer)
-            {
-                consultas = new consultas(conectado_conServer, server);
-                consultas.ShowDialog();
-            }
+            // Set the form's location
+            this.Location = new Point(x, y);
         }
     }
 }
