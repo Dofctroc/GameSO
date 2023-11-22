@@ -103,9 +103,19 @@ namespace ClienteC__Juego.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Icono_Enviar {
+            get {
+                object obj = ResourceManager.GetObject("Icono_Enviar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Icono_Invitar {
             get {
-                object obj = ResourceManager.GetObject("Icono Invitar", resourceCulture);
+                object obj = ResourceManager.GetObject("Icono_Invitar", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
