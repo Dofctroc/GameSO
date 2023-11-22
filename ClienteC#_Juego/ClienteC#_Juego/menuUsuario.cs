@@ -24,6 +24,7 @@ namespace ClienteC__Juego
         int entry;
         string username;
         string password;
+        delegate void Delegado(string[] mensaje);
 
         public menuUsuario()
         {
@@ -154,6 +155,39 @@ namespace ClienteC__Juego
             }
         }
 
+        public void textoconsola(string[] mensaje)
+        {
+            int codigo = Convert.ToInt32(mensaje[0]);
+            switch (codigo)
+            {
+                case 1:     // Sign up correct
+                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+
+                case 2:     // Sign up incorrecto
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+                case 3:     // Log in correcto
+                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    break;
+                case 4:     // Log in incorrecto
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+
+                case 5:     // Log in incorrecto
+                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                    serverShutdown();
+                    break;
+                case 10:
+                    consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
+                    break;
+            }
+            entry++;
+        }
+
         private void OpenNewForm()
         {
             // Create and show the new form
@@ -174,41 +208,36 @@ namespace ClienteC__Juego
                 server.Receive(msg2);
                 string[] mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0].Split('/');
                 int codigo = Convert.ToInt32(mensaje[0]);
+                Delegado delegado = new Delegado(textoconsola);
 
                 switch (codigo)
                 {
                     case 1:     // Sign up correct
-                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                        entry++;
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
                         break;
 
                     case 2:     // Sign up incorrecto
-                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
-                        entry++;
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
                         break;
 
                     case 3:     // Log in correcto
-                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                        entry++;
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
                         break;
                     case 4:     // Log in incorrecto
-                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
-                        entry++;
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
                         break;
 
                     case 5:     // Log in incorrecto
-                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
-                        entry++;
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
                         break;
                     case 10:
                         menuPartida.listaConectados(mensaje[1]);
-                        consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
-                        entry++;
+                        consoletextbox.Invoke(delegado, new object[] { mensaje });
                         break;
                     case 11:
                         consultas.responseReceived(mensaje, codigo);

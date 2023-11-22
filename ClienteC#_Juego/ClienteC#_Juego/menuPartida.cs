@@ -393,7 +393,7 @@ namespace ClienteC__Juego
 
         private void textBox_write_KeyDown(object sender, KeyEventArgs e)
         {
-            if ((e.KeyCode == Keys.Enter) && (textBox_write.Text != "") && (in_gameLobby))
+            if ((e.KeyCode == Keys.Enter) && (textBox_write.Text != ""))
             {
                 string men = textBox_write.Text;
                 string mensaje = "27/" + host + "/" + username + "/" + men;
@@ -401,7 +401,6 @@ namespace ClienteC__Juego
                 server.Send(msg);
                 textBox_write.Text = "";
             }
-
         }
 
         private void dataGrid_listaUsuarios_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
