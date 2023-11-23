@@ -102,9 +102,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Icono Invitar.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\bottonConn2.png" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +112,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\fondoCluedo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icono_Enviar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icono_Invitar.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

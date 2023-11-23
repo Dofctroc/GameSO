@@ -255,12 +255,16 @@
             // 
             // pBox_sendText
             // 
+            this.pBox_sendText.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Icono_Enviar;
             this.pBox_sendText.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pBox_sendText.Location = new System.Drawing.Point(289, 196);
             this.pBox_sendText.Name = "pBox_sendText";
             this.pBox_sendText.Size = new System.Drawing.Size(25, 25);
             this.pBox_sendText.TabIndex = 38;
             this.pBox_sendText.TabStop = false;
+            this.pBox_sendText.Click += new System.EventHandler(this.pBox_sendText_Click);
+            this.pBox_sendText.MouseEnter += new System.EventHandler(this.pBox_sendText_MouseEnter);
+            this.pBox_sendText.MouseLeave += new System.EventHandler(this.pBox_sendText_MouseLeave);
             // 
             // gBox_chat
             // 

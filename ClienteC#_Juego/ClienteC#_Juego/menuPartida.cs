@@ -35,6 +35,7 @@ namespace ClienteC__Juego
 
         private void principal_Load(object sender, EventArgs e)
         {
+            bool isEnterKeyPressed = false;
             lbl_userName.Text = "Usuario: " + username;
 
             // Data grid de la lista de usuarios
@@ -93,7 +94,7 @@ namespace ClienteC__Juego
         {
             if (hosting_gameLobby)
             {
-                string mensaje = "25/" + username;
+                string mensaje = "26/" + username;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
                 hosting_gameLobby = false;
@@ -102,8 +103,6 @@ namespace ClienteC__Juego
             {
 
             }
-            menuUsuario.serverShutdown();
-            menuUsuario.Show();
         }
 
         private void CenterFormOnScreen()
@@ -187,78 +186,124 @@ namespace ClienteC__Juego
 
         public void onResponse(string[] mensaje)
         {
+            int codigo = Convert.ToInt32(mensaje[0]);
+            switch (codigo)
+            {
+                case 20:
+                    if (Convert.ToInt32(mensaje[1]) == 0)
+                    {
+                        datagrid_miPartida.Rows.Add("Host", username);
+                        datagrid_miPartida.ClearSelection();
+                        hosting_gameLobby = true;
+                    }
+                    else
+                        MessageBox.Show("Error al crear la partida, vuelva a intentarlo.");
+                    break;
+                case 21:
+                    dataGrid_listaInvitar.Rows.Clear();
+                    break;
+                case 22:
+                    string host = mensaje[1];
+                    DialogResult result = MessageBox.Show("El usuario " + host + " te ha invitado a una partida",
+                            "Incoming Message", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        string mensaje2 = "23/" + host + "/" + username + "/Yes";
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+                        server.Send(msg);
+                    }
+                    else
+                    {
+                        string mensaje2 = "23/" + host + "/" + username + "/No";
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+                        server.Send(msg);
+                    }
+                    break;
+                case 23:
+                    if (mensaje.Length == 4)
+                    {
+                        string invitado = mensaje[2];
+                        string decision = mensaje[3];
+                        if (decision == "Yes")
+                        {
+                            listaMiPartida(invitado, true);
+                            DialogResult showInvite = MessageBox.Show(username + ", El usuario " + invitado + " se ha unido a la partida",
+                                "Incoming Message", MessageBoxButtons.OK);
+
+                        }
+                        else if (username == datagrid_miPartida.Rows[0].Cells[1].Value.ToString())
+                        {
+                            DialogResult showInvite = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
+                                "Incoming Message", MessageBoxButtons.OK);
+                        }
+                    }
+                    else if (mensaje[1] != "0")
+                    {
+                        Console.WriteLine(mensaje[1] + " es el host");
+                        listaMiPartida(mensaje[1]);
+                        host = mensaje[1].Split('.')[0];
+                    }
+                    break;
+                case 24:    // El host de la partida te ha expulsado
+                    if (mensaje[2] == username)
+                    {
+                        string exHost = mensaje[1];
+                        DialogResult showExpulsion = MessageBox.Show("El usuario " + exHost + " te ha expulsado de la partida",
+                                "Incoming Message", MessageBoxButtons.OK);
+                        datagrid_miPartida.Rows.Clear();
+                        host = null;
+                    }
+                    else
+                    {
+                        string expulsado = mensaje[2];
+                        listaMiPartida(expulsado, false);
+                    }
+                    break;
+                case 25:
+
+                    break;
+                case 26:
+                    if (mensaje[1] == username)
+                    {
+                        datagrid_miPartida.Rows.Clear();
+                        host = null;
+                        menuUsuario.serverShutdown();
+                        menuUsuario.Show();
+                    }
+                    else
+                    {
+                        DialogResult showGameDeleted = MessageBox.Show("El usuario " + mensaje[1] + " te ha expulsado de la partida",
+                                "Incoming Message", MessageBoxButtons.OK);
+                        datagrid_miPartida.Rows.Clear();
+                        host = null;
+                        in_gameLobby = false;
+                    }
+                    break;
+                case 27:
+                    break;
+            }
             if (Convert.ToInt32(mensaje[0]) == 20) {
-                if (Convert.ToInt32(mensaje[1]) == 0) {
-                    datagrid_miPartida.Rows.Add("Host", username);
-                    datagrid_miPartida.ClearSelection();
-                    hosting_gameLobby = true;
-                }
-                else
-                    MessageBox.Show("Error al crear la partida, vuelva a intentarlo.");
+                
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 21)
             {
-                dataGrid_listaInvitar.Rows.Clear();
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 22)
             {
-                string host = mensaje[1];
-                DialogResult result = MessageBox.Show("El usuario " + host + " te ha invitado a una partida",
-                        "Incoming Message", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
-                {
-                    string mensaje2 = "23/" + host + "/" + username + "/Yes";
-                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
-                    server.Send(msg);
-                }
-                else
-                {
-                    string mensaje2 = "23/" + host + "/" + username + "/No";
-                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
-                    server.Send(msg);
-                }
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 23)
             {
-                if (mensaje.Length == 3)
-                {
-                    string invitado = mensaje[1];
-                    string decision = mensaje[2];
-                    if (decision == "Yes")
-                    {
-                        listaMiPartida(invitado, true);
-                        DialogResult result = MessageBox.Show(username + ", El usuario " + invitado + " se ha unido a la partida",
-                            "Incoming Message", MessageBoxButtons.OK);
-                        
-                    }
-                    else if (username == datagrid_miPartida.Rows[0].Cells[1].Value.ToString())
-                    {
-                        DialogResult result = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
-                            "Incoming Message", MessageBoxButtons.OK);
-                    }
-                }
-                else if (mensaje[1] != "0")
-                {
-                    listaMiPartida(mensaje[1]);
-                    host = mensaje[1].Split('.')[0];
-                }
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 24)
             {
-                string expulsado = mensaje[1];
-                listaMiPartida(expulsado, false);
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 25)
             {
-                string host = mensaje[1];
-                DialogResult result = MessageBox.Show("El usuario " + host + " te ha expulsado de la partida",
-                        "Incoming Message", MessageBoxButtons.OK);
-                datagrid_miPartida.Rows.Clear();
             }
 
             else if (Convert.ToInt32(mensaje[0]) == 27)
@@ -364,6 +409,35 @@ namespace ClienteC__Juego
             dataGrid_listaInvitar.ClearSelection();
         }
 
+        private void dataGrid_listaUsuarios_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            //pbox_Invite.Location = new Point(100, 100);
+            //pbox_Invite.Size = new Size(20, 20);
+            //pbox_Invite.BackgroundImage = Properties.Resources.Icono_Invitar;
+            //pbox_Invite.BackgroundImageLayout = ImageLayout.Zoom;
+            //this.Controls.Add(pbox_Invite);
+        }
+
+        private void datagrid_miPartida_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 1)
+            {
+                datagrid_miPartida.ClearSelection();
+                btt_eliminarInvitado.Visible = true;
+                invitadoEliminado = datagrid_miPartida.Rows[e.RowIndex].Cells[1].Value.ToString();
+            }
+            else
+                btt_eliminarInvitado.Visible = false;
+        }
+
+        private void dataGrid_listaUsuarios_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            //this.Controls.Remove(pbox_Invite);
+        }
+
+        // -------------------- Chat & Conn related interactions ---------------------
+        // ---------------------------------------------------------------------------
+
         private void pBox_mostrarConn_Click(object sender, EventArgs e)
         {
             PictureBox arrowConn = (PictureBox)sender;
@@ -391,42 +465,50 @@ namespace ClienteC__Juego
             arrowConn.BackColor = Color.Transparent;
         }
 
-        private void textBox_write_KeyDown(object sender, KeyEventArgs e)
+        private void pBox_sendText_Click(object sender, EventArgs e)
         {
-            if ((e.KeyCode == Keys.Enter) && (textBox_write.Text != ""))
+            if (textBox_write.Text != "")
             {
+                Console.WriteLine(textBox_write.Text);
                 string men = textBox_write.Text;
                 string mensaje = "27/" + host + "/" + username + "/" + men;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-                textBox_write.Text = "";
             }
+            textBox_write.Text = "";
         }
 
-        private void dataGrid_listaUsuarios_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        private void pBox_sendText_MouseEnter(object sender, EventArgs e)
         {
-            //pbox_Invite.Location = new Point(100, 100);
-            //pbox_Invite.Size = new Size(20, 20);
-            //pbox_Invite.BackgroundImage = Properties.Resources.Icono_Invitar;
-            //pbox_Invite.BackgroundImageLayout = ImageLayout.Zoom;
-            //this.Controls.Add(pbox_Invite);
+            PictureBox arrowConn = (PictureBox)sender;
+            arrowConn.BackColor = Color.FromArgb(20, Color.Green);
         }
 
-        private void datagrid_miPartida_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void pBox_sendText_MouseLeave(object sender, EventArgs e)
         {
-            if (e.RowIndex >= 1)
+            PictureBox arrowConn = (PictureBox)sender;
+            arrowConn.BackColor = Color.Transparent;
+        }
+
+        private void textBox_write_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
             {
-                datagrid_miPartida.ClearSelection();
-                btt_eliminarInvitado.Visible = true;
-                invitadoEliminado = datagrid_miPartida.Rows[e.RowIndex].Cells[1].Value.ToString();
+                if (textBox_write.Text != "")
+                {
+                    e.SuppressKeyPress = true;
+                    string men = textBox_write.Text;
+                    string mensaje = "27/" + host + "/" + username + "/" + men;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                    textBox_write.Clear();
+                }
+                else
+                {
+                    e.SuppressKeyPress = true;
+                    textBox_write.Clear();
+                }
             }
-            else
-                btt_eliminarInvitado.Visible = false;
-        }
-
-        private void dataGrid_listaUsuarios_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
-        {
-            //this.Controls.Remove(pbox_Invite);
         }
     }
 }

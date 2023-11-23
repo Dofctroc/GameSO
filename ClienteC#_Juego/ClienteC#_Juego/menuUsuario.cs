@@ -106,7 +106,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9077;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9079;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -264,6 +264,9 @@ namespace ClienteC__Juego
                         menuPartida.onResponse(mensaje);
                         break;
                     case 25:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 26:
                         menuPartida.onResponse(mensaje);
                         break;
                     case 27:
