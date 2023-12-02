@@ -31,12 +31,11 @@ Shiva ports: 75-79
 |--------------------------- Codigos mensaje que envia Server: -------------------------------|
 |_____________________________________________________________________________________________|
 
-1 - SignUp correcto
-2 - SignUp error
+1 - SignUp correcto			1/0
+1 - SignUp error			1/1
 
-3 - LogIn correcto
-4 - LogIn error contra
-5 - LogIn error usuario
+2 - LogIn correcto			2/0
+2 - LogIn error 			2/TextoDeError
 
 10 - ConsultaConectados
 11 - Consulta1
@@ -48,7 +47,8 @@ Shiva ports: 75-79
 22 - Invitacion a partida		22/Host				(SentTo: Invited player)
 23 - Respuesta a aceptar invitacion	23/Host/JugX/Yes-No 		(SentTo: Host + players in game lobby)
 					23/Host.Jug1.Jug2.Jug3...	(SentTo: Invited player if accepts)
-24 - Respuesta a la expulsion		24/Host/JugX	 		(SentTo: Host + players in game lobby + fired player)
+24 - Respuesta a la expulsion		24/Host/JugX	 		(SentTo: Host + players in game lobby)
+					24/Host				(SentTO: Fired player)
 25 - Mensaje jugador abandona partida	25/Host/JugX			(SentTo: All players in game lobby, not who abandons)
 26 - Host ha eliminado la partida	26/Host				(SentTo: Players in game lobby, not host)
 27 - Reenvia mensaje jugador chat	27/Host/JugX/Mensaje		(SentTo: All players in game lobby)

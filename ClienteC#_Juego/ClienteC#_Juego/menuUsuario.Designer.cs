@@ -115,7 +115,7 @@
             // consoletextbox
             // 
             this.consoletextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.consoletextbox.Location = new System.Drawing.Point(687, 32);
+            this.consoletextbox.Location = new System.Drawing.Point(672, 32);
             this.consoletextbox.Margin = new System.Windows.Forms.Padding(4);
             this.consoletextbox.Multiline = true;
             this.consoletextbox.Name = "consoletextbox";
@@ -143,7 +143,7 @@
             // lbl_controlPanel
             // 
             this.lbl_controlPanel.AutoSize = true;
-            this.lbl_controlPanel.Location = new System.Drawing.Point(684, 12);
+            this.lbl_controlPanel.Location = new System.Drawing.Point(669, 12);
             this.lbl_controlPanel.Name = "lbl_controlPanel";
             this.lbl_controlPanel.Size = new System.Drawing.Size(87, 16);
             this.lbl_controlPanel.TabIndex = 21;

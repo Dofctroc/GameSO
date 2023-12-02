@@ -106,7 +106,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9079;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -160,26 +160,21 @@ namespace ClienteC__Juego
             int codigo = Convert.ToInt32(mensaje[0]);
             switch (codigo)
             {
-                case 1:     // Sign up correct
-                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                case 1:     // Sign up
+                    if (mensaje[1] == "0")
+                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    else
+                        consoletextbox.AppendText(String.Format("Entry {0}: El nombre de usuario ya existe, pruebe otro nombre.", entry) + Environment.NewLine);
                     serverShutdown();
                     break;
 
-                case 2:     // Sign up incorrecto
-                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
-                    serverShutdown();
-                    break;
-                case 3:     // Log in correcto
-                    consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                    break;
-                case 4:     // Log in incorrecto
-                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
-                    serverShutdown();
-                    break;
-
-                case 5:     // Log in incorrecto
-                    consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
-                    serverShutdown();
+                case 2:     // Log in
+                    if (mensaje[1] == "0")
+                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    else {
+                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                        serverShutdown();
+                    }
                     break;
                 case 10:
                     consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
@@ -212,28 +207,16 @@ namespace ClienteC__Juego
 
                 switch (codigo)
                 {
-                    case 1:     // Sign up correct
+                    case 1:     // Sign up
                         consoletextbox.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
                         break;
-
-                    case 2:     // Sign up incorrecto
+                    case 2:     // Log in
                         consoletextbox.Invoke(delegado, new object[] { mensaje });
-                        serverShutdown();
-                        break;
-
-                    case 3:     // Log in correcto
-                        consoletextbox.Invoke(delegado, new object[] { mensaje });
-                        this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
-                        break;
-                    case 4:     // Log in incorrecto
-                        consoletextbox.Invoke(delegado, new object[] { mensaje });
-                        serverShutdown();
-                        break;
-
-                    case 5:     // Log in incorrecto
-                        consoletextbox.Invoke(delegado, new object[] { mensaje });
-                        serverShutdown();
+                        if (mensaje[1] == "0")
+                            this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
+                        else
+                            serverShutdown();
                         break;
                     case 10:
                         menuPartida.listaConectados(mensaje[1]);

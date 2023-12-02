@@ -83,7 +83,7 @@ namespace ClienteC__Juego
             // Other properties
             pBox_mostrarConn.Size = new Size(20, 40);
             dgrid_listaUsuarios.Location = new Point(pBox_mostrarConn.Location.X + pBox_mostrarConn.Width + 4, pBox_mostrarConn.Location.Y);
-            dgrid_listaUsuarios.Size = new Size(160,460);
+            dgrid_listaUsuarios.Size = new Size(160,gBox_partida.Height);
             dgrid_listaUsuarios.Visible = false;
             lbl_write.BackColor = Color.FromArgb(150, Color.White);
 
@@ -103,6 +103,7 @@ namespace ClienteC__Juego
             {
 
             }
+            menuUsuario.serverShutdown();
         }
 
         private void CenterFormOnScreen()
@@ -125,7 +126,6 @@ namespace ClienteC__Juego
 
         private void button_LogOut_Click(object sender, EventArgs e)
         {
-            dgrid_listaInvitar.Rows.Clear();
             Close();
         }
 

@@ -245,10 +245,10 @@ int consultaSignUp(MYSQL* conn, char userName[], char password[], char mensajeSi
 				mysql_errno(conn), mysql_error(conn));
 			exit(1);
 		}
-		strcpy(mensajeSignUp, "1/Se ha creado su usuario correctamente.");
+		strcpy(mensajeSignUp, "1/0");
 	}
 	else {
-		strcpy(mensajeSignUp, "2/El usuario ya existe, elija otro username.");
+		strcpy(mensajeSignUp, "1/1");
 	}
 	// cerrar la conexion con el servidor MYSQL
 	return 0;
@@ -289,18 +289,17 @@ int consultaLogIn(MYSQL* conn, char userName[], char password[], char mensajeLog
 					mysql_errno(conn), mysql_error(conn));
 				exit(1);
 			}
-			strcpy(mensajeLogIn, "3/");
-			strcat(mensajeLogIn, "Se ha iniciado sesion correctamente.");
+			strcpy(mensajeLogIn, "2/0");
 			i = 0;
 		}
 		else {
-			strcpy(mensajeLogIn, "4/");
+			strcpy(mensajeLogIn, "2/");
 			strcat(mensajeLogIn, "La contrasenya que ha introducido es incorrecta.");
 			i = 1;
 		}
 	}
 	else {
-		strcpy(mensajeLogIn, "5/");
+		strcpy(mensajeLogIn, "2/");
 		strcat(mensajeLogIn, "El usuario no existe, cree un usuario.");
 		i = 2;
 	}
@@ -539,11 +538,17 @@ void AtenderCliente(void* socket)
 			strcpy(userName, p);
 			p = strtok(NULL, "/");
 			strcpy(password, p);
-			char mensajeLogIn[80];
-			int login = consultaLogIn(conn, userName, password, mensajeLogIn);
-			if (login == 0)
-				PonConectado(&lista_Conectados, userName, sock_conn);
-			strcpy(respuesta, mensajeLogIn);
+			
+			if (BuscarConectado(&lista_Conectados,userName) != -1) {
+				strcpy(respuesta, "2/Este usuario ya esta conectado");
+			}
+			else{
+				char mensajeLogIn[80];
+				int login = consultaLogIn(conn, userName, password, mensajeLogIn);
+				if (login == 0)
+					PonConectado(&lista_Conectados, userName, sock_conn);
+				strcpy(respuesta, mensajeLogIn);
+			}
 		}
 		else if (codigo == 10)
 		{
@@ -681,7 +686,7 @@ void AtenderCliente(void* socket)
 			}
 			
 			socketInvitado = BuscarSocket(&lista_Conectados,invitado);
-			sprintf(expulsion, "25/%s", host);
+			sprintf(expulsion, "24/%s", host);
 			write(socketInvitado, actualizacion, strlen(actualizacion));
 			
 			strcpy(respuesta, actualizacion);
@@ -749,7 +754,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9077; 		//Linux
+	int puerto = 9075; 		//Linux
 
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
