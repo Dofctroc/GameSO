@@ -28,10 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgrid_listaInvitar = new System.Windows.Forms.DataGridView();
             this.button_partidanueva = new System.Windows.Forms.Button();
             this.button_LogOut = new System.Windows.Forms.Button();
-            this.lbl_miPartida = new System.Windows.Forms.Label();
             this.dgrid_miPartida = new System.Windows.Forms.DataGridView();
             this.button_Jugar = new System.Windows.Forms.Button();
             this.button_Invitar = new System.Windows.Forms.Button();
@@ -58,10 +63,21 @@
             this.dgrid_listaInvitar.AllowUserToDeleteRows = false;
             this.dgrid_listaInvitar.AllowUserToResizeColumns = false;
             this.dgrid_listaInvitar.AllowUserToResizeRows = false;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgrid_listaInvitar.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             this.dgrid_listaInvitar.ColumnHeadersHeight = 25;
             this.dgrid_listaInvitar.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgrid_listaInvitar.DefaultCellStyle = dataGridViewCellStyle8;
             this.dgrid_listaInvitar.Location = new System.Drawing.Point(793, 273);
-            this.dgrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_listaInvitar.Name = "dgrid_listaInvitar";
             this.dgrid_listaInvitar.ReadOnly = true;
             this.dgrid_listaInvitar.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
@@ -100,33 +116,36 @@
             this.button_LogOut.UseVisualStyleBackColor = false;
             this.button_LogOut.Click += new System.EventHandler(this.button_LogOut_Click);
             // 
-            // lbl_miPartida
-            // 
-            this.lbl_miPartida.AutoSize = true;
-            this.lbl_miPartida.BackColor = System.Drawing.Color.White;
-            this.lbl_miPartida.Location = new System.Drawing.Point(5, 21);
-            this.lbl_miPartida.Name = "lbl_miPartida";
-            this.lbl_miPartida.Size = new System.Drawing.Size(69, 16);
-            this.lbl_miPartida.TabIndex = 25;
-            this.lbl_miPartida.Text = "Mi partida:";
-            // 
             // dgrid_miPartida
             // 
             this.dgrid_miPartida.AllowUserToAddRows = false;
             this.dgrid_miPartida.AllowUserToDeleteRows = false;
             this.dgrid_miPartida.AllowUserToResizeColumns = false;
             this.dgrid_miPartida.AllowUserToResizeRows = false;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgrid_miPartida.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle9;
             this.dgrid_miPartida.ColumnHeadersHeight = 25;
             this.dgrid_miPartida.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dgrid_miPartida.Location = new System.Drawing.Point(7, 41);
-            this.dgrid_miPartida.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.Color.Maroon;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgrid_miPartida.DefaultCellStyle = dataGridViewCellStyle10;
+            this.dgrid_miPartida.Location = new System.Drawing.Point(7, 22);
+            this.dgrid_miPartida.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_miPartida.Name = "dgrid_miPartida";
             this.dgrid_miPartida.ReadOnly = true;
             this.dgrid_miPartida.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrid_miPartida.RowHeadersVisible = false;
             this.dgrid_miPartida.RowHeadersWidth = 50;
+            this.dgrid_miPartida.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgrid_miPartida.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
             this.dgrid_miPartida.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dgrid_miPartida.Size = new System.Drawing.Size(307, 199);
+            this.dgrid_miPartida.Size = new System.Drawing.Size(307, 218);
             this.dgrid_miPartida.TabIndex = 24;
             this.dgrid_miPartida.Visible = false;
             this.dgrid_miPartida.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgrid_miPartida_CellClick);
@@ -165,16 +184,22 @@
             this.dgrid_listaUsuarios.AllowUserToDeleteRows = false;
             this.dgrid_listaUsuarios.AllowUserToResizeColumns = false;
             this.dgrid_listaUsuarios.AllowUserToResizeRows = false;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.dgrid_listaUsuarios.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle11;
             this.dgrid_listaUsuarios.ColumnHeadersHeight = 25;
             this.dgrid_listaUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgrid_listaUsuarios.GridColor = System.Drawing.SystemColors.ActiveBorder;
             this.dgrid_listaUsuarios.Location = new System.Drawing.Point(901, 10);
-            this.dgrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_listaUsuarios.Name = "dgrid_listaUsuarios";
             this.dgrid_listaUsuarios.ReadOnly = true;
             this.dgrid_listaUsuarios.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrid_listaUsuarios.RowHeadersVisible = false;
             this.dgrid_listaUsuarios.RowHeadersWidth = 50;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.dgrid_listaUsuarios.RowsDefaultCellStyle = dataGridViewCellStyle12;
             this.dgrid_listaUsuarios.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgrid_listaUsuarios.Size = new System.Drawing.Size(200, 460);
             this.dgrid_listaUsuarios.TabIndex = 30;
@@ -187,6 +212,7 @@
             this.btt_eliminarInvitado.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.btt_eliminarInvitado.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btt_eliminarInvitado.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
+            this.btt_eliminarInvitado.ForeColor = System.Drawing.SystemColors.InfoText;
             this.btt_eliminarInvitado.Location = new System.Drawing.Point(214, 209);
             this.btt_eliminarInvitado.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btt_eliminarInvitado.Name = "btt_eliminarInvitado";
@@ -210,8 +236,9 @@
             // 
             this.textBox_write.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox_write.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox_write.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_write.Location = new System.Drawing.Point(63, 428);
-            this.textBox_write.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox_write.Margin = new System.Windows.Forms.Padding(4);
             this.textBox_write.Multiline = true;
             this.textBox_write.Name = "textBox_write";
             this.textBox_write.Size = new System.Drawing.Size(225, 25);
@@ -223,7 +250,7 @@
             this.tbox_read.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbox_read.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbox_read.Location = new System.Drawing.Point(7, 248);
-            this.tbox_read.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbox_read.Margin = new System.Windows.Forms.Padding(4);
             this.tbox_read.Name = "tbox_read";
             this.tbox_read.ReadOnly = true;
             this.tbox_read.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -249,6 +276,7 @@
             // 
             this.lbl_write.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_write.BackColor = System.Drawing.SystemColors.Control;
+            this.lbl_write.ForeColor = System.Drawing.SystemColors.InfoText;
             this.lbl_write.Location = new System.Drawing.Point(6, 428);
             this.lbl_write.Name = "lbl_write";
             this.lbl_write.Size = new System.Drawing.Size(50, 25);
@@ -280,7 +308,8 @@
             this.gBox_partida.Controls.Add(this.btt_eliminarInvitado);
             this.gBox_partida.Controls.Add(this.lbl_write);
             this.gBox_partida.Controls.Add(this.dgrid_miPartida);
-            this.gBox_partida.Controls.Add(this.lbl_miPartida);
+            this.gBox_partida.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gBox_partida.ForeColor = System.Drawing.Color.Maroon;
             this.gBox_partida.Location = new System.Drawing.Point(324, 10);
             this.gBox_partida.Name = "gBox_partida";
             this.gBox_partida.Size = new System.Drawing.Size(320, 460);
@@ -327,7 +356,6 @@
         private System.Windows.Forms.DataGridView dgrid_listaInvitar;
         private System.Windows.Forms.Button button_partidanueva;
         private System.Windows.Forms.Button button_LogOut;
-        private System.Windows.Forms.Label lbl_miPartida;
         private System.Windows.Forms.DataGridView dgrid_miPartida;
         private System.Windows.Forms.Button button_Jugar;
         private System.Windows.Forms.Button button_Invitar;

@@ -49,11 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BoardDistribution.cs" />
     <Compile Include="consultas.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="consultas.Designer.cs">
       <DependentUpon>consultas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="tableroPartida.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tableroPartida.Designer.cs">
+      <DependentUpon>tableroPartida.cs</DependentUpon>
     </Compile>
     <Compile Include="menuUsuario.cs">
       <SubType>Form</SubType>
@@ -67,10 +74,14 @@
     <Compile Include="menuPartida.Designer.cs">
       <DependentUpon>menuPartida.cs</DependentUpon>
     </Compile>
+    <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="consultas.resx">
       <DependentUpon>consultas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="tableroPartida.resx">
+      <DependentUpon>tableroPartida.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="menuUsuario.resx">
       <DependentUpon>menuUsuario.cs</DependentUpon>
@@ -118,6 +129,45 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Icono_Invitar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fondoCluedoPixeled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Board.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CluedoBoard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\playerTile1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\playerTile2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\DiceEmpty.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

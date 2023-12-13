@@ -631,7 +631,7 @@ void AtenderCliente(void* socket)
 				strcpy(invitado, p);
 				p = strtok(NULL, "/");
 				strcpy(decision, p);
-				sprintf(actualizacion, "23/%s/%s", invitado, decision);
+				sprintf(actualizacion, "23/%s/%s/%s", host, invitado, decision);
 				
 				if (strcmp(decision,"Yes") == 0)
 					PonJugadorPartida(&lista_Conectados, &lista_Partidas, invitado, host);

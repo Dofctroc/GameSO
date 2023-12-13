@@ -82,10 +82,12 @@ namespace ClienteC__Juego
 
             // Other properties
             pBox_mostrarConn.Size = new Size(20, 40);
+            lbl_write.BackColor = Color.FromArgb(150, Color.White);
+            gBox_partida.BackColor = Color.FromArgb(100, Color.White);
+
             dgrid_listaUsuarios.Location = new Point(pBox_mostrarConn.Location.X + pBox_mostrarConn.Width + 4, pBox_mostrarConn.Location.Y);
             dgrid_listaUsuarios.Size = new Size(160,gBox_partida.Height);
             dgrid_listaUsuarios.Visible = false;
-            lbl_write.BackColor = Color.FromArgb(150, Color.White);
 
             CenterFormOnScreen();
         }
@@ -168,6 +170,8 @@ namespace ClienteC__Juego
 
         private void button_Jugar_Click(object sender, EventArgs e)
         {
+            board tablero = new board();
+            tablero.Show();
         }
 
         private void btt_eliminarInvitado_Click(object sender, EventArgs e)
@@ -205,7 +209,6 @@ namespace ClienteC__Juego
                     break;
                 case 22:
                     hostmensaje = mensaje[1];
-                    invitado = mensaje[2];
                     DialogResult result = MessageBox.Show("El usuario " + hostmensaje + " te ha invitado a una partida",
                             "Incoming Message", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
@@ -213,9 +216,6 @@ namespace ClienteC__Juego
                         string mensaje2 = "23/" + hostmensaje + "/" + username + "/Yes";
                         byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
                         server.Send(msg);
-                        tbox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
-                        tbox_read.SelectionColor = Color.Crimson;
-                        tbox_read.AppendText("El usuario " + invitado + "se ha unido a la partida");
                     }
                     else
                     {
@@ -234,9 +234,12 @@ namespace ClienteC__Juego
                             listaMiPartida(invitado, true);
                             DialogResult showInvite = MessageBox.Show(username + ", El usuario " + invitado + " se ha unido a la partida",
                                 "Incoming Message", MessageBoxButtons.OK);
-
+                            tbox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
+                            tbox_read.SelectionColor = Color.Crimson;
+                            tbox_read.AppendText("El usuario " + invitado + " se ha unido a la partida");
+                            tbox_read.AppendText(Environment.NewLine);
                         }
-                        else if (username == dgrid_miPartida.Rows[0].Cells[1].Value.ToString())
+                        else
                         {
                             DialogResult showInvite = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
                                 "Incoming Message", MessageBoxButtons.OK);
@@ -247,6 +250,10 @@ namespace ClienteC__Juego
                         Console.WriteLine(mensaje[1] + " es el host");
                         listaMiPartida(mensaje[1]);
                         host = mensaje[1].Split('.')[0];
+                        tbox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
+                        tbox_read.SelectionColor = Color.Crimson;
+                        tbox_read.AppendText("Te has unido a la partida");
+                        tbox_read.AppendText(Environment.NewLine);
                     }
                     break;
                 case 24:    // El host de la partida te ha expulsado
@@ -289,41 +296,14 @@ namespace ClienteC__Juego
                     }
                     break;
                 case 27:
+                    tbox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
+                    tbox_read.SelectionColor = Color.DarkBlue;
+                    tbox_read.AppendText(mensaje[2] + ": ");
+                    tbox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
+                    tbox_read.SelectionColor = Color.Black;
+                    tbox_read.AppendText(mensaje[3]);
+                    tbox_read.AppendText(Environment.NewLine);
                     break;
-            }
-            if (Convert.ToInt32(mensaje[0]) == 20) {
-                
-            }
-
-            else if (Convert.ToInt32(mensaje[0]) == 21)
-            {
-            }
-
-            else if (Convert.ToInt32(mensaje[0]) == 22)
-            {
-            }
-
-            else if (Convert.ToInt32(mensaje[0]) == 23)
-            {
-            }
-
-            else if (Convert.ToInt32(mensaje[0]) == 24)
-            {
-            }
-
-            else if (Convert.ToInt32(mensaje[0]) == 25)
-            {
-            }
-
-            else if (Convert.ToInt32(mensaje[0]) == 27)
-            {
-                tbox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
-                tbox_read.SelectionColor = Color.DarkBlue;
-                tbox_read.AppendText(mensaje[2] + ": ");
-                tbox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
-                tbox_read.SelectionColor = Color.Black;
-                tbox_read.AppendText(mensaje[3]);
-                tbox_read.AppendText(Environment.NewLine);
             }
         }
 

@@ -41,6 +41,7 @@
             this.opcionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consultasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlPanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableroToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -167,6 +168,7 @@
             // 
             this.opcionesToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.opcionesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tableroToolStripMenuItem,
             this.consultasToolStripMenuItem,
             this.controlPanelToolStripMenuItem});
             this.opcionesToolStripMenuItem.Name = "opcionesToolStripMenuItem";
@@ -176,22 +178,29 @@
             // consultasToolStripMenuItem
             // 
             this.consultasToolStripMenuItem.Name = "consultasToolStripMenuItem";
-            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
+            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(257, 26);
             this.consultasToolStripMenuItem.Text = "Consultas";
             this.consultasToolStripMenuItem.Click += new System.EventHandler(this.consultasToolStripMenuItem_Click);
             // 
             // controlPanelToolStripMenuItem
             // 
             this.controlPanelToolStripMenuItem.Name = "controlPanelToolStripMenuItem";
-            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
+            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(257, 26);
             this.controlPanelToolStripMenuItem.Text = "Control Panel";
             this.controlPanelToolStripMenuItem.Click += new System.EventHandler(this.controlPanelToolStripMenuItem_Click);
+            // 
+            // tableroToolStripMenuItem
+            // 
+            this.tableroToolStripMenuItem.Name = "tableroToolStripMenuItem";
+            this.tableroToolStripMenuItem.Size = new System.Drawing.Size(257, 26);
+            this.tableroToolStripMenuItem.Text = "Tablero (EXPERIMENTAL)";
+            this.tableroToolStripMenuItem.Click += new System.EventHandler(this.tableroToolStripMenuItem_Click);
             // 
             // menuUsuario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::ClienteC__Juego.Properties.Resources.fondoCluedo;
+            this.BackgroundImage = global::ClienteC__Juego.Properties.Resources.fondoCluedoPixeled;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(982, 573);
             this.Controls.Add(this.lbl_controlPanel);
@@ -231,5 +240,6 @@
         private System.Windows.Forms.ToolStripMenuItem opcionesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem consultasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem controlPanelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tableroToolStripMenuItem;
     }
 }

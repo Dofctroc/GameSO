@@ -80,6 +80,14 @@ namespace ClienteC__Juego
             }
         }
 
+        private void button_LogOut_Click(object sender, EventArgs e)
+        {
+            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
+            entry++;
+            serverShutdown();
+            Close();
+        }
+
         private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (conectado_conServer)
@@ -89,12 +97,16 @@ namespace ClienteC__Juego
             }
         }
 
-        private void button_LogOut_Click(object sender, EventArgs e)
+        private void controlPanelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
-            entry++;
-            serverShutdown();
-            Close();
+            lbl_controlPanel.Visible = !lbl_controlPanel.Visible;
+            consoletextbox.Visible = !consoletextbox.Visible;
+        }
+
+        private void tableroToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            board tablero = new board();
+            tablero.Show();
         }
 
         // -------------------- Funciones del formulario --------------------
@@ -257,12 +269,6 @@ namespace ClienteC__Juego
                         break;
                 }
             }
-        }
-
-        private void controlPanelToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            lbl_controlPanel.Visible = !lbl_controlPanel.Visible;
-            consoletextbox.Visible = !consoletextbox.Visible;
         }
 
         private void CenterFormOnScreen()
