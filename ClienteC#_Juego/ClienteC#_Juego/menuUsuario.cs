@@ -57,27 +57,33 @@ namespace ClienteC__Juego
         {
             username = textbox_username.Text;
             password = textbox_password.Text;
-            int err = serverConnect();
-
-            if (err == 0)
+            if (username != "" &&  password != "")
             {
-                string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
+                int err = serverConnect();
+
+                if (err == 0)
+                {
+                    string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                }
             }
         }
 
         private void button_signUp_Click(object sender, EventArgs e)
         {
             username = textbox_username.Text;
+            password = textbox_password.Text;
             int err = serverConnect();
-
-            if (err == 0)
+            if (username != "" && password != "")
             {
-                string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
+                if (err == 0)
+                {
+                    string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                }
+            }  
         }
 
         private void button_LogOut_Click(object sender, EventArgs e)
@@ -213,7 +219,9 @@ namespace ClienteC__Juego
                 //Recibimos el mensaje del servidor
                 byte[] msg2 = new byte[80];
                 server.Receive(msg2);
-                string[] mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0].Split('/');
+                string msje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
+                Console.WriteLine(msje);
+                string[] mensaje = msje.Split('/');
                 int codigo = Convert.ToInt32(mensaje[0]);
                 Delegado delegado = new Delegado(textoconsola);
 

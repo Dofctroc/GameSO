@@ -42,39 +42,28 @@ Shiva ports: 75-79
 12 - Consulta2
 13 - Consulta3
 
-20 - Respuesta a creacion de partida	20/0 -> Good 	20/-1 -> Error	(SentTo: Host)
-21 - Respuesta a invitacion a partida	21/0 -> Good	21/-1 -> Error	(SentTo: Host)
+20 - Respuesta a creacion de partida	20/Host/0 -> Good 	20/-1 -> Error	(SentTo: Host)
+21 - Respuesta a invitacion a partida	21/Host/0 -> Good	21/-1 -> Error	(SentTo: Host)
 22 - Invitacion a partida		22/Host				(SentTo: Invited player)
 23 - Respuesta a aceptar invitacion	23/Host/JugX/Yes-No 		(SentTo: Host + players in game lobby)
-					23/Host.Jug1.Jug2.Jug3...	(SentTo: Invited player if accepts)
-					23/0				(SentTo: Host if player does not accept)
-24 - Respuesta a la expulsion		24/Host/JugX	 		(SentTo: Host + players in game lobby)
-					24/Host				(SentTO: Fired player)
+					23/Host/Host.Jug1.Jug2.Jug3...	(SentTo: Invited player if accepts)
+24 - Respuesta a la expulsion		24/Host/JugX	 		(SentTo: Host + players in game lobby + kicked player)
 25 - Mensaje jugador abandona partida	25/Host/JugX			(SentTo: All players in game lobby, not who abandons)
 26 - Host ha eliminado la partida	26/Host				(SentTo: Players in game lobby, not host)
 27 - Reenvia mensaje jugador chat	27/Host/JugX/Mensaje		(SentTo: All players in game lobby)
- _____________________________________________________________________________________________
-|											      |
-|---------------------------------- Control de errores: --------------------------------------|
-|_____________________________________________________________________________________________|
+28 - Avisar a tots els invitats que ja no poden entrar a partida
 
-1) MenuUsuario:
-- Try-Catch para desconexion/error del server
 
-2) MenuPartida:
-- No puedes invitar a alguien que ya has invitado
-- No puedes invitar si ya esta en la partida
-- Si te desconectas, se cierra la partida y se expulsa a todos
-- El host pot eliminar a qui vulgui de la partida
-- Un invitat por sortir de la partida si vol
-- No pots invitar si no has creat una partida
+One player MUST only be able to host ONE game
 
-- Añadir variables que guarden jugadores y host de partida
-- Añadir variable que sepa jugadores pendientes de invitacio
+Now ALL server responses of game lobby MUST have the following structure:
+	CODIGO / HOST / etc...
 
-3) Server:
-- !! Permitir que un jugador se de de baja !!
-- Incorporar uso de Actualizar status y simplificacion de codigo en funciones de introduccion a partida y otras
-- La partida creada debe aparecer al resto de usuarios que no la juegan
-- No heu arreglat la gestio del buffer de sockets que es pot arribar a desbordar
-- Primera consulta no correcta
+
+Check/Delete bool variables is hosting and ingame
+
+bool_HostingGame
+bool_InGame
+partida1 = [host,jug1,jug2,jug3]
+partida2 = []
+

@@ -1,0 +1,46 @@
+ _____________________________________________________________________________________________
+|											      |
+|---------------------------------- Control de errores: --------------------------------------|
+|_____________________________________________________________________________________________|
+
+
+	----------FUNCIONALIDADES----------
+SIGN DOWN - The user must be able to remove all his data from the database and delete user	|JULIA|
+-/ MULTIPLE GAMES - Player must join/create multiple games
+LEAVE A GAME - Player must willingly leave a joined game			|GU|
+-/ DELETE GAME - Host of a game must be able to delete game
+~/ KICK PLAYER - Host of a game must be able to kick any player anytime
+SOCKET BUFFER GESTION - When a player disconnects, frees the socket to reuse	|ASIER|
+FIND CONSULTA ERROR!!								|ASIER|
+CODE 28 - Host tells all invited players that no more can join			|GU|
+CONSULTA RANKING PARTIDAS							|JULIA|
+
+NORMES JOC		|JULIA|
+VISUAL DESIGN		|ASIER|
+MOVIMENT PER TURNOS	
+CARTES (RANDOMIZAR, REPARTIR, ESCOLLIR TRES DEL DELITO, etc)		
+LOGICA DE DONAR LA SOLUCIO FNAL (GUANYAR O PERDRE)			
+CONTROL ERRORES JOC							
+	ALGU ABANDONA, HOST ABANDONA, S'ACABA LA PARTIDA...		
+
+	----------EXTRA FUNCIONALIDADES----------
+-/ EXTRA CHAT MESSAGES
+-/ GAME & PLAYERS VARIABLES THAT SAVE JOINED GAME DATA IN ~menuPartida~ 
+-/ PENDING INVITED PLAYERS IN GAME LOBBY VARIABLES
+// INVITATION shows up as a time-limitted button to accept, if not, denies invitation
+//	opt1) IF INVITED LOBBY is now full while you do not accept -> you cant accept
+//	opt2) AS HOST there cant be more than 6 (pending invitations + player in lobby)
+
+	----------CONTROL DE ERRORES----------
+When SERVER fails -> control error in client *(Difficult to implement -> optional)
+Only invite other players if hosting a game
+-/ Only invite players not already in the game
+Cannot invite a player if already in two games					|ASIER|
+Increase max length of some C variables
+
+data grid falla
+
+
+
+Delete the "host" variable in menuPartida as variable usage has changed
+Notification of new incoming message or event in other game

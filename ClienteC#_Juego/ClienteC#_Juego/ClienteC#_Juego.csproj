@@ -169,5 +169,8 @@
   <ItemGroup>
     <None Include="Resources\Dice\DiceEmpty.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icono_Notificacion.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

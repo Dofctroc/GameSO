@@ -233,6 +233,16 @@ namespace ClienteC__Juego.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Icono_Notificacion {
+            get {
+                object obj = ResourceManager.GetObject("Icono_Notificacion", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap playerTile1 {
             get {
                 object obj = ResourceManager.GetObject("playerTile1", resourceCulture);
