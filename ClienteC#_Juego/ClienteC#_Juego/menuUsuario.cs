@@ -11,11 +11,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
+using System.Xml.Linq;
 
 namespace ClienteC__Juego
 {
     public partial class menuUsuario : Form
     {
+        public static string txtGrid = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataGrid.txt";
+        public static string txtGrid2 = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataGrid2.txt";
+        public static string txtBox = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataBox.txt";
+
         bool conectado_conServer = false;
         Socket server;
         Thread atender;
@@ -25,6 +31,7 @@ namespace ClienteC__Juego
         string username;
         string password;
         delegate void Delegado(string[] mensaje);
+        string msge;
 
         public menuUsuario()
         {
@@ -34,15 +41,25 @@ namespace ClienteC__Juego
 
         private void menuUsuario_Load(object sender, EventArgs e)
         {
+            File.WriteAllLines(txtGrid, new string[0]);
+            File.WriteAllLines(txtGrid2, new string[0]);
+            File.WriteAllLines(txtBox, new string[0]);
+
             textbox_password.Text = password;
             textbox_username.Text = username;
 
             lbl_controlPanel.Visible = false;
-            consoletextbox.Visible = false;
+            richBox_Control.Visible = false;
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Size = new Size(1000, 620);
+
+            richBox_Control.Size = new Size(200, this.Height - 60);
+
+            richBox_Control.Location = new Point(this.Width - richBox_Control.Width - 20, 20);
+            lbl_controlPanel.Location = new Point(richBox_Control.Left, richBox_Control.Top - lbl_controlPanel.Height);
+
             CenterFormOnScreen();
         }
 
@@ -88,8 +105,9 @@ namespace ClienteC__Juego
 
         private void button_LogOut_Click(object sender, EventArgs e)
         {
-            consoletextbox.AppendText(String.Format("Entry {0}: ~{1}~ Ha cerrado sesion.", entry, username) + Environment.NewLine);
-            entry++;
+            msge = String.Format("~{0}~ Ha cerrado sesión.", username);
+            WriteConsole(entry, msge);
+
             serverShutdown();
             Close();
         }
@@ -106,13 +124,19 @@ namespace ClienteC__Juego
         private void controlPanelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lbl_controlPanel.Visible = !lbl_controlPanel.Visible;
-            consoletextbox.Visible = !consoletextbox.Visible;
+            richBox_Control.Visible = !richBox_Control.Visible;
         }
 
         private void tableroToolStripMenuItem_Click(object sender, EventArgs e)
         {
             board tablero = new board();
             tablero.Show();
+        }
+
+        private void notePadEXPERIMENTALToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InGameNotes notePad = new InGameNotes();
+            notePad.Show();
         }
 
         // -------------------- Funciones del formulario --------------------
@@ -134,14 +158,14 @@ namespace ClienteC__Juego
             try
             {
                 server.Connect(ipep); //Intentamos conectar el socket
-                consoletextbox.AppendText(String.Format("Entry {0}: Te has conectado con el servidor con exito.", entry) + Environment.NewLine);
-                entry++;
+                msge = "Te has conectado con el servidor con éxito.";
+                WriteConsole(entry, msge);
             }
             catch (SocketException ex)
             {
-                //Si hay excepcion imprimimos error y salimos del programa con return 
-                consoletextbox.AppendText(String.Format("Entry {0}: No se ha podido conectar con el servidor.", entry) + Environment.NewLine);
-                entry++;
+                //Si hay excepcion imprimimos error y salimos del programa con return
+                msge = String.Format("No se ha podido conectar con el servidor. Error: {0}", ex.Message);
+                WriteConsole(entry, msge);
                 return 1;
             }
             conectado_conServer = true;
@@ -180,25 +204,36 @@ namespace ClienteC__Juego
             {
                 case 1:     // Sign up
                     if (mensaje[1] == "0")
-                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario ~{1}~ se ha creado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
+                    {
+                        msge = String.Format("El usuario ~{0}~ se ha creado correctamente.", textbox_username.Text);
+                        WriteConsole(entry, msge);
+                    }
                     else
-                        consoletextbox.AppendText(String.Format("Entry {0}: El nombre de usuario ya existe, pruebe otro nombre.", entry) + Environment.NewLine);
+                    {
+                        msge = "El nombre de usuario ya existe, pruebe otro nombre.";
+                        WriteConsole(entry, msge);
+                    }
                     serverShutdown();
                     break;
 
                 case 2:     // Log in
                     if (mensaje[1] == "0")
-                        consoletextbox.AppendText(String.Format("Entry {0}: El usuario {1} se ha conectado correctamente.", entry, textbox_username.Text) + Environment.NewLine);
-                    else {
-                        consoletextbox.AppendText(String.Format("Entry {0}: {1}", entry, mensaje[1]) + Environment.NewLine);
+                    {
+                        msge = String.Format("El usuario {0} se ha conectado correctamente.", textbox_username.Text);
+                        WriteConsole(entry, msge);
+                    }
+                    else
+                    {
+                        msge = mensaje[1];
+                        WriteConsole(entry, msge);
                         serverShutdown();
                     }
                     break;
                 case 10:
-                    consoletextbox.AppendText(String.Format("Entry {0}: Visualiza la lista de usuarios.", entry) + Environment.NewLine);
+                    msge = "Visualiza la lista de usuarios.";
+                    WriteConsole(entry, msge);
                     break;
             }
-            entry++;
         }
 
         private void OpenNewForm()
@@ -207,6 +242,19 @@ namespace ClienteC__Juego
             menuPartida = new menuPartida(this, server, atender, username);
             menuPartida.Show();
             //this.Hide();
+        }
+
+        private void WriteConsole(int entryNum, string msg)
+        {
+            richBox_Control.SelectionFont = new Font("Arial", 10, FontStyle.Bold);
+            richBox_Control.SelectionColor = Color.Goldenrod;
+            richBox_Control.AppendText(String.Format("Entry {0}: ", entryNum));
+            richBox_Control.SelectionFont = new Font("Calibri", 11, FontStyle.Regular);
+            richBox_Control.SelectionColor = Color.White;
+            richBox_Control.AppendText(msg);
+            richBox_Control.AppendText(Environment.NewLine);
+
+            entry++;
         }
 
         // -------------------- Thread general del Programa --------------------
@@ -228,11 +276,11 @@ namespace ClienteC__Juego
                 switch (codigo)
                 {
                     case 1:     // Sign up
-                        consoletextbox.Invoke(delegado, new object[] { mensaje });
+                        richBox_Control.Invoke(delegado, new object[] { mensaje });
                         serverShutdown();
                         break;
                     case 2:     // Log in
-                        consoletextbox.Invoke(delegado, new object[] { mensaje });
+                        richBox_Control.Invoke(delegado, new object[] { mensaje });
                         if (mensaje[1] == "0")
                             this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
                         else
@@ -240,7 +288,7 @@ namespace ClienteC__Juego
                         break;
                     case 10:
                         menuPartida.listaConectados(mensaje[1]);
-                        consoletextbox.Invoke(delegado, new object[] { mensaje });
+                        richBox_Control.Invoke(delegado, new object[] { mensaje });
                         break;
                     case 11:
                         consultas.responseReceived(mensaje, codigo);

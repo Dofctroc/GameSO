@@ -118,19 +118,14 @@ int EliminarJugadorPartida(ListaPartidas* listaP, char nombre[], char host[])
 
 int EliminarPartida(ListaPartidas* listaP, char host[])
 {
-	pthread_mutex_lock(&mutex);
 	int partida = BuscarPartidaHost(listaP, host);
 	if (partida != -1)
 	{
-		for (int j = 0; j < listaP->num; j++)
-		{
-			if (strcmp(listaP->partidas[partida].jugadores[j].userName, host) == 0)
-				for (int k = j; k < listaP->num - 1; k++)
-					listaP->partidas[partida] = listaP->partidas[partida + 1];
-		}
-		listaP->partidas[partida].numJugadores--;
+		listaP->partidas[partida].numJugadores = 0;
+		for (int k = partida; k < listaP->num - 1; k++)
+			listaP->partidas[k] = listaP->partidas[k + 1];
+		listaP->num--;
 	}
-	pthread_mutex_unlock(&mutex);
 	return 0;
 }
 
@@ -397,7 +392,7 @@ void consultaConectados(ListaConectados* lista, char conectados[300]) {
 int JugadoresEnPartida(ListaPartidas* listaP, char sockets_receptores[], char host[], char infoJugadoresPartida[])
 {
 	strcpy(sockets_receptores, "");
-	strcpy(infoJugadoresPartida, "23/");
+	strcpy(infoJugadoresPartida, "");
 	
 	for (int i = 0; i < listaP->num; i++) {
 		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0) 
@@ -489,6 +484,9 @@ void AtenderCliente(void* socket)
 		char userName[20];
 		char password[20];
 		char sockets_receptores[20];
+		char infoJugadoresPartida[200];
+		char mensaje[200];
+		int socketUsuario;
 		
 		// Ahora recibimos la petici?n
 		ret = read(sock_conn, peticion, sizeof(peticion));
@@ -508,17 +506,17 @@ void AtenderCliente(void* socket)
 		{
 			p = strtok(NULL, "/");
 			strcpy(userName, p);
+			
 			if (BuscarConectado(&lista_Conectados,userName) != -1) {
 				EliminarConectado(&lista_Conectados, userName);
-			}
-			if (BuscarPartidaHost(&lista_Partidas,userName) != -1) {
-				EliminarPartida(&lista_Partidas,userName);char conectados[800];
+				
+				char conectados[800];
 				consultaConectados(&lista_Conectados, conectados);
 				char notificacion[800];
-				strcpy(notificacion, "100/Poner que se ha eliminado la partida");
+				strcpy(notificacion, conectados);
 				int j;
 				for (j = 0; j < i; j++)
-					write(sockets[j], notificacion, strlen(notificacion));				
+					write(sockets[j], notificacion, strlen(notificacion));
 			}
 			terminar = 1;
 		}
@@ -585,7 +583,7 @@ void AtenderCliente(void* socket)
 			p = strtok(NULL, "/");
 			strcpy(host, p);
 			int err = CrearPartida(&lista_Partidas, userName, sock_conn);
-			sprintf(respuesta, "20/%d", err);
+			sprintf(respuesta, "20/%s/%d", host, err);
 		}
 		else if (codigo == 21)		// 3/Host/Asier/Julia/Gu... tots els invitados (fins a 8)
 		{
@@ -599,9 +597,8 @@ void AtenderCliente(void* socket)
 			printf("Info: %s \n", infoInvitados);
 			
 			err = EnviarInvitacion(&lista_Conectados, &lista_Partidas, infoInvitados, sockets_receptores, invitacion);
-			sprintf(respuesta, "21/%d", err);
+			sprintf(respuesta, "21/%s/%d", host, err);
 			
-			int socketUsuario;
 			p = strtok(sockets_receptores, "/");
 			while (p != NULL)
 			{
@@ -617,7 +614,6 @@ void AtenderCliente(void* socket)
 			char decision[20];
 			char actualizacion[20];
 			int socketHost;
-			char infoJugadoresPartida[200];
 			strcpy (sockets_receptores,"");
 			strcpy (actualizacion,"");
 			
@@ -638,58 +634,76 @@ void AtenderCliente(void* socket)
 				
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 				
-				int socketUsuario;
 				p = strtok(sockets_receptores, "/");
-				printf ("Socket por donde llega: %d \n", sock_conn);
 				while (p != NULL)
 				{
-					printf ("Socket invitado: %d y enviado por: %d \n", socketUsuario,sock_conn);
 					socketUsuario = atoi(p);
 					if (socketUsuario != sock_conn)
-					{
 						write(socketUsuario, actualizacion, strlen(actualizacion));
-						printf ("Mensaje de aceptacion: %s \n", actualizacion);
-					}
 					p = strtok(NULL, "/");
 				}
 				
 				if (strcmp(decision,"Yes") == 0)
-					strcpy(respuesta, infoJugadoresPartida);
+					sprintf(respuesta, "23/%s/%s", host, infoJugadoresPartida);
 				else 
-					strcpy(respuesta, "23/0");
+					sprintf(respuesta, "23/%s/0", host);
 			}
 		}
 		else if (codigo == 24)
 		{
-			char invitado[20];
+			char expulsado[20];
 			char expulsion[20];
-			char actualizacion[20];
-			char infoJugadoresPartida[200];
 			int socketInvitado;
 			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
 			p = strtok(NULL, "/");
-			strcpy(invitado, p);
-			sprintf(actualizacion, "24/%s", invitado);
+			strcpy(expulsado, p);
+			sprintf(expulsion, "24/%s/%s", host, expulsado);
 			
-			EliminarJugadorPartida(&lista_Partidas,invitado,host);
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			EliminarJugadorPartida(&lista_Partidas, expulsado, host);
 			
-			int socketUsuario;
 			p = strtok(sockets_receptores, "/");
 			while (p != NULL)
 			{
 				socketUsuario = atoi(p);
-				write(socketUsuario, actualizacion, strlen(actualizacion));
+				if (socketUsuario != sock_conn)
+					write(socketUsuario, expulsion, strlen(expulsion));
 				p = strtok(NULL, "/");
 			}
 			
-			socketInvitado = BuscarSocket(&lista_Conectados,invitado);
-			sprintf(expulsion, "24/%s", host);
-			write(socketInvitado, actualizacion, strlen(actualizacion));
+			strcpy(respuesta, expulsion);
+		}
+		else if (codigo == 25)
+		{
 			
-			strcpy(respuesta, actualizacion);
+		}
+		else if (codigo == 26)
+		{
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			
+			sprintf(mensaje, "26/%s", host);
+			
+			pthread_mutex_lock(&mutex);
+			int partida = BuscarPartidaHost(&lista_Partidas,host);
+			if (partida != -1)
+			{
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				EliminarPartida(&lista_Partidas,host);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn)
+						write(socketUsuario, mensaje, strlen(mensaje));
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, mensaje);
+			}
+			pthread_mutex_unlock(&mutex);
+			
 		}
 		else if (codigo == 27)
 		{
@@ -698,8 +712,6 @@ void AtenderCliente(void* socket)
 			char mensajechat[200];
 			char chat[200];
 			char jugador[20];
-			char infoJugadoresPartida[200];
-			int socketUsuario;
 			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
@@ -715,9 +727,7 @@ void AtenderCliente(void* socket)
 			{
 				socketUsuario = atoi(p);
 				if (socketUsuario != sock_conn)
-				{
 					write(socketUsuario, mensajechat, strlen(mensajechat));
-				}
 				p = strtok(NULL, "/");
 			}
 			strcpy(respuesta, mensajechat);
@@ -728,7 +738,7 @@ void AtenderCliente(void* socket)
 			// Enviamos respuesta
 			write(sock_conn, respuesta, strlen(respuesta));		// sock_conn es el socket del host
 		}
-		if ((codigo == 0) || (codigo == 2))
+		if (codigo == 2)
 		{
 			if (BuscarConectado(&lista_Conectados,userName) != -1) {
 				char conectados[800];

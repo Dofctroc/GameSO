@@ -34,14 +34,15 @@
             this.button_signUp = new System.Windows.Forms.Button();
             this.button_logIn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.consoletextbox = new System.Windows.Forms.TextBox();
             this.button_LogOut = new System.Windows.Forms.Button();
             this.lbl_controlPanel = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.opcionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableroToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.notePadEXPERIMENTALToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consultasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlPanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tableroToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.richBox_Control = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -113,20 +114,6 @@
             this.label1.TabIndex = 17;
             this.label1.Text = "Password";
             // 
-            // consoletextbox
-            // 
-            this.consoletextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.consoletextbox.Location = new System.Drawing.Point(672, 32);
-            this.consoletextbox.Margin = new System.Windows.Forms.Padding(4);
-            this.consoletextbox.Multiline = true;
-            this.consoletextbox.Name = "consoletextbox";
-            this.consoletextbox.ReadOnly = true;
-            this.consoletextbox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.consoletextbox.Size = new System.Drawing.Size(297, 524);
-            this.consoletextbox.TabIndex = 6;
-            this.consoletextbox.TabStop = false;
-            this.consoletextbox.Visible = false;
-            // 
             // button_LogOut
             // 
             this.button_LogOut.AutoSize = true;
@@ -144,6 +131,7 @@
             // lbl_controlPanel
             // 
             this.lbl_controlPanel.AutoSize = true;
+            this.lbl_controlPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.lbl_controlPanel.Location = new System.Drawing.Point(669, 12);
             this.lbl_controlPanel.Name = "lbl_controlPanel";
             this.lbl_controlPanel.Size = new System.Drawing.Size(87, 16);
@@ -169,32 +157,52 @@
             this.opcionesToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.opcionesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tableroToolStripMenuItem,
+            this.notePadEXPERIMENTALToolStripMenuItem,
             this.consultasToolStripMenuItem,
             this.controlPanelToolStripMenuItem});
             this.opcionesToolStripMenuItem.Name = "opcionesToolStripMenuItem";
             this.opcionesToolStripMenuItem.Size = new System.Drawing.Size(85, 24);
             this.opcionesToolStripMenuItem.Text = "Opciones";
             // 
+            // tableroToolStripMenuItem
+            // 
+            this.tableroToolStripMenuItem.Name = "tableroToolStripMenuItem";
+            this.tableroToolStripMenuItem.Size = new System.Drawing.Size(265, 26);
+            this.tableroToolStripMenuItem.Text = "Tablero (EXPERIMENTAL)";
+            this.tableroToolStripMenuItem.Click += new System.EventHandler(this.tableroToolStripMenuItem_Click);
+            // 
+            // notePadEXPERIMENTALToolStripMenuItem
+            // 
+            this.notePadEXPERIMENTALToolStripMenuItem.Name = "notePadEXPERIMENTALToolStripMenuItem";
+            this.notePadEXPERIMENTALToolStripMenuItem.Size = new System.Drawing.Size(265, 26);
+            this.notePadEXPERIMENTALToolStripMenuItem.Text = "NotePad (EXPERIMENTAL)";
+            this.notePadEXPERIMENTALToolStripMenuItem.Click += new System.EventHandler(this.notePadEXPERIMENTALToolStripMenuItem_Click);
+            // 
             // consultasToolStripMenuItem
             // 
             this.consultasToolStripMenuItem.Name = "consultasToolStripMenuItem";
-            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(257, 26);
+            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(265, 26);
             this.consultasToolStripMenuItem.Text = "Consultas";
             this.consultasToolStripMenuItem.Click += new System.EventHandler(this.consultasToolStripMenuItem_Click);
             // 
             // controlPanelToolStripMenuItem
             // 
             this.controlPanelToolStripMenuItem.Name = "controlPanelToolStripMenuItem";
-            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(257, 26);
+            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(265, 26);
             this.controlPanelToolStripMenuItem.Text = "Control Panel";
             this.controlPanelToolStripMenuItem.Click += new System.EventHandler(this.controlPanelToolStripMenuItem_Click);
             // 
-            // tableroToolStripMenuItem
+            // richBox_Control
             // 
-            this.tableroToolStripMenuItem.Name = "tableroToolStripMenuItem";
-            this.tableroToolStripMenuItem.Size = new System.Drawing.Size(257, 26);
-            this.tableroToolStripMenuItem.Text = "Tablero (EXPERIMENTAL)";
-            this.tableroToolStripMenuItem.Click += new System.EventHandler(this.tableroToolStripMenuItem_Click);
+            this.richBox_Control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.richBox_Control.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richBox_Control.ForeColor = System.Drawing.Color.White;
+            this.richBox_Control.Location = new System.Drawing.Point(672, 31);
+            this.richBox_Control.Name = "richBox_Control";
+            this.richBox_Control.ReadOnly = true;
+            this.richBox_Control.Size = new System.Drawing.Size(298, 440);
+            this.richBox_Control.TabIndex = 25;
+            this.richBox_Control.Text = "";
             // 
             // menuUsuario
             // 
@@ -203,9 +211,9 @@
             this.BackgroundImage = global::ClienteC__Juego.Properties.Resources.fondoCluedoPixeled;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(982, 573);
+            this.Controls.Add(this.richBox_Control);
             this.Controls.Add(this.lbl_controlPanel);
             this.Controls.Add(this.button_LogOut);
-            this.Controls.Add(this.consoletextbox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button_signUp);
             this.Controls.Add(this.button_logIn);
@@ -233,7 +241,6 @@
         private System.Windows.Forms.Button button_signUp;
         private System.Windows.Forms.Button button_logIn;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox consoletextbox;
         private System.Windows.Forms.Button button_LogOut;
         private System.Windows.Forms.Label lbl_controlPanel;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -241,5 +248,7 @@
         private System.Windows.Forms.ToolStripMenuItem consultasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem controlPanelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tableroToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem notePadEXPERIMENTALToolStripMenuItem;
+        private System.Windows.Forms.RichTextBox richBox_Control;
     }
 }

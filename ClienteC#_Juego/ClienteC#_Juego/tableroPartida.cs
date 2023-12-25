@@ -4,11 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace ClienteC__Juego
 {
@@ -19,37 +21,34 @@ namespace ClienteC__Juego
             InitializeComponent();
         }
 
-        int Rows; int Columns; int Margin;
-        int TileWidth; int TileHeight;
+        int rows; int columns; int cornerBoardMargin;
+        int tileWidth; int tileHeight;
         int diceRoll, diceRoll1, diceRoll2;
-        int inRoom;
-        Position myPos;
-        PictureBox[,] grid;
-        BoardDistribution boardGrids;
-        Image[] dicesImg;
+        Position myPos;         // Current position of the player in the grid
+        PictureBox[,] grid;     // Grid of pictureBoxes representing each tile
+        BoardDistribution boardGrids;   // Initalizes variables from custom class <BoardDistribution>
+        Image[] dicesImg;       // Vector including all images a dice can have, ordered from 0 to 6 (0 being empty throw)
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Variables
-            Rows = 25; Columns = 24;
-            TileWidth = 26; TileHeight = 26;
-            Margin = 15;
-            panel_Board.Size = new Size(TileWidth*Columns, TileHeight*Rows);
-            grid = new PictureBox[Rows, Columns];
+            // Variables assignment
+            rows = 25; columns = 24;
+            tileWidth = 26; tileHeight = 26;
+            cornerBoardMargin = 15;
+            panel_Board.Size = new Size(tileWidth*columns, tileHeight*rows);
+            grid = new PictureBox[rows, columns];
             boardGrids = new BoardDistribution();
-
             dicesImg = new Image[] {Properties.Resources.DiceEmpty, Properties.Resources.Dice1, Properties.Resources.Dice2,
                 Properties.Resources.Dice3, Properties.Resources.Dice4, Properties.Resources.Dice5, Properties.Resources.Dice6};
 
             myPos = new Position(-1, -1);
-            inRoom = 0;
 
-            // All related with the board
-            for (int row = 0; row < Rows; row++) {
-                for (int col = 0; col < Columns; col++) {
+            // Creation of the board picture boxes grid
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < columns; col++) {
                     grid[row, col] = new PictureBox();
-                    grid[row, col].Location = new Point(Margin - 1 + TileWidth + col * TileWidth, Margin - 1 + TileHeight + row * TileHeight);
-                    grid[row, col].Size = new Size(TileWidth, TileHeight);
+                    grid[row, col].Location = new Point(cornerBoardMargin - 1 + tileWidth + col * tileWidth, cornerBoardMargin - 1 + tileHeight + row * tileHeight);
+                    grid[row, col].Size = new Size(tileWidth, tileHeight);
                     grid[row, col].BorderStyle = BorderStyle.None;
                     grid[row, col].BackColor = Color.Transparent;
                     grid[row, col].BackgroundImageLayout = ImageLayout.Stretch;
@@ -62,33 +61,46 @@ namespace ClienteC__Juego
                 }
             }
 
-            // Other things
-            panel_Board.Size = new Size(TileWidth*Columns + 2*(TileWidth + Margin), TileHeight*Rows + 2*(TileHeight + Margin));
-            pBox_dice1.BackgroundImageLayout = ImageLayout.Stretch;
-            pBox_dice1.BackColor = Color.Transparent;
-            pBox_dice2.BackgroundImageLayout = ImageLayout.Stretch;
-            pBox_dice2.BackColor = Color.Transparent;
+            // All buttons arrangement in the form
+            panel_Board.Size = new Size(tileWidth*columns + 2*(tileWidth + cornerBoardMargin), tileHeight*rows + 2*(tileHeight + cornerBoardMargin));
+            panel_Board.Location = new Point(300,10);
 
-            pBox_mostrarConectados.Location = new Point(panel_Board.Location.X + panel_Board.Width + 10, panel_Board.Location.Y);
-            pBox_mostrarConectados.Size = new Size(15,30);
-            dGrid_conectados.Location = new Point(pBox_mostrarConectados.Location.X + pBox_mostrarConectados.Width + 4, pBox_mostrarConectados.Location.Y);
-            dGrid_conectados.Size = new Size(160,panel_Board.Height);
-            dGrid_conectados.Visible = false;
+            btt_dado.Size = new Size(120, 25);
+            lbl_diceRoll.Size = new Size(60, 20);
+            btt_dado.Font = new Font("Arial", 10, FontStyle.Bold);
+            btt_dado.Location = new Point(panel_Board.Location.X / 2 - btt_dado.Width / 2, panel_Board.Location.Y);
+            lbl_diceRoll.Location = new Point(btt_dado.Location.X + btt_dado.Width + 5, btt_dado.Location.Y + btt_dado.Height - lbl_diceRoll.Height);
 
-            dGrid_conectados.ColumnCount = 2;
-            dGrid_conectados.ColumnHeadersDefaultCellStyle.Font = new Font(dGrid_conectados.Font, FontStyle.Bold);
+            pBox_dice1.Size = pBox_dice2.Size = new Size(80, 80);
+            pBox_dice1.Location = new Point(panel_Board.Location.X / 2 - 5 - pBox_dice1.Width, btt_dado.Location.Y + btt_dado.Height + 5);
+            pBox_dice2.Location = new Point(panel_Board.Location.X / 2 + 5, btt_dado.Location.Y + btt_dado.Height + 5);
+            pBox_dice1.BackgroundImageLayout = pBox_dice2.BackgroundImageLayout = ImageLayout.Stretch;
+            pBox_dice1.BackColor = pBox_dice2.BackColor = Color.Transparent;
 
-            dGrid_conectados.Columns[0].Name = "column_Username";
-            dGrid_conectados.Columns[0].HeaderText = "Username";
-            dGrid_conectados.Columns[1].Name = "column_Status";
-            dGrid_conectados.Columns[1].HeaderText = "Status";
+            pBox_notePad.Size = new Size(130, 130);
+            pBox_notePad.Location = new Point(panel_Board.Location.X + panel_Board.Width + 5, panel_Board.Location.Y + panel_Board.Height - pBox_notePad.Height);
 
-            dGrid_conectados.Columns[0].Width = 80;
-            dGrid_conectados.Columns[1].Width = dGrid_conectados.Width - dGrid_conectados.Columns[0].Width - 2;
-            dGrid_conectados.Rows.Clear();
+            lbl_notePad.Size = lbl_cards.Size = new Size(130, 20);
+            lbl_notePad.BorderStyle = lbl_cards.BorderStyle = BorderStyle.None;
+            lbl_notePad.Font = lbl_cards.Font = new Font("Arial", 11, FontStyle.Regular);
+            lbl_notePad.TextAlign = lbl_cards.TextAlign = ContentAlignment.MiddleLeft;
+            lbl_notePad.Location = new Point(pBox_notePad.Location.X, pBox_notePad.Location.Y - lbl_notePad.Height - 5);
+            lbl_cards.Location = new Point(pBox_notePad.Location.X, panel_Board.Location.Y);
 
-            for (int i = 0; i < 60;  i++)
-                dGrid_conectados.Rows.Add("Asier", "InGame");
+            pBox_card1.Size = pBox_card2.Size = pBox_card3.Size = new Size(130,178);
+            pBox_card1.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5);
+            pBox_card2.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5);
+            pBox_card3.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5 + pBox_card2.Height + 5);
+
+            gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 300);
+            gBox_chat.Location = new Point(10, panel_Board.Location.Y + panel_Board.Height - gBox_chat.Height);
+            richtBox_read.Location = new Point(5, 15);
+            richtBox_read.Size = new Size(gBox_chat.Width - 10, gBox_chat.Height - 50);
+            lbl_write.Location = new Point(richtBox_read.Location.X, richtBox_read.Location.Y + richtBox_read.Height + 5);
+            lbl_write.Size = new Size(35, tBox_write.Height);
+            tBox_write.Width = richtBox_read.Width - lbl_write.Width - pBox_sendText.Width - 10;
+            tBox_write.Location = new Point(lbl_write.Location.X + lbl_write.Width + 5, lbl_write.Location.Y);
+            pBox_sendText.Location = new Point(tBox_write.Location.X + tBox_write.Width + 5, lbl_write.Location.Y);
 
             CenterFormOnScreen();
         }
@@ -106,22 +118,6 @@ namespace ClienteC__Juego
 
             // Set the form's location
             this.Location = new Point(50, y);
-        }
-
-        private void button_Dado1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void pBox_dice_Click(object sender, EventArgs e)
-        {
-            Random random = new Random();
-            // Generate a random integer between 1 and 6
-            diceRoll1 = random.Next(1, 7);
-            diceRoll2 = random.Next(1, 7);
-            diceRoll = diceRoll1 + diceRoll2;
-            lbl_diceRoll.Text = diceRoll.ToString();
-
-            displayDiceNum(diceRoll1, diceRoll2);
         }
 
         private void displayDiceNum(int num1, int num2)
@@ -148,8 +144,8 @@ namespace ClienteC__Juego
                 bool found = false;
 
                 // Loop to find where the hovered pBox is at
-                for (int row = 0; row < Rows; row++) {
-                    for (int col = 0; col < Columns; col++) 
+                for (int row = 0; row < rows; row++) {
+                    for (int col = 0; col < columns; col++) 
                     {
                         if (grid[row, col] == hoveredPBox)
                         {
@@ -211,8 +207,8 @@ namespace ClienteC__Juego
         private void Tile_mouseLeave(object sender, EventArgs e)
         {
             PictureBox pictureBox = (PictureBox)sender;
-            for (int row = 0; row < Rows; row++) {
-                for (int col = 0; col < Columns; col++) {
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < columns; col++) {
                     grid[row,col].BackColor = Color.Transparent;
                 }
             }
@@ -232,9 +228,9 @@ namespace ClienteC__Juego
                 int remainingMoves = diceRoll;
 
                 // Search positon clicked
-                for (int row = 0; row < Rows; row++)
+                for (int row = 0; row < rows; row++)
                 {
-                    for (int col = 0; col < Columns; col++)
+                    for (int col = 0; col < columns; col++)
                     {
                         // Position clicked found, save the position
                         if (grid[row, col] == clickedPBox)
@@ -327,9 +323,9 @@ namespace ClienteC__Juego
 
             else if (e.Button == MouseButtons.Right)
             {
-                for (int row = 0; row < Rows; row++)
+                for (int row = 0; row < rows; row++)
                 {
-                    for (int col = 0; col < Columns; col++)
+                    for (int col = 0; col < columns; col++)
                     {
                         if ((grid[row, col] == clickedPBox) && (grid[row, col].BackgroundImage == null))
                             grid[row, col].BackgroundImage = Properties.Resources.playerTile2;
@@ -351,15 +347,14 @@ namespace ClienteC__Juego
             else if (nextPBox.Tag.ToString().Split('/')[0] == "door")
             {
                 int doorNum = Convert.ToInt32(nextPBox.Tag.ToString().Split('/')[1]);
-                inRoom = doorNum;
                 grid[prePos.X, prePos.Y].BackgroundImage = null;
                 myPos = boardGrids.moveToRoom(doorNum, grid);
                 grid[myPos.X, myPos.Y].BackgroundImage = Properties.Resources.playerTile1;
             }
 
             // Clear all background from previous path
-            for (int row = 0; row < Rows; row++) {
-                for (int col = 0; col < Columns; col++) {
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < columns; col++) {
                     grid[row, col].BackColor = Color.Transparent;
                 }
             }
@@ -388,7 +383,6 @@ namespace ClienteC__Juego
                     nextRoomNum = 3;
                     break;
             }
-            inRoom = roomNum;
             grid[myPos.X, myPos.Y].BackgroundImage = null;
             myPos = boardGrids.moveToRoom(nextRoomNum, grid);
             grid[myPos.X, myPos.Y].BackgroundImage = Properties.Resources.playerTile1;
@@ -481,7 +475,6 @@ namespace ClienteC__Juego
                 Console.WriteLine();
             }
 
-
             List<Position> path = startPosition.FindPath(startPosition, endPosition, grid);
             foreach (Position pathPosition in path)
             {
@@ -491,79 +484,72 @@ namespace ClienteC__Juego
             Console.WriteLine();
         }
 
-        private void pBox_dice_MouseEnter(object sender, EventArgs e)
+        private void pBox_notePad_MouseEnter(object sender, EventArgs e)
         {
-            PictureBox dice = (PictureBox)sender;
-            dice.BackColor = Color.FromArgb(20, Color.Green);
+            PictureBox notepad = (PictureBox)sender;
+            notepad.BackgroundImage = Properties.Resources.notepad_IconHovered;
         }
 
-        private void pBox_dice_MouseLeave(object sender, EventArgs e)
+        private void pBox_notePad_MouseLeave(object sender, EventArgs e)
         {
-            PictureBox dice = (PictureBox)sender;
-            dice.BackColor = Color.Transparent;
+            PictureBox notepad = (PictureBox)sender;
+            notepad.BackgroundImage = Properties.Resources.notepad_Icon;
         }
 
-        private void btt_pruebas2_Click(object sender, EventArgs e)
+        private void pBox_card1_Click(object sender, EventArgs e)
         {
-            tbox_pruebas.SelectionFont = new Font("Verdana", 12, FontStyle.Bold);
-            tbox_pruebas.SelectionColor = Color.Red;
-            tbox_pruebas.AppendText("Prueba de texto:");
-
-            tbox_pruebas.AppendText(Environment.NewLine);
-            tbox_pruebas.AppendText(Environment.NewLine);
-
-            tbox_pruebas.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
-            tbox_pruebas.SelectionColor = Color.Black;
-            tbox_pruebas.AppendText("Hola, aquí la prueba, esto ha de ser negro, y pequeño.");
+            PictureBox card = (PictureBox)sender;
         }
 
-        private void pbox_mensaje_KeyDown(object sender, KeyEventArgs e)
+        private void pBox_card2_Click(object sender, EventArgs e)
         {
-            if ((e.KeyCode == Keys.Enter) && (tbox_mensaje.Text != ""))
+            PictureBox card = (PictureBox)sender;
+        }
+
+        private void pBox_card3_Click(object sender, EventArgs e)
+        {
+            PictureBox card = (PictureBox)sender;
+        }
+
+        private void tBox_write_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (e.KeyCode == Keys.Enter)
             {
-                tbox_pruebas.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
-                tbox_pruebas.SelectionColor = Color.DarkBlue;
-                tbox_pruebas.AppendText("[All] Asier: ");
-
-                tbox_pruebas.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
-                tbox_pruebas.SelectionColor = Color.Black;
-                tbox_pruebas.AppendText(tbox_mensaje.Text);
-                tbox_pruebas.AppendText(Environment.NewLine);
-
-                tbox_pruebas.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
-                tbox_pruebas.SelectionColor = Color.Firebrick;
-                tbox_pruebas.AppendText("Asier has left the lobby");
-                tbox_pruebas.AppendText(Environment.NewLine);
-
-                tbox_mensaje.Text = "";
+                string text = tBox_write.Text;
+                if (text != "")
+                {
+                    e.SuppressKeyPress = true;
+                    richtBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Regular);
+                    richtBox_read.SelectionColor = Color.Black;
+                    richtBox_read.AppendText(text);
+                    richtBox_read.AppendText(Environment.NewLine);
+                    tBox_write.Clear();
+                }
+                else
+                {
+                    e.SuppressKeyPress = true;
+                    tBox_write.Clear();
+                }
             }
         }
 
-        private void pBox_mostrarConectados_MouseEnter(object sender, EventArgs e)
+        private void button_Dado1_Click(object sender, EventArgs e)
         {
-            PictureBox arrowConn = (PictureBox)sender;
-            arrowConn.BackColor = Color.FromArgb(20, Color.Green);
+            Random random = new Random();
+            // Generate a random integer between 1 and 6
+            diceRoll1 = random.Next(1, 7);
+            diceRoll2 = random.Next(1, 7);
+            diceRoll = diceRoll1 + diceRoll2;
+            lbl_diceRoll.Text = diceRoll.ToString();
+
+            displayDiceNum(diceRoll1, diceRoll2);
         }
 
-        private void pBox_mostrarConectados_MouseLeave(object sender, EventArgs e)
+        private void pBox_notePad_Click(object sender, EventArgs e)
         {
-            PictureBox arrowConn = (PictureBox)sender;
-            arrowConn.BackColor = Color.Transparent;
-        }
-
-        private void pBox_mostrarConectados_Click(object sender, EventArgs e)
-        {
-            PictureBox arrowConn = (PictureBox)sender;
-            if (!dGrid_conectados.Visible)
-            {
-                dGrid_conectados.Visible = true;
-                arrowConn.BackgroundImage = Properties.Resources.bottonConn2;
-            }
-            else
-            {
-                dGrid_conectados.Visible = false;
-                arrowConn.BackgroundImage = Properties.Resources.bottonConn1;
-            }    
+            InGameNotes notePad = new InGameNotes();
+            notePad.Show();
         }
     }
 }

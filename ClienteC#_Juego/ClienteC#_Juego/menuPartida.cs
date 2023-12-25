@@ -21,21 +21,21 @@ namespace ClienteC__Juego
     {
         PictureBox pbox_Invite = new PictureBox();
 
-        string password, username, selectedPlayerToKick, host;
+        string username, selectedPlayerToKick;
         bool hosting_gameLobby, in_gameLobby;
-        int displayedGame;
-        List<string> partida1;
-        List<string> partida2;
-        List<List<string>> partidas;
-        List<string> pendingInvitation;
-        List<DataGridView> partidasDataGrids;
-        List<System.Windows.Forms.Button> partidasButtons;
-        List<GroupBox> partidasGroups;
-        List<RichTextBox> partidasChats;
+        int displayedGame;      // Corresponds to the currently shown on screen game
+        List<string> partida1, partida2;        // Vectors of each game where all players are state, first one is the host. Ex: partida1[0] = host
+        List<List<string>> partidas;            // Vector including both previous game vectors partidas[0] = game 1 & partidas[1] = game 2
+        List<string> pendingInvitation;         // Vector of players from whom you await a response
+        List<System.Windows.Forms.Button> partidasButtons;      // Vector of the two Buttons for displaying each game groupBox
+        List<GroupBox> partidasGroups;                          // Vector of the two GroupBoxes that contain all the display of each game. Each contains: (dataGrid, kick button, chatBox, etc)
+        List<DataGridView> partidasDataGrids;                   // Vector of the two datagridViews displaying the players of each game
+        List<RichTextBox> partidasChats;                        // Vector of the two chatTextBox of each game
 
         menuUsuario menuUsuario;
         Socket server;
         Thread atender;
+
         public menuPartida(menuUsuario menuUsuario, Socket server, Thread atender, string username)
         {
             InitializeComponent();
@@ -146,6 +146,9 @@ namespace ClienteC__Juego
             }
         }
 
+        /// <summary>
+        /// Function that when called changes current form's position on screen to the exact center
+        /// </summary>
         private void CenterFormOnScreen()
         {
             // Calculate the center position
@@ -161,8 +164,8 @@ namespace ClienteC__Juego
             this.Location = new Point(x, y);
         }
 
-        // -------------------- Acciones de Button Click --------------------
-        // ------------------------------------------------------------------
+        // -------------------- ACTIONS EXECUTED BY BUTTONS WHEN CLICKED --------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------
 
         private void button_LogOut_Click(object sender, EventArgs e)
         {
@@ -260,175 +263,25 @@ namespace ClienteC__Juego
             textBox_write0.Text = "";
         }
 
-        // -------------------- Respuestas a mensajes servidor --------------------
-        // ------------------------------------------------------------------------
-
-        public void onResponse(string[] mensaje)
+        private void pBox_mostrarConn_Click(object sender, EventArgs e)
         {
-            string invitado, nameHost, chatMSG; int codigo, gameIndex;
-
-            gameIndex = -1; // Si es -1, no tens cap partida
-            codigo = Convert.ToInt32(mensaje[0]);
-            nameHost = mensaje[1];
-            
-            // Buscar a quina partida esta aquest host i si no esta a cap, l'index es -1
-            foreach (List<string> partida in partidas) {
-                if (partida.Count != 0 && partida[0] == nameHost) {
-                    gameIndex = partidas.IndexOf(partida);
-                    break;
-                }
-            }
-
-            switch (codigo)
+            PictureBox arrowConn = (PictureBox)sender;
+            if (!dgrid_listaUsuarios.Visible)
             {
-                case 20: // Servidor confirma la creación de partida en que tu eres host
-                    if (Convert.ToInt32(mensaje[2]) == 0)
-                    {
-                        foreach (List<string> partida in partidas) {
-                            if (partida.Count == 0) {
-                                partida.Add(username);
-                                gameIndex = partidas.IndexOf(partida);
-                                break;
-                            }
-                        }
-                        listaMiPartida(gameIndex, username, true);
-                        Console.WriteLine("Game index is: " + gameIndex.ToString());
-                        //partidasGroups[gameIndex].Visible = true;
-                        //partidasGroups[gameIndex].BringToFront();
-                        hosting_gameLobby = true;
-                        in_gameLobby = true;
-
-                        chatMSG = "Has creado una nueva partida";
-                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
-                    }
-                    else
-                        MessageBox.Show("Error al crear la partida, vuelva a intentarlo.");
-                    break;
-                case 21: // Servidor confirma que se ha invitado a los seleccionados
-                    if (Convert.ToInt32(mensaje[2]) == 0)
-                    {
-                        for (int i = 0; i < dgrid_listaInvitar.RowCount; i++)
-                            pendingInvitation.Add(dgrid_listaInvitar.Rows[i].Cells[0].Value.ToString());
-                        dgrid_listaInvitar.Rows.Clear();
-                    }
-                    else { 
-                    }
-                    break;
-                case 22: // Te llega una invitacion de un host
-                    DialogResult result = MessageBox.Show("El usuario " + nameHost + " te ha invitado a una partida",
-                            "Incoming Message", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
-                    {
-                        string mensaje2 = "23/" + nameHost + "/" + username + "/Yes";
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
-                        server.Send(msg);
-                    }
-                    else
-                    {
-                        string mensaje2 = "23/" + nameHost + "/" + username + "/No";
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
-                        server.Send(msg);
-                    }
-                    break;
-                case 23: // Respuesta cuando un jugador ha aceptado o no una invitación
-                    // Mensaje que le llega a todos los jugadores en partida
-                    if (mensaje.Length == 4)
-                    {
-                        invitado = mensaje[2];
-                        string decision = mensaje[3];
-                        if (decision == "Yes")
-                        {
-                            partidas[gameIndex].Add(invitado);
-                            listaMiPartida(gameIndex, invitado, true);
-
-                            chatMSG = "El usuario " + invitado + " se ha unido a la partida";
-                            WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
-                        }
-                        else
-                        {
-                            DialogResult showInvite = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
-                                "Incoming Message", MessageBoxButtons.OK);
-                        }
-                        pendingInvitation.Remove(invitado);
-                    }
-                    // Mensaje que le llega solo al quien ha aceptado la invitacion, informando de todos los datos de la partida
-                    // Sera diferente de cero si ha aceptado la invitacion
-                    else if (mensaje[2] != "0")
-                    {
-                        List<string> jugadores = new List<string>(mensaje[2].Split('.'));
-                        host = nameHost;
-                        foreach (List<string> partida in partidas) {
-                            if (partida.Count == 0) {
-                                for (int i = 0; i < jugadores.Count - 1; i++ )
-                                    partida.Add(jugadores[i]);
-                                gameIndex = partidas.IndexOf(partida);
-                                break;
-                            }
-                        }
-                        listaMiPartida(gameIndex, mensaje[2]);
-                        Console.WriteLine("Game index is: " + gameIndex.ToString());
-                        //partidasGroups[gameIndex].Visible = true;
-                        //partidasGroups[gameIndex].BringToFront();
-
-                        chatMSG = "Te has unido a la partida";
-                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
-                    }
-                    break;
-                case 24: // El host de la partida te ha expulsado
-                    string expulsado = mensaje[2];
-                    if (username == expulsado)
-                    {
-                        partidas[gameIndex].Clear();
-                        dgrid_miPartida0.Rows.Clear();
-                        host = null;
-
-                        chatMSG = "El host " + nameHost + " te ha expulsado de la partida";
-                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
-                    }
-                    else
-                    {
-                        partidas[gameIndex].Remove(expulsado);
-                        listaMiPartida(gameIndex, expulsado, false);
-
-                        chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
-                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
-                    }
-                    break;
-                case 25: // Jugador abandona partida voluntariamente
-
-                    break;
-                case 26: // La partida ha sido eliminada por el host
-                    if (nameHost == username)
-                    {
-                        // Add if in other game, it MUST exit it before shutdown !!!!!!!!!!!!
-                        menuUsuario.serverShutdown();
-                    }
-                    else
-                    {
-                        foreach (List<string> partida in partidas) {
-                            if (partida.Count != 0 && partida[0] == nameHost) {
-                                partida.Clear();
-                                break;
-                            }
-                        }
-                        dgrid_miPartida0.Rows.Clear();
-                        host = null;
-                        in_gameLobby = false;
-
-                        chatMSG = "El host " + nameHost + " ha eliminado la partida";
-                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
-                    }
-                    break;
-                case 27: // Mensaje del chat
-                    string sender = mensaje[2];
-                    chatMSG = mensaje[3];
-                    WriteInChatMESSAGE(gameIndex, sender, chatMSG, Color.Black);
-                    break;
+                dgrid_listaUsuarios.Visible = true;
+                arrowConn.BackgroundImage = Properties.Resources.bottonConn2;
             }
-
-            updateStatusPartidas();
+            else
+            {
+                dgrid_listaUsuarios.Visible = false;
+                arrowConn.BackgroundImage = Properties.Resources.bottonConn1;
+            }
         }
 
+        /// <summary>
+        /// Shows on console status of local variables for all games. <para>
+        /// Also displays the buttons to access the game lobbies you are in. </para>
+        /// </summary>
         private void updateStatusPartidas()
         {
             Console.WriteLine("     ----------------------      ");
@@ -460,9 +313,13 @@ namespace ClienteC__Juego
             }
         }
 
-        // -------------------- Actualizaciones de Datagrid --------------------
-        // ---------------------------------------------------------------------
+        // -------------------- ALL DATAGRID UPDATES -------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// Updates the whole connected players dataGrid (receives information of every connected player each time).
+        /// </summary>
+        /// <param name="mensaje"> Input in the form of: Player1.Status1.Player2.Status2... </param>
         public void listaConectados(string mensaje)
         {
             string[] mensajeCodificado = mensaje.Split('.');
@@ -480,6 +337,11 @@ namespace ClienteC__Juego
             dgrid_listaUsuarios.ClearSelection();
         }
 
+        /// <summary>
+        /// When called, adds in order all players from the input string in the corresponding game dataGrid.
+        /// </summary>
+        /// <param name="p"> Number representing the game of which the incoming information is from. Can be 0 or 1. </param>
+        /// <param name="jugadores"> String including all players separated by a '.' . </param>
         public void listaMiPartida(int p, string jugadores)
         {
             string[] vectorJugadores = jugadores.Split('.');
@@ -493,6 +355,12 @@ namespace ClienteC__Juego
             partidasDataGrids[p].ClearSelection();
         }
 
+        /// <summary>
+        /// When called, depending on the input it adds or deletes a player from the corresponding game dataGrid.
+        /// </summary>
+        /// <param name="p"> Number representing the game of which the incoming information is from. Can be 0 or 1. </param>
+        /// <param name="jugador"> Name of the player. </param>
+        /// <param name="afegir"> Determines if said player will be added or deleted. TRUE: added. FALSE: deleted. </param>
         public void listaMiPartida(int p, string jugador, bool afegir) 
         {
             if (afegir)
@@ -513,9 +381,18 @@ namespace ClienteC__Juego
             partidasDataGrids[p].ClearSelection();
         }
 
-        // -------------------- Interacciones con Datagrid --------------------
-        // --------------------------------------------------------------------
+        // -------------------- INTERACTIONS WITH DATAGRIDS -----------------------------------------------------------
+        // ------------------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// When the dataGrid of all users connected is clicked, this method determines: <para>
+        /// - If you are the host of the displayed game </para> <para>
+        /// - If the clicked player is not currently in your game </para>
+        /// If both conditions are met, the clicked player will be displayed in the invitations dataGrid
+        /// to be able to invite them.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event arguments.</param>
         private void dgrid_listaUsuarios_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             bool nuevo = true;
@@ -578,23 +455,8 @@ namespace ClienteC__Juego
                 btt_kickPlayer0.Visible = false;
         }
 
-        // -------------------- Chat & Conn related interactions ---------------------
-        // ---------------------------------------------------------------------------
-
-        private void pBox_mostrarConn_Click(object sender, EventArgs e)
-        {
-            PictureBox arrowConn = (PictureBox)sender;
-            if (!dgrid_listaUsuarios.Visible)
-            {
-                dgrid_listaUsuarios.Visible = true;
-                arrowConn.BackgroundImage = Properties.Resources.bottonConn2;
-            }
-            else
-            {
-                dgrid_listaUsuarios.Visible = false;
-                arrowConn.BackgroundImage = Properties.Resources.bottonConn1;
-            }
-        }
+        // -------------------- CHAT AND CONNECTED INFO RELATED FUNCTIONS ----------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------
 
         private void pBox_mostrarConn_MouseEnter(object sender, EventArgs e)
         {
@@ -656,6 +518,12 @@ namespace ClienteC__Juego
             }
         }
 
+        /// <summary>
+        /// Writes a user's sent message in the corresponding game chat.
+        /// </summary>
+        /// <param name="c"> Number representing the game of which the incoming information is from. Can be 0 or 1. </param>
+        /// <param name="chatMSG"> String representing the message to be written. </param>
+        /// <param name="color"> Color of the written message. </param>
         private void WriteInChatTITLE(int c, string chatMSG, Color color)
         {
             partidasChats[c].SelectionFont = new Font("Arial", 10, FontStyle.Regular);
@@ -664,6 +532,13 @@ namespace ClienteC__Juego
             partidasChats[c].AppendText(Environment.NewLine);
         }
 
+        /// <summary>
+        /// Writes a user's sent message in the corresponding game chat.
+        /// </summary>
+        /// <param name="c"> Number representing the game of which the incoming information is from. Can be 0 or 1. </param>
+        /// <param name="name"> Name of the player that sends said message. </param>
+        /// <param name="chatMSG"> String representing the message to be written. </param>
+        /// <param name="color"> Color of the written message. </param>
         private void WriteInChatMESSAGE(int c, string name, string chatMSG, Color color)
         {
             partidasChats[c].SelectionFont = new Font("Arial", 10, FontStyle.Regular);
@@ -673,6 +548,193 @@ namespace ClienteC__Juego
             partidasChats[c].SelectionColor = color;
             partidasChats[c].AppendText(chatMSG);
             partidasChats[c].AppendText(Environment.NewLine);
+        }
+
+        // -------------------- FUNCTION THAT PROCESSES ALL INCOMING DATA FROM SERVER ----------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------
+
+        public void onResponse(string[] mensaje)
+        {
+            string invitado, nameHost, chatMSG; int codigo, gameIndex;
+
+            gameIndex = -1; // Si es -1, no tens cap partida
+            codigo = Convert.ToInt32(mensaje[0]);
+            nameHost = mensaje[1];
+
+            // Buscar a quina partida esta aquest host i si no esta a cap, l'index es -1
+            foreach (List<string> partida in partidas)
+            {
+                if (partida.Count != 0 && partida[0] == nameHost)
+                {
+                    gameIndex = partidas.IndexOf(partida);
+                    break;
+                }
+            }
+
+            switch (codigo)
+            {
+                case 20: // Servidor confirma la creación de partida en que tu eres host
+                    if (Convert.ToInt32(mensaje[2]) == 0)
+                    {
+                        foreach (List<string> partida in partidas)
+                        {
+                            if (partida.Count == 0)
+                            {
+                                partida.Add(username);
+                                gameIndex = partidas.IndexOf(partida);
+                                break;
+                            }
+                        }
+                        listaMiPartida(gameIndex, username, true);
+                        Console.WriteLine("Game index is: " + gameIndex.ToString());
+
+                        for (int i = 0; i < partidasGroups.Count; i++)
+                            if (i == gameIndex)
+                                partidasGroups[i].Visible = true;
+                            else
+                                partidasGroups[i].Visible = false;
+
+                        hosting_gameLobby = true;
+                        in_gameLobby = true;
+
+                        chatMSG = "Has creado una nueva partida";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
+                    }
+                    else
+                        MessageBox.Show("Error al crear la partida, vuelva a intentarlo.");
+                    break;
+                case 21: // Servidor confirma que se ha invitado a los seleccionados
+                    if (Convert.ToInt32(mensaje[2]) == 0)
+                    {
+                        for (int i = 0; i < dgrid_listaInvitar.RowCount; i++)
+                            pendingInvitation.Add(dgrid_listaInvitar.Rows[i].Cells[0].Value.ToString());
+                        dgrid_listaInvitar.Rows.Clear();
+                    }
+                    else
+                    {
+                    }
+                    break;
+                case 22: // Te llega una invitacion de un host
+                    DialogResult result = MessageBox.Show("El usuario " + nameHost + " te ha invitado a una partida",
+                            "Incoming Message", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        string mensaje2 = "23/" + nameHost + "/" + username + "/Yes";
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+                        server.Send(msg);
+                    }
+                    else
+                    {
+                        string mensaje2 = "23/" + nameHost + "/" + username + "/No";
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+                        server.Send(msg);
+                    }
+                    break;
+                case 23: // Respuesta cuando un jugador ha aceptado o no una invitación
+                    // Mensaje que le llega a todos los jugadores en partida
+                    if (mensaje.Length == 4)
+                    {
+                        invitado = mensaje[2];
+                        string decision = mensaje[3];
+                        if (decision == "Yes")
+                        {
+                            partidas[gameIndex].Add(invitado);
+                            listaMiPartida(gameIndex, invitado, true);
+
+                            chatMSG = "El usuario " + invitado + " se ha unido a la partida";
+                            WriteInChatTITLE(gameIndex, chatMSG, Color.ForestGreen);
+                        }
+                        else
+                        {
+                            DialogResult showInvite = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
+                                "Incoming Message", MessageBoxButtons.OK);
+                        }
+                        pendingInvitation.Remove(invitado);
+                    }
+                    // Mensaje que le llega solo al quien ha aceptado la invitacion, informando de todos los datos de la partida
+                    // Sera diferente de cero si ha aceptado la invitacion
+                    else if (mensaje[2] != "0")
+                    {
+                        List<string> jugadores = new List<string>(mensaje[2].Split('.'));
+                        foreach (List<string> partida in partidas)
+                        {
+                            if (partida.Count == 0)
+                            {
+                                for (int i = 0; i < jugadores.Count - 1; i++)
+                                    partida.Add(jugadores[i]);
+                                gameIndex = partidas.IndexOf(partida);
+                                break;
+                            }
+                        }
+                        listaMiPartida(gameIndex, mensaje[2]);
+
+                        for (int i = 0; i < partidasGroups.Count; i++)
+                            if (i == gameIndex)
+                                partidasGroups[i].Visible = true;
+                            else
+                                partidasGroups[i].Visible = false;
+
+                        chatMSG = "Te has unido a la partida de " + nameHost;
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
+                    }
+                    break;
+                case 24: // El host de la partida te ha expulsado
+                    string expulsado = mensaje[2];
+                    if (username == expulsado)
+                    {
+                        partidas[gameIndex].Clear();
+                        partidasDataGrids[gameIndex].Rows.Clear();
+
+                        // partidasGroups[gameIndex].Visible = false;
+
+                        chatMSG = "- El host " + nameHost + " te ha expulsado de la partida -";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+                        partidasChats[gameIndex].AppendText(Environment.NewLine);
+                        partidasChats[gameIndex].AppendText(Environment.NewLine);
+                    }
+                    else
+                    {
+                        partidas[gameIndex].Remove(expulsado);
+                        listaMiPartida(gameIndex, expulsado, false);
+
+                        chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+                    }
+                    break;
+                case 25: // Jugador abandona partida voluntariamente
+
+                    break;
+                case 26: // La partida ha sido eliminada por el host
+                    if (nameHost == username)
+                    {
+                        // Add if in other game, it MUST exit it before shutdown !!!!!!!!!!!!
+                        menuUsuario.serverShutdown();
+                    }
+                    else
+                    {
+                        foreach (List<string> partida in partidas)
+                        {
+                            if (partida.Count != 0 && partida[0] == nameHost)
+                            {
+                                partida.Clear();
+                                break;
+                            }
+                        }
+                        dgrid_miPartida0.Rows.Clear();
+                        in_gameLobby = false;
+
+                        chatMSG = "El host " + nameHost + " ha eliminado la partida";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+                    }
+                    break;
+                case 27: // Mensaje del chat
+                    string sender = mensaje[2];
+                    chatMSG = mensaje[3];
+                    WriteInChatMESSAGE(gameIndex, sender, chatMSG, Color.Black);
+                    break;
+            }
+
+            updateStatusPartidas();
         }
     }
 }

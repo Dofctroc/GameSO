@@ -56,6 +56,12 @@
     <Compile Include="consultas.Designer.cs">
       <DependentUpon>consultas.cs</DependentUpon>
     </Compile>
+    <Compile Include="InGameNotes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InGameNotes.Designer.cs">
+      <DependentUpon>InGameNotes.cs</DependentUpon>
+    </Compile>
     <Compile Include="tableroPartida.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -79,6 +85,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="consultas.resx">
       <DependentUpon>consultas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InGameNotes.resx">
+      <DependentUpon>InGameNotes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="tableroPartida.resx">
       <DependentUpon>tableroPartida.cs</DependentUpon>
@@ -171,6 +180,96 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Icono_Notificacion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\NotePad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Exclam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Cross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Interr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\notepad_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\notepad_IconHovered.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Crossed.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

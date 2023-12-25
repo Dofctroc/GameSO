@@ -95,7 +95,7 @@ namespace ClienteC__Juego
 
         public Position moveToRoom(int doorNum, PictureBox[,] grid)
         {
-            int[] roomCenters = {0, 2,2, 2,11, 2,21, 11,3, 9,21, 15,21, 21,3, 20,11, 22,21};
+            int[] roomCenters = {0, 3,2, 4,11, 2,21, 12,2, 10,21, 16,20, 22,2, 22,11, 23,21};
             Position newPos = new Position(0,0);
 
             int x = roomCenters[2 * doorNum - 1];
