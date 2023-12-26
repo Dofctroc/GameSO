@@ -112,6 +112,22 @@ namespace ClienteC__Juego
             Close();
         }
 
+        private void button_signOut_Click(object sender, EventArgs e)
+        {
+            username = textbox_username.Text;
+            password = textbox_password.Text;
+            int err = serverConnect();
+            if (username != "" && password != "")
+            {
+                if (err == 0)
+                {
+                    string mensaje = "3/" + textbox_username.Text + "/" + textbox_password.Text;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                }
+            }
+        }
+
         private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (conectado_conServer)
@@ -148,7 +164,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
+            string IP = "192.168.56.101"; int puerto = 9075;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -169,7 +185,6 @@ namespace ClienteC__Juego
                 return 1;
             }
             conectado_conServer = true;
-            button_LogOut.Enabled = true;
             ThreadStart ts = delegate { AtenderServidor(); };
             atender = new Thread(ts);
             atender.Start();
@@ -220,6 +235,19 @@ namespace ClienteC__Juego
                     if (mensaje[1] == "0")
                     {
                         msge = String.Format("El usuario {0} se ha conectado correctamente.", textbox_username.Text);
+                        WriteConsole(entry, msge);
+                    }
+                    else
+                    {
+                        msge = mensaje[1];
+                        WriteConsole(entry, msge);
+                        serverShutdown();
+                    }
+                    break;
+                case 3:
+                    if (mensaje[1] == "0")
+                    {
+                        msge = String.Format("El usuario {0} se ha borrado correctamente.", textbox_username.Text);
                         WriteConsole(entry, msge);
                     }
                     else
@@ -284,6 +312,11 @@ namespace ClienteC__Juego
                         if (mensaje[1] == "0")
                             this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
                         else
+                            serverShutdown();
+                        break;
+                    case 3:
+                        richBox_Control.Invoke(delegado, new object[] { mensaje });
+                        if (mensaje[1] == "0")
                             serverShutdown();
                         break;
                     case 10:

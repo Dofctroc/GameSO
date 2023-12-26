@@ -129,6 +129,70 @@ int EliminarPartida(ListaPartidas* listaP, char host[])
 	return 0;
 }
 
+int EliminarUsuario(MYSQL* conn, char nombre[], char password[], char mensajeSignOut[])
+{
+	MYSQL_RES* resultado;
+	MYSQL_ROW row;
+	int err, n;
+	char ID[10];
+	char consulta[800];
+	char consulta2[800];
+	strcpy(consulta, "select exists(SELECT Jugador.userName FROM Jugador WHERE Jugador.userName = '");
+	strcat(consulta, nombre);
+	strcat(consulta, "');");
+	mysql_query(conn, consulta);
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	int i;
+	
+	if (atoi(row[0]) == 1)
+	{
+		strcpy(consulta, "select exists(SELECT Jugador.pssword FROM Jugador WHERE Jugador.userName = '");
+		strcat(consulta, nombre);
+		strcat(consulta, "' AND Jugador.pssword = '");
+		strcat(consulta, password);
+		strcat(consulta, "');");
+		if (mysql_query(conn, consulta) != 0) {
+			fprintf(stderr, "Error: %s\n", mysql_error(conn));
+			exit(1);
+		}
+		resultado = mysql_store_result(conn);
+		row = mysql_fetch_row(resultado);
+		
+		if (atoi(row[0]) == 1)
+		{
+			strcpy(mensajeSignOut, "3/0");
+			strcpy(consulta, "SET FOREIGN_KEY_CHECKS=0;");
+			if (mysql_query(conn, consulta) != 0) {
+				fprintf(stderr, "Error: %s\n", mysql_error(conn));
+			}
+			strcpy(consulta, "DELETE FROM Jugador WHERE Jugador.userName = '");
+			strcat(consulta, nombre);
+			strcat(consulta, "';");
+			if (mysql_query(conn, consulta) != 0) {
+				fprintf(stderr, "Error: %s\n", mysql_error(conn));
+			}
+			strcpy(consulta, "SET FOREIGN_KEY_CHECKS=1;");
+			if (mysql_query(conn, consulta) != 0) {
+				fprintf(stderr, "Error: %s\n", mysql_error(conn));
+			}
+			i = 0;
+		}
+		else {
+			strcpy(mensajeSignOut, "3/");
+			strcat(mensajeSignOut, "La contrasenya que ha introducido es incorrecta.");
+			i = 1;
+		}
+	}
+	else {
+		strcpy(mensajeSignOut, "3/");
+		strcat(mensajeSignOut, "El usuario no existe, cree un usuario.");
+		i = 2;
+	}
+
+	return i;
+}
+
 // ------------------------- INSERTACIONES ---------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------
 int PonConectado(ListaConectados* lista, char nombre[], int socketUsuario)
@@ -140,7 +204,7 @@ int PonConectado(ListaConectados* lista, char nombre[], int socketUsuario)
 		pthread_mutex_lock(&mutex);
 		strcpy(lista->conectados[lista->num].userName, nombre);
 		lista->conectados[lista->num].status = 0;
-		lista->conectados[lista->num].socket = socketUsuario;
+		lista->conectados[lista->num].socket= socketUsuario;
 		lista->num++;
 		pthread_mutex_unlock(&mutex);
 		return 0;
@@ -219,7 +283,7 @@ int consultaSignUp(MYSQL* conn, char userName[], char password[], char mensajeSi
 
 	if (atoi(row[0]) == 0)
 	{
-		mysql_query(conn, "SELECT COUNT(ID) FROM Jugador");
+		mysql_query(conn, "SELECT MAX(ID) FROM Jugador");
 		resultado = mysql_store_result(conn);
 		row = mysql_fetch_row(resultado);
 		n = atoi(row[0]) + 1;
@@ -548,6 +612,17 @@ void AtenderCliente(void* socket)
 				strcpy(respuesta, mensajeLogIn);
 			}
 		}
+		else if (codigo == 3)
+		{
+			p = strtok(NULL, "/");
+			strcpy(userName, p);
+			p = strtok(NULL, "/");
+			strcpy(password, p);
+			char mensajeSignOut[800];
+			EliminarUsuario(conn, userName, password, mensajeSignOut);
+			EliminarConectado(&lista_Conectados, userName);
+			strcpy(respuesta, mensajeSignOut);
+		}
 		else if (codigo == 10)
 		{
 			p = strtok(NULL, "/");
@@ -720,7 +795,6 @@ void AtenderCliente(void* socket)
 			p = strtok(NULL, "/");
 			strcpy(chat, p);
 			sprintf(mensajechat, "27/%s/%s/%s", host, jugador, chat);
-			
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 			p = strtok(sockets_receptores, "/");
 			while (p != NULL)
@@ -765,7 +839,6 @@ int main(int argc, char* argv[])
 
 	//int puerto = 50075;  //50075-50090 for Shiva
 	int puerto = 9075; 		//Linux
-
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
 

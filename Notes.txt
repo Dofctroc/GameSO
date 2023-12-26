@@ -8,10 +8,7 @@ Shiva ports: 75-79
 0 - Desconectar
 1 - Peticion de SignUp
 2 - Peticion de LogIn
-
-3 - Invitacion a partida		3/Host/4(numero de invitados)/Asier/Gu/Julia/Ivan
-4 - Respuesta a invitacion a partida	4/Host/Jo soc Asier/Dic que Si
-5 - Crear una partida			5/Qui la crea
+3 - Peticion de SignDown		3/nomUsuari/contraseña
 
 10 - Peticion ListaUsuarios
 11 - ComandoInd1 (puntuacion total jugador)
@@ -36,6 +33,9 @@ Shiva ports: 75-79
 
 2 - LogIn correcto			2/0
 2 - LogIn error 			2/TextoDeError
+
+3 - SignOut error nombre usuario	3/TextoDeError
+3 - SignOut error contraseña		3/TextoDeError
 
 10 - ConsultaConectados
 11 - Consulta1
