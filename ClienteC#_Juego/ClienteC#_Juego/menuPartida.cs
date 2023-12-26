@@ -10,10 +10,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Threading;
-using System.Security;
 
 namespace ClienteC__Juego
 {
@@ -31,6 +28,7 @@ namespace ClienteC__Juego
         List<GroupBox> partidasGroups;                          // Vector of the two GroupBoxes that contain all the display of each game. Each contains: (dataGrid, kick button, chatBox, etc)
         List<DataGridView> partidasDataGrids;                   // Vector of the two datagridViews displaying the players of each game
         List<RichTextBox> partidasChats;                        // Vector of the two chatTextBox of each game
+        List<PictureBox> partidasNotifications;
 
         menuUsuario menuUsuario;
         Socket server;
@@ -58,6 +56,7 @@ namespace ClienteC__Juego
             partidasButtons = new List<System.Windows.Forms.Button> { btt_partida0, btt_partida1};
             partidasGroups = new List<GroupBox> { gBox_partida0, gBox_partida1};
             partidasChats = new List<RichTextBox> { tbox_read0, tbox_read1 };
+            partidasNotifications = new List<PictureBox> { pBox_notif0, pBox_notif1 };
             lbl_userName.Text = "Usuario: " + username;
             displayedGame = 0;
 
@@ -122,6 +121,7 @@ namespace ClienteC__Juego
             dgrid_listaUsuarios.Size = new Size(160,gBox_partida0.Height);
             dgrid_listaUsuarios.Visible = false;
 
+            pBox_notif0.Visible = pBox_notif1.Visible = false;
             btt_partida0.Visible = btt_partida1.Visible = false;
 
             CenterFormOnScreen();
@@ -222,13 +222,14 @@ namespace ClienteC__Juego
 
         private void button_Jugar_Click(object sender, EventArgs e)
         {
-            board tablero = new board();
+            gameBoard tablero = new gameBoard();
             tablero.Show();
         }
 
         private void btt_partida0_Click(object sender, EventArgs e)
         {
             displayedGame = 0;
+            pBox_notif0.Visible = false;
             if (gBox_partida0.Visible)
                 gBox_partida0.Visible = false;
             else
@@ -241,6 +242,7 @@ namespace ClienteC__Juego
         private void btt_partida1_Click(object sender, EventArgs e)
         {
             displayedGame = 1;
+            pBox_notif1.Visible = false;
             if (gBox_partida1.Visible)
                 gBox_partida1.Visible = false;
             else
@@ -588,6 +590,7 @@ namespace ClienteC__Juego
                         listaMiPartida(gameIndex, username, true);
                         Console.WriteLine("Game index is: " + gameIndex.ToString());
 
+                        displayedGame = gameIndex;
                         for (int i = 0; i < partidasGroups.Count; i++)
                             if (i == gameIndex)
                                 partidasGroups[i].Visible = true;
@@ -643,6 +646,9 @@ namespace ClienteC__Juego
 
                             chatMSG = "El usuario " + invitado + " se ha unido a la partida";
                             WriteInChatTITLE(gameIndex, chatMSG, Color.ForestGreen);
+
+                            if (displayedGame != gameIndex)
+                                partidasNotifications[gameIndex].Visible = true;
                         }
                         else
                         {
@@ -668,6 +674,7 @@ namespace ClienteC__Juego
                         }
                         listaMiPartida(gameIndex, mensaje[2]);
 
+                        displayedGame = gameIndex;
                         for (int i = 0; i < partidasGroups.Count; i++)
                             if (i == gameIndex)
                                 partidasGroups[i].Visible = true;
@@ -691,6 +698,9 @@ namespace ClienteC__Juego
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
                         partidasChats[gameIndex].AppendText(Environment.NewLine);
                         partidasChats[gameIndex].AppendText(Environment.NewLine);
+
+                        if (displayedGame != gameIndex)
+                            partidasNotifications[gameIndex].Visible = true;
                     }
                     else
                     {
@@ -699,6 +709,9 @@ namespace ClienteC__Juego
 
                         chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+
+                        if (displayedGame != gameIndex)
+                            partidasNotifications[gameIndex].Visible = true;
                     }
                     break;
                 case 25: // Jugador abandona partida voluntariamente
@@ -721,7 +734,6 @@ namespace ClienteC__Juego
                             }
                         }
                         dgrid_miPartida0.Rows.Clear();
-                        in_gameLobby = false;
 
                         chatMSG = "El host " + nameHost + " ha eliminado la partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
@@ -731,6 +743,10 @@ namespace ClienteC__Juego
                     string sender = mensaje[2];
                     chatMSG = mensaje[3];
                     WriteInChatMESSAGE(gameIndex, sender, chatMSG, Color.Black);
+
+                    if (displayedGame != gameIndex)
+                        partidasNotifications[gameIndex].Visible = true;
+
                     break;
             }
 

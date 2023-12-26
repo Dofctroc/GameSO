@@ -1,6 +1,6 @@
 ﻿namespace ClienteC__Juego
 {
-    partial class board
+    partial class gameBoard
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -198,7 +198,7 @@
             // 
             this.richtBox_read.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.richtBox_read.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richtBox_read.Location = new System.Drawing.Point(7, 17);
+            this.richtBox_read.Location = new System.Drawing.Point(7, 20);
             this.richtBox_read.Margin = new System.Windows.Forms.Padding(4);
             this.richtBox_read.Name = "richtBox_read";
             this.richtBox_read.ReadOnly = true;
@@ -212,7 +212,7 @@
             this.pBox_sendText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pBox_sendText.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Icono_Enviar;
             this.pBox_sendText.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_sendText.Location = new System.Drawing.Point(196, 197);
+            this.pBox_sendText.Location = new System.Drawing.Point(196, 200);
             this.pBox_sendText.Name = "pBox_sendText";
             this.pBox_sendText.Size = new System.Drawing.Size(25, 25);
             this.pBox_sendText.TabIndex = 42;
@@ -223,7 +223,7 @@
             this.tBox_write.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tBox_write.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tBox_write.Font = new System.Drawing.Font("Calibri", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tBox_write.Location = new System.Drawing.Point(63, 197);
+            this.tBox_write.Location = new System.Drawing.Point(63, 200);
             this.tBox_write.Margin = new System.Windows.Forms.Padding(4);
             this.tBox_write.Multiline = true;
             this.tBox_write.Name = "tBox_write";
@@ -236,7 +236,7 @@
             this.lbl_write.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lbl_write.BackColor = System.Drawing.SystemColors.Control;
             this.lbl_write.ForeColor = System.Drawing.SystemColors.InfoText;
-            this.lbl_write.Location = new System.Drawing.Point(6, 197);
+            this.lbl_write.Location = new System.Drawing.Point(6, 200);
             this.lbl_write.Name = "lbl_write";
             this.lbl_write.Size = new System.Drawing.Size(50, 25);
             this.lbl_write.TabIndex = 41;
@@ -245,18 +245,20 @@
             // 
             // gBox_chat
             // 
+            this.gBox_chat.BackColor = System.Drawing.Color.Snow;
+            this.gBox_chat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.gBox_chat.Controls.Add(this.richtBox_read);
             this.gBox_chat.Controls.Add(this.lbl_write);
             this.gBox_chat.Controls.Add(this.pBox_sendText);
             this.gBox_chat.Controls.Add(this.tBox_write);
-            this.gBox_chat.Location = new System.Drawing.Point(12, 388);
+            this.gBox_chat.Location = new System.Drawing.Point(12, 385);
             this.gBox_chat.Name = "gBox_chat";
-            this.gBox_chat.Size = new System.Drawing.Size(229, 227);
+            this.gBox_chat.Size = new System.Drawing.Size(229, 230);
             this.gBox_chat.TabIndex = 43;
             this.gBox_chat.TabStop = false;
             this.gBox_chat.Text = "Chat";
             // 
-            // board
+            // gameBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -278,7 +280,7 @@
             this.Controls.Add(this.panel_Board);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "board";
+            this.Name = "gameBoard";
             this.Text = "Board";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card3)).EndInit();

@@ -341,13 +341,6 @@ int consultaLogIn(MYSQL* conn, char userName[], char password[], char mensajeLog
 
 		if (atoi(row[0]) == 1)
 		{
-			// Ahora ya podemos realizar la insercion 
-			err = mysql_query(conn, consulta);
-			if (err != 0) {
-				printf("Error al introducir datos la base %u %s\n",
-					mysql_errno(conn), mysql_error(conn));
-				exit(1);
-			}
 			strcpy(mensajeLogIn, "2/0");
 			i = 0;
 		}
@@ -381,8 +374,11 @@ int consulta1(MYSQL* conn, char nombre[])
 	resultado = mysql_store_result(conn);
 	row = mysql_fetch_row(resultado);
 
-	if (row == NULL)
+	if (row == NULL|| row[0] == NULL)
+	{
 		printf("No se han obtenido datos en la consulta\n");
+		return -1;
+	}
 
 	int puntosTotales = atoi(row[0]);
 	return puntosTotales;
@@ -404,17 +400,19 @@ int consulta2(MYSQL* conn, char nombre[], char puntuaciones[])
 	row = mysql_fetch_row(resultado);
 
 	if (row == NULL)
-		printf("Ha habido un error en la consulta de datos \n");
-	else
 	{
-		int i = 0;
-		strcpy(puntuaciones, "12/");
-		while (row != NULL) {
-			strcat(puntuaciones, row[0]);
-			strcat(puntuaciones, "/");
-			row = mysql_fetch_row(resultado);
-			i++;
-		}
+		printf("Ha habido un error en la consulta de datos \n");
+		strcpy(puntuaciones, "12/NULL");
+		return -1;
+	}
+	
+	int i = 0;
+	strcpy(puntuaciones, "12");
+	while (row != NULL) {
+		strcat(puntuaciones, "/");
+		strcat(puntuaciones, row[0]);
+		row = mysql_fetch_row(resultado);
+		i++;
 	}
 	return 0;
 }
@@ -434,7 +432,10 @@ int consulta3(MYSQL* conn, char partidaID[], char ganador[])
 	row = mysql_fetch_row(resultado);
 
 	if (row == NULL)
+	{
 		printf("Ha habido un error en la consulta de datos \n");
+		strcpy(ganador, "13/NULL");
+	}
 	else {
 		strcpy(ganador, "13/");
 		strcat(ganador, row[0]);
@@ -640,9 +641,10 @@ void AtenderCliente(void* socket)
 		}
 		else if (codigo == 12)
 		{
+			char puntuaciones[20];
+			
 			p = strtok(NULL, "/");
 			strcpy(partida, p);
-			char puntuaciones[20];
 			consulta2(conn, partida, puntuaciones);
 			strcpy(respuesta, puntuaciones);
 		}
@@ -650,7 +652,10 @@ void AtenderCliente(void* socket)
 		{
 			char ganador[20];
 			char partidaID[10];
-			consulta3(conn, nombre, ganador);
+			
+			p = strtok(NULL, "/");
+			strcpy(partidaID, p);
+			consulta3(conn, partidaID, ganador);
 			strcpy(respuesta, ganador);
 		}
 		else if (codigo == 20)

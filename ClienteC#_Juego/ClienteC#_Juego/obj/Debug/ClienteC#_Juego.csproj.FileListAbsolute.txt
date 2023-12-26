@@ -70,7 +70,6 @@ C:\Users\G513\Desktop\Asier Uni\3r Año\SO\Juego\SafeFiles\V3+\ClienteC#_Juego\C
 C:\Users\G513\Desktop\Asier Uni\3r Año\SO\Juego\SafeFiles\V3+\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.pdb
 C:\Users\G513\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.consultas.resources
 C:\Users\G513\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.menuPartida.resources
-C:\Users\G513\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.board.resources
 C:\Users\G513\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.InGameNotes.resources
 C:\Users\julia\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\bin\Debug\ClienteC#_Juego.exe.config
 C:\Users\julia\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\bin\Debug\ClienteC#_Juego.exe
@@ -86,3 +85,4 @@ C:\Users\julia\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug
 C:\Users\julia\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.csproj.CoreCompileInputs.cache
 C:\Users\julia\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.exe
 C:\Users\julia\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC#_Juego.pdb
+C:\Users\G513\Documents\GitHub\GameSO\ClienteC#_Juego\ClienteC#_Juego\obj\Debug\ClienteC__Juego.gameBoard.resources

@@ -14,9 +14,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace ClienteC__Juego
 {
-    public partial class board : Form
+    public partial class gameBoard : Form
     {
-        public board()
+        public gameBoard()
         {
             InitializeComponent();
         }
@@ -29,8 +29,24 @@ namespace ClienteC__Juego
         BoardDistribution boardGrids;   // Initalizes variables from custom class <BoardDistribution>
         Image[] dicesImg;       // Vector including all images a dice can have, ordered from 0 to 6 (0 being empty throw)
 
+        List<Image> cardsOrderedDeck;
+        List<Image> cardsDeck;
+        List<Image> roomCards;
+        List<Image> suspectCards;
+        List<Image> weaponCards;
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            cardsOrderedDeck = new List<Image> { Properties.Resources.room1, Properties.Resources.room2, Properties.Resources.room3, Properties.Resources.room4,
+                Properties.Resources.room5, Properties.Resources.room6, Properties.Resources.room7, Properties.Resources.room8, Properties.Resources.room9,
+                Properties.Resources.suspect1, Properties.Resources.suspect2, Properties.Resources.suspect3, Properties.Resources.suspect4, Properties.Resources.suspect5, Properties.Resources.suspect6,
+                Properties.Resources.weapon1, Properties.Resources.weapon2, Properties.Resources.weapon3, Properties.Resources.weapon4, Properties.Resources.weapon5, Properties.Resources.weapon6};
+
+            roomCards = new List<Image> (9);
+            suspectCards = new List<Image>(6);
+            weaponCards = new List<Image>(6);
+
             // Variables assignment
             rows = 25; columns = 24;
             tileWidth = 26; tileHeight = 26;
@@ -92,7 +108,7 @@ namespace ClienteC__Juego
             pBox_card2.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5);
             pBox_card3.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5 + pBox_card2.Height + 5);
 
-            gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 300);
+            gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 200);
             gBox_chat.Location = new Point(10, panel_Board.Location.Y + panel_Board.Height - gBox_chat.Height);
             richtBox_read.Location = new Point(5, 15);
             richtBox_read.Size = new Size(gBox_chat.Width - 10, gBox_chat.Height - 50);
@@ -101,6 +117,37 @@ namespace ClienteC__Juego
             tBox_write.Width = richtBox_read.Width - lbl_write.Width - pBox_sendText.Width - 10;
             tBox_write.Location = new Point(lbl_write.Location.X + lbl_write.Width + 5, lbl_write.Location.Y);
             pBox_sendText.Location = new Point(tBox_write.Location.X + tBox_write.Width + 5, lbl_write.Location.Y);
+
+            // Cards logic
+
+            string cardTypeName = "room";
+            int n = 1;
+            foreach (Image card in cardsOrderedDeck)
+            {
+                card.Tag = cardTypeName;
+                if (n == 9)
+                    cardTypeName = "suspect";
+                if (n == 15)
+                    cardTypeName = "weapon";
+                n++;
+            }
+
+            cardsDeck = cardsOrderedDeck;
+            Shuffle(cardsDeck);
+
+            foreach (Image card in cardsDeck)
+            {
+                if (card.Tag.ToString() == "room")
+                    roomCards.Add(card); 
+                else if (card.Tag.ToString() == "suspect")
+                    suspectCards.Add(card);
+                else if (card.Tag.ToString() == "weapon")
+                    weaponCards.Add(card);
+            }
+
+            pBox_card1.BackgroundImage = suspectCards[0];
+            pBox_card2.BackgroundImage = weaponCards[1];
+            pBox_card3.BackgroundImage = roomCards[2];
 
             CenterFormOnScreen();
         }
@@ -550,6 +597,22 @@ namespace ClienteC__Juego
         {
             InGameNotes notePad = new InGameNotes();
             notePad.Show();
+        }
+
+        // -------------------- FUNCTIONS INVOLVING CARDS LOGIC AND WORK -----------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------
+
+        static void Shuffle<T>(List<T> list)
+        {
+            Random random = new Random();
+            int n = list.Count;
+            for (int i = n - 1; i > 0; i--)
+            {
+                int j = random.Next(0, i + 1);
+                T temp = list[i];
+                list[i] = list[j];
+                list[j] = temp;
+            }
         }
     }
 }
