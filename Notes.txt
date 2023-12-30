@@ -27,6 +27,10 @@ Shiva ports: 75-79
 25 - Jugador quiere abandonar partida	25/Host/JugX		(JugX abandona la partida) *
 26 - Eliminar la partida		26/Host			(Host elimina su partida) *
 27 - Jugador envia mensaje por chat	27/Host/JugX/Mensaje	(JugX envia "mensaje" por chat)
+
+40 - Empieza la partida			40/Host
+41 - 
+42 - Acaba mi turno			42/Host/JugX
  _____________________________________________________________________________________________
 |											      |
 |--------------------------- Codigos mensaje que envia Server: -------------------------------|
@@ -60,6 +64,10 @@ Shiva ports: 75-79
 26 - Host ha eliminado la partida	26/Host				(SentTo: Players in game lobby, not host)
 27 - Reenvia mensaje jugador chat	27/Host/JugX/Mensaje		(SentTo: All players in game lobby)
 28 - Avisar a tots els invitats que ja no poden entrar a partida
+
+40 - Notificación inicio game 		40/Host
+41 - Empieza mi turno			41/Host
+42 - 
 
 
 One player MUST only be able to host ONE game

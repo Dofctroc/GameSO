@@ -37,6 +37,7 @@ namespace ClienteC__Juego
         Socket server;
 
         menuRankings menu_rankings;
+        gameBoard tablero;
 
         public menuPartida(menuUsuario menuUsuario, Socket server, string username)
         {
@@ -216,8 +217,12 @@ namespace ClienteC__Juego
 
         private void button_Jugar_Click(object sender, EventArgs e)
         {
-            if (partidas[displayedGame].Count > 0 && partidas[displayedGame][0] == username)
-                StartNewGame(username, displayedGame);
+            if (partidas[displayedGame].Count >= 2 && partidas[displayedGame][0] == username)
+            {
+                string mensaje = "40/" + username;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
         }
 
         private void btt_partida0_Click(object sender, EventArgs e)
@@ -743,6 +748,12 @@ namespace ClienteC__Juego
                         partidasNotifPanels[gameIndex].Visible = true;
 
                     break;
+                case 40:
+                    this.Invoke(new Action(() => { StartNewGame(nameHost, gameIndex); }));
+                    break;
+                case 41:
+                    tablero.AtenderPartida(mensaje);
+                    break;
             }
             if (codigo != 27)
                 updateStatusPartidas();
@@ -750,7 +761,7 @@ namespace ClienteC__Juego
 
         private void StartNewGame(string gameHost, int gameNum)
         {
-            gameBoard tablero = new gameBoard(server, gameNum, gameHost);
+            tablero = new gameBoard(server, gameNum, gameHost);
             tablero.Show();
         }
 

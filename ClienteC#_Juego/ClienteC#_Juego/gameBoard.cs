@@ -32,6 +32,7 @@ namespace ClienteC__Juego
         int rows; int columns; int cornerBoardMargin;
         int tileWidth; int tileHeight;
         int diceRoll, diceRoll1, diceRoll2;
+        bool myturn;
         Position myPos;         // Current position of the player in the grid
         PictureBox[,] grid;     // Grid of pictureBoxes representing each tile
         BoardDistribution boardGrids;   // Initalizes variables from custom class <BoardDistribution>
@@ -46,7 +47,9 @@ namespace ClienteC__Juego
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = "Game of " + gameNum;
+            this.Text = "Game of " + gameHost;
+            myturn = false;
+            ComprovarTurno(myturn);
 
             cardsOrderedDeck = new List<Image> { Properties.Resources.room1, Properties.Resources.room2, Properties.Resources.room3, Properties.Resources.room4,
                 Properties.Resources.room5, Properties.Resources.room6, Properties.Resources.room7, Properties.Resources.room8, Properties.Resources.room9,
@@ -642,6 +645,41 @@ namespace ClienteC__Juego
                 T temp = list[i];
                 list[i] = list[j];
                 list[j] = temp;
+            }
+        }
+
+        // -------------------- FUNCTIONS INVOLVING CARDS LOGIC AND WORK -----------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------
+
+        public void AtenderPartida(string[] mensaje)
+        {
+            int codigo;
+            codigo = Convert.ToInt32(mensaje[0]);
+            switch (codigo)
+            {
+                case 41:
+                    myturn = true;
+                    ComprovarTurno(myturn);
+                    break;
+            }
+        }
+        
+
+        private void ComprovarTurno (bool turno)
+        {
+            if (turno)
+            {
+                btt_dado.Enabled = true;
+                btt_guess.Enabled = true;
+                btt_solve.Enabled = true;
+                panel_Board.Enabled = true;
+            }
+            else
+            {
+                btt_dado.Enabled = false;
+                btt_guess.Enabled = false;
+                panel_Board.Enabled = false;
+                btt_solve.Enabled = false;
             }
         }
     }
