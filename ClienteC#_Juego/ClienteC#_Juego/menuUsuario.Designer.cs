@@ -39,6 +39,7 @@
             this.opcionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableroToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notePadEXPERIMENTALToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rankingsEXPERIMENTALToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.consultasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlPanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.richBox_Control = new System.Windows.Forms.RichTextBox();
@@ -50,10 +51,9 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(16, 41);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(21, 50);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 17);
+            this.label3.Size = new System.Drawing.Size(89, 20);
             this.label3.TabIndex = 12;
             this.label3.Text = "UserName";
             // 
@@ -61,20 +61,20 @@
             // 
             this.textbox_password.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textbox_password.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.textbox_password.Location = new System.Drawing.Point(20, 113);
-            this.textbox_password.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.textbox_password.Location = new System.Drawing.Point(27, 139);
+            this.textbox_password.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_password.Name = "textbox_password";
             this.textbox_password.PasswordChar = '*';
-            this.textbox_password.Size = new System.Drawing.Size(94, 20);
+            this.textbox_password.Size = new System.Drawing.Size(125, 22);
             this.textbox_password.TabIndex = 2;
             // 
             // textbox_username
             // 
             this.textbox_username.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textbox_username.Location = new System.Drawing.Point(20, 63);
-            this.textbox_username.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.textbox_username.Location = new System.Drawing.Point(27, 78);
+            this.textbox_username.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_username.Name = "textbox_username";
-            this.textbox_username.Size = new System.Drawing.Size(94, 20);
+            this.textbox_username.Size = new System.Drawing.Size(125, 22);
             this.textbox_username.TabIndex = 1;
             // 
             // button_signUp
@@ -82,10 +82,10 @@
             this.button_signUp.AutoSize = true;
             this.button_signUp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.button_signUp.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_signUp.Location = new System.Drawing.Point(27, 313);
-            this.button_signUp.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.button_signUp.Location = new System.Drawing.Point(36, 385);
+            this.button_signUp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_signUp.Name = "button_signUp";
-            this.button_signUp.Size = new System.Drawing.Size(92, 34);
+            this.button_signUp.Size = new System.Drawing.Size(123, 42);
             this.button_signUp.TabIndex = 3;
             this.button_signUp.Text = "Sign Up";
             this.button_signUp.UseVisualStyleBackColor = false;
@@ -96,10 +96,10 @@
             this.button_logIn.AutoSize = true;
             this.button_logIn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.button_logIn.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_logIn.Location = new System.Drawing.Point(26, 351);
-            this.button_logIn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.button_logIn.Location = new System.Drawing.Point(35, 432);
+            this.button_logIn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_logIn.Name = "button_logIn";
-            this.button_logIn.Size = new System.Drawing.Size(81, 34);
+            this.button_logIn.Size = new System.Drawing.Size(108, 42);
             this.button_logIn.TabIndex = 4;
             this.button_logIn.Text = "Log In";
             this.button_logIn.UseVisualStyleBackColor = false;
@@ -109,10 +109,9 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(16, 93);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(21, 114);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 17);
+            this.label1.Size = new System.Drawing.Size(83, 20);
             this.label1.TabIndex = 17;
             this.label1.Text = "Password";
             // 
@@ -120,10 +119,9 @@
             // 
             this.lbl_controlPanel.AutoSize = true;
             this.lbl_controlPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.lbl_controlPanel.Location = new System.Drawing.Point(502, 10);
-            this.lbl_controlPanel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbl_controlPanel.Location = new System.Drawing.Point(669, 12);
             this.lbl_controlPanel.Name = "lbl_controlPanel";
-            this.lbl_controlPanel.Size = new System.Drawing.Size(70, 13);
+            this.lbl_controlPanel.Size = new System.Drawing.Size(87, 16);
             this.lbl_controlPanel.TabIndex = 21;
             this.lbl_controlPanel.Text = "Control Panel";
             this.lbl_controlPanel.Visible = false;
@@ -136,8 +134,8 @@
             this.opcionesToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(736, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(981, 30);
             this.menuStrip1.TabIndex = 24;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -147,37 +145,45 @@
             this.opcionesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tableroToolStripMenuItem,
             this.notePadEXPERIMENTALToolStripMenuItem,
+            this.rankingsEXPERIMENTALToolStripMenuItem,
             this.consultasToolStripMenuItem,
             this.controlPanelToolStripMenuItem});
             this.opcionesToolStripMenuItem.Name = "opcionesToolStripMenuItem";
-            this.opcionesToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.opcionesToolStripMenuItem.Size = new System.Drawing.Size(85, 24);
             this.opcionesToolStripMenuItem.Text = "Opciones";
             // 
             // tableroToolStripMenuItem
             // 
             this.tableroToolStripMenuItem.Name = "tableroToolStripMenuItem";
-            this.tableroToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.tableroToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
             this.tableroToolStripMenuItem.Text = "Tablero (EXPERIMENTAL)";
             this.tableroToolStripMenuItem.Click += new System.EventHandler(this.tableroToolStripMenuItem_Click);
             // 
             // notePadEXPERIMENTALToolStripMenuItem
             // 
             this.notePadEXPERIMENTALToolStripMenuItem.Name = "notePadEXPERIMENTALToolStripMenuItem";
-            this.notePadEXPERIMENTALToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.notePadEXPERIMENTALToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
             this.notePadEXPERIMENTALToolStripMenuItem.Text = "NotePad (EXPERIMENTAL)";
             this.notePadEXPERIMENTALToolStripMenuItem.Click += new System.EventHandler(this.notePadEXPERIMENTALToolStripMenuItem_Click);
+            // 
+            // rankingsEXPERIMENTALToolStripMenuItem
+            // 
+            this.rankingsEXPERIMENTALToolStripMenuItem.Name = "rankingsEXPERIMENTALToolStripMenuItem";
+            this.rankingsEXPERIMENTALToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
+            this.rankingsEXPERIMENTALToolStripMenuItem.Text = "Rankings (EXPERIMENTAL)";
+            this.rankingsEXPERIMENTALToolStripMenuItem.Click += new System.EventHandler(this.rankingsEXPERIMENTALToolStripMenuItem_Click);
             // 
             // consultasToolStripMenuItem
             // 
             this.consultasToolStripMenuItem.Name = "consultasToolStripMenuItem";
-            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
             this.consultasToolStripMenuItem.Text = "Consultas";
             this.consultasToolStripMenuItem.Click += new System.EventHandler(this.consultasToolStripMenuItem_Click);
             // 
             // controlPanelToolStripMenuItem
             // 
             this.controlPanelToolStripMenuItem.Name = "controlPanelToolStripMenuItem";
-            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
             this.controlPanelToolStripMenuItem.Text = "Control Panel";
             this.controlPanelToolStripMenuItem.Click += new System.EventHandler(this.controlPanelToolStripMenuItem_Click);
             // 
@@ -186,11 +192,11 @@
             this.richBox_Control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.richBox_Control.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richBox_Control.ForeColor = System.Drawing.Color.White;
-            this.richBox_Control.Location = new System.Drawing.Point(504, 25);
-            this.richBox_Control.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.richBox_Control.Location = new System.Drawing.Point(672, 31);
+            this.richBox_Control.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.richBox_Control.Name = "richBox_Control";
             this.richBox_Control.ReadOnly = true;
-            this.richBox_Control.Size = new System.Drawing.Size(224, 358);
+            this.richBox_Control.Size = new System.Drawing.Size(297, 532);
             this.richBox_Control.TabIndex = 25;
             this.richBox_Control.Text = "";
             // 
@@ -199,10 +205,10 @@
             this.button_signOut.AutoSize = true;
             this.button_signOut.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.button_signOut.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_signOut.Location = new System.Drawing.Point(27, 391);
-            this.button_signOut.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.button_signOut.Location = new System.Drawing.Point(36, 481);
+            this.button_signOut.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_signOut.Name = "button_signOut";
-            this.button_signOut.Size = new System.Drawing.Size(98, 34);
+            this.button_signOut.Size = new System.Drawing.Size(131, 42);
             this.button_signOut.TabIndex = 26;
             this.button_signOut.Text = "Sign Out";
             this.button_signOut.UseVisualStyleBackColor = false;
@@ -210,11 +216,11 @@
             // 
             // menuUsuario
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::ClienteC__Juego.Properties.Resources.fondoCluedoPixeled;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(736, 466);
+            this.ClientSize = new System.Drawing.Size(981, 574);
             this.Controls.Add(this.button_signOut);
             this.Controls.Add(this.richBox_Control);
             this.Controls.Add(this.lbl_controlPanel);
@@ -226,6 +232,7 @@
             this.Controls.Add(this.textbox_username);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "menuUsuario";
             this.Text = "menuUsuario";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.menuUsuario_FormClosing);
@@ -253,5 +260,6 @@
         private System.Windows.Forms.ToolStripMenuItem notePadEXPERIMENTALToolStripMenuItem;
         private System.Windows.Forms.RichTextBox richBox_Control;
         private System.Windows.Forms.Button button_signOut;
+        private System.Windows.Forms.ToolStripMenuItem rankingsEXPERIMENTALToolStripMenuItem;
     }
 }

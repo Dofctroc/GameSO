@@ -18,9 +18,9 @@ namespace ClienteC__Juego
 {
     public partial class menuUsuario : Form
     {
-        public static string txtGrid = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataGrid.txt";
-        public static string txtGrid2 = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataGrid2.txt";
-        public static string txtBox = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataBox.txt";
+        string txtGrid;
+        string txtGrid2;
+        string txtBox;
 
         bool conectado_conServer = false;
         Socket server;
@@ -41,10 +41,15 @@ namespace ClienteC__Juego
 
         private void menuUsuario_Load(object sender, EventArgs e)
         {
-            File.WriteAllLines(txtGrid, new string[0]);
-            File.WriteAllLines(txtGrid2, new string[0]);
-            File.WriteAllLines(txtBox, new string[0]);
-
+            for (int i = 0; i < 2; i++)
+            {
+                txtGrid = AppDomain.CurrentDomain.BaseDirectory + @"\notepad_tiles_" + i + ".txt";
+                txtGrid2 = AppDomain.CurrentDomain.BaseDirectory + @"\notepad_names_" + i + ".txt";
+                txtBox = AppDomain.CurrentDomain.BaseDirectory + @"\NotePad_notes_" + i + ".txt";
+                File.WriteAllLines(txtGrid, new string[0]);
+                File.WriteAllLines(txtGrid2, new string[0]);
+                File.WriteAllLines(txtBox, new string[0]);
+            }
             textbox_password.Text = password;
             textbox_username.Text = username;
 
@@ -145,13 +150,13 @@ namespace ClienteC__Juego
 
         private void tableroToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            gameBoard tablero = new gameBoard();
+            gameBoard tablero = new gameBoard(server, 0, "ELPATRON");
             tablero.Show();
         }
 
         private void notePadEXPERIMENTALToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InGameNotes notePad = new InGameNotes();
+            InGameNotes notePad = new InGameNotes(0);
             notePad.Show();
         }
 
@@ -199,6 +204,27 @@ namespace ClienteC__Juego
 
                 //Mensaje de desconexión
                 string mensaje = "0/" + username;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+
+                // Nos desconectamos
+                server.Shutdown(SocketShutdown.Both);
+                server.Close();
+                atender.Abort();
+
+                textbox_password.Text = "";
+                textbox_username.Text = "";
+            }
+        }
+
+        public void serverShutdown(string userName)
+        {
+            if (conectado_conServer)
+            {
+                conectado_conServer = false;
+
+                //Mensaje de desconexión
+                string mensaje = "0/" + userName;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
@@ -267,7 +293,7 @@ namespace ClienteC__Juego
         private void OpenNewForm()
         {
             // Create and show the new form
-            menuPartida = new menuPartida(this, server, atender, username);
+            menuPartida = new menuPartida(this, server, username);
             menuPartida.Show();
             //this.Hide();
         }
@@ -319,10 +345,12 @@ namespace ClienteC__Juego
                         if (mensaje[1] == "0")
                             serverShutdown();
                         break;
+                        // Connected information
                     case 10:
                         menuPartida.listaConectados(mensaje[1]);
                         richBox_Control.Invoke(delegado, new object[] { mensaje });
                         break;
+                        // Consultations
                     case 11:
                         consultas.responseReceived(mensaje, codigo);
                         break;
@@ -332,6 +360,20 @@ namespace ClienteC__Juego
                     case 13:
                         consultas.responseReceived(mensaje, codigo);
                         break;
+                        // Four ranking Consultations
+                    case 14:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 15:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 16:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 17:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                        // In game lobby
                     case 20:    // Has podido crear partida bien o no
                         menuPartida.onResponse(mensaje);
                         break;
@@ -373,6 +415,12 @@ namespace ClienteC__Juego
 
             // Set the form's location
             this.Location = new Point(x, y);
+        }
+
+        private void rankingsEXPERIMENTALToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            menuRankings rankings = new menuRankings(server);
+            rankings.Show();
         }
     }
 }

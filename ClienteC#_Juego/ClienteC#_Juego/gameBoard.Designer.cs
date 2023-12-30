@@ -45,6 +45,19 @@
             this.tBox_write = new System.Windows.Forms.TextBox();
             this.lbl_write = new System.Windows.Forms.Label();
             this.gBox_chat = new System.Windows.Forms.GroupBox();
+            this.panel_Guess = new System.Windows.Forms.Panel();
+            this.btt_solve = new System.Windows.Forms.Button();
+            this.btt_guess = new System.Windows.Forms.Button();
+            this.lbl_suspect = new System.Windows.Forms.Label();
+            this.lbl_weap = new System.Windows.Forms.Label();
+            this.lbl_room = new System.Windows.Forms.Label();
+            this.panel_Dados = new System.Windows.Forms.Panel();
+            this.panel_guess1 = new System.Windows.Forms.Panel();
+            this.panel_guess2 = new System.Windows.Forms.Panel();
+            this.panel_guess3 = new System.Windows.Forms.Panel();
+            this.pBox_check1 = new System.Windows.Forms.PictureBox();
+            this.pBox_check2 = new System.Windows.Forms.PictureBox();
+            this.pBox_check3 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card1)).BeginInit();
@@ -54,6 +67,14 @@
             this.panel_Board.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_sendText)).BeginInit();
             this.gBox_chat.SuspendLayout();
+            this.panel_Guess.SuspendLayout();
+            this.panel_Dados.SuspendLayout();
+            this.panel_guess1.SuspendLayout();
+            this.panel_guess2.SuspendLayout();
+            this.panel_guess3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_check1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_check2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_check3)).BeginInit();
             this.SuspendLayout();
             // 
             // btt_dado
@@ -61,7 +82,7 @@
             this.btt_dado.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btt_dado.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btt_dado.Font = new System.Drawing.Font("Rockwell", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btt_dado.Location = new System.Drawing.Point(75, 10);
+            this.btt_dado.Location = new System.Drawing.Point(53, 3);
             this.btt_dado.Name = "btt_dado";
             this.btt_dado.Size = new System.Drawing.Size(119, 30);
             this.btt_dado.TabIndex = 2;
@@ -72,7 +93,7 @@
             // lbl_diceRoll
             // 
             this.lbl_diceRoll.AutoSize = true;
-            this.lbl_diceRoll.Location = new System.Drawing.Point(196, 24);
+            this.lbl_diceRoll.Location = new System.Drawing.Point(174, 17);
             this.lbl_diceRoll.Name = "lbl_diceRoll";
             this.lbl_diceRoll.Size = new System.Drawing.Size(37, 16);
             this.lbl_diceRoll.TabIndex = 5;
@@ -113,7 +134,7 @@
             // 
             // pBox_card3
             // 
-            this.pBox_card3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.weapon1;
+            this.pBox_card3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.room1;
             this.pBox_card3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pBox_card3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card3.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -126,7 +147,7 @@
             // 
             // pBox_card2
             // 
-            this.pBox_card2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.room1;
+            this.pBox_card2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.weapon1;
             this.pBox_card2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pBox_card2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card2.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -167,7 +188,7 @@
             // pBox_dice2
             // 
             this.pBox_dice2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pBox_dice2.Location = new System.Drawing.Point(133, 46);
+            this.pBox_dice2.Location = new System.Drawing.Point(121, 39);
             this.pBox_dice2.Name = "pBox_dice2";
             this.pBox_dice2.Size = new System.Drawing.Size(100, 100);
             this.pBox_dice2.TabIndex = 16;
@@ -176,7 +197,7 @@
             // pBox_dice1
             // 
             this.pBox_dice1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pBox_dice1.Location = new System.Drawing.Point(27, 46);
+            this.pBox_dice1.Location = new System.Drawing.Point(11, 39);
             this.pBox_dice1.Name = "pBox_dice1";
             this.pBox_dice1.Size = new System.Drawing.Size(100, 100);
             this.pBox_dice1.TabIndex = 1;
@@ -258,6 +279,144 @@
             this.gBox_chat.TabStop = false;
             this.gBox_chat.Text = "Chat";
             // 
+            // panel_Guess
+            // 
+            this.panel_Guess.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel_Guess.Controls.Add(this.panel_guess3);
+            this.panel_Guess.Controls.Add(this.panel_guess2);
+            this.panel_Guess.Controls.Add(this.panel_guess1);
+            this.panel_Guess.Controls.Add(this.lbl_room);
+            this.panel_Guess.Controls.Add(this.lbl_weap);
+            this.panel_Guess.Controls.Add(this.lbl_suspect);
+            this.panel_Guess.Controls.Add(this.btt_guess);
+            this.panel_Guess.Location = new System.Drawing.Point(12, 162);
+            this.panel_Guess.Name = "panel_Guess";
+            this.panel_Guess.Size = new System.Drawing.Size(240, 172);
+            this.panel_Guess.TabIndex = 44;
+            // 
+            // btt_solve
+            // 
+            this.btt_solve.BackColor = System.Drawing.Color.YellowGreen;
+            this.btt_solve.Font = new System.Drawing.Font("Algerian", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btt_solve.Location = new System.Drawing.Point(72, 340);
+            this.btt_solve.Name = "btt_solve";
+            this.btt_solve.Size = new System.Drawing.Size(106, 39);
+            this.btt_solve.TabIndex = 45;
+            this.btt_solve.Text = "SOLVE";
+            this.btt_solve.UseVisualStyleBackColor = false;
+            // 
+            // btt_guess
+            // 
+            this.btt_guess.Font = new System.Drawing.Font("Modern No. 20", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btt_guess.Location = new System.Drawing.Point(3, 135);
+            this.btt_guess.Name = "btt_guess";
+            this.btt_guess.Size = new System.Drawing.Size(229, 34);
+            this.btt_guess.TabIndex = 0;
+            this.btt_guess.Text = "Make your guess";
+            this.btt_guess.UseVisualStyleBackColor = true;
+            // 
+            // lbl_suspect
+            // 
+            this.lbl_suspect.Location = new System.Drawing.Point(12, 9);
+            this.lbl_suspect.Name = "lbl_suspect";
+            this.lbl_suspect.Size = new System.Drawing.Size(68, 19);
+            this.lbl_suspect.TabIndex = 4;
+            this.lbl_suspect.Text = "Suspect";
+            this.lbl_suspect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_weap
+            // 
+            this.lbl_weap.Location = new System.Drawing.Point(84, 9);
+            this.lbl_weap.Name = "lbl_weap";
+            this.lbl_weap.Size = new System.Drawing.Size(69, 16);
+            this.lbl_weap.TabIndex = 5;
+            this.lbl_weap.Text = "Weapon";
+            this.lbl_weap.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_room
+            // 
+            this.lbl_room.Location = new System.Drawing.Point(159, 9);
+            this.lbl_room.Name = "lbl_room";
+            this.lbl_room.Size = new System.Drawing.Size(44, 16);
+            this.lbl_room.TabIndex = 6;
+            this.lbl_room.Text = "Room";
+            this.lbl_room.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panel_Dados
+            // 
+            this.panel_Dados.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel_Dados.Controls.Add(this.btt_dado);
+            this.panel_Dados.Controls.Add(this.pBox_dice1);
+            this.panel_Dados.Controls.Add(this.lbl_diceRoll);
+            this.panel_Dados.Controls.Add(this.pBox_dice2);
+            this.panel_Dados.Location = new System.Drawing.Point(12, 10);
+            this.panel_Dados.Name = "panel_Dados";
+            this.panel_Dados.Size = new System.Drawing.Size(240, 146);
+            this.panel_Dados.TabIndex = 46;
+            // 
+            // panel_guess1
+            // 
+            this.panel_guess1.BackColor = System.Drawing.Color.Transparent;
+            this.panel_guess1.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect5;
+            this.panel_guess1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel_guess1.Controls.Add(this.pBox_check1);
+            this.panel_guess1.Location = new System.Drawing.Point(15, 31);
+            this.panel_guess1.Name = "panel_guess1";
+            this.panel_guess1.Size = new System.Drawing.Size(65, 100);
+            this.panel_guess1.TabIndex = 7;
+            // 
+            // panel_guess2
+            // 
+            this.panel_guess2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.weapon4;
+            this.panel_guess2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel_guess2.Controls.Add(this.pBox_check2);
+            this.panel_guess2.Location = new System.Drawing.Point(86, 31);
+            this.panel_guess2.Name = "panel_guess2";
+            this.panel_guess2.Size = new System.Drawing.Size(65, 100);
+            this.panel_guess2.TabIndex = 8;
+            // 
+            // panel_guess3
+            // 
+            this.panel_guess3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.room4;
+            this.panel_guess3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel_guess3.Controls.Add(this.pBox_check3);
+            this.panel_guess3.Location = new System.Drawing.Point(156, 31);
+            this.panel_guess3.Name = "panel_guess3";
+            this.panel_guess3.Size = new System.Drawing.Size(65, 100);
+            this.panel_guess3.TabIndex = 8;
+            // 
+            // pBox_check1
+            // 
+            this.pBox_check1.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
+            this.pBox_check1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pBox_check1.Location = new System.Drawing.Point(25, 58);
+            this.pBox_check1.Name = "pBox_check1";
+            this.pBox_check1.Size = new System.Drawing.Size(40, 40);
+            this.pBox_check1.TabIndex = 0;
+            this.pBox_check1.TabStop = false;
+            // 
+            // pBox_check2
+            // 
+            this.pBox_check2.BackColor = System.Drawing.Color.Transparent;
+            this.pBox_check2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
+            this.pBox_check2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pBox_check2.Location = new System.Drawing.Point(25, 57);
+            this.pBox_check2.Name = "pBox_check2";
+            this.pBox_check2.Size = new System.Drawing.Size(40, 40);
+            this.pBox_check2.TabIndex = 1;
+            this.pBox_check2.TabStop = false;
+            // 
+            // pBox_check3
+            // 
+            this.pBox_check3.BackColor = System.Drawing.Color.Transparent;
+            this.pBox_check3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
+            this.pBox_check3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pBox_check3.Location = new System.Drawing.Point(22, 57);
+            this.pBox_check3.Name = "pBox_check3";
+            this.pBox_check3.Size = new System.Drawing.Size(40, 40);
+            this.pBox_check3.TabIndex = 2;
+            this.pBox_check3.TabStop = false;
+            // 
             // gameBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -266,6 +425,9 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(960, 627);
+            this.Controls.Add(this.panel_Dados);
+            this.Controls.Add(this.btt_solve);
+            this.Controls.Add(this.panel_Guess);
             this.Controls.Add(this.gBox_chat);
             this.Controls.Add(this.lbl_notePad);
             this.Controls.Add(this.lbl_cards);
@@ -273,15 +435,11 @@
             this.Controls.Add(this.pBox_card2);
             this.Controls.Add(this.pBox_card1);
             this.Controls.Add(this.pBox_notePad);
-            this.Controls.Add(this.btt_dado);
-            this.Controls.Add(this.pBox_dice2);
-            this.Controls.Add(this.lbl_diceRoll);
-            this.Controls.Add(this.pBox_dice1);
             this.Controls.Add(this.panel_Board);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "gameBoard";
-            this.Text = "Board";
+            this.Text = "Game of \"Host\"";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card2)).EndInit();
@@ -294,8 +452,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.pBox_sendText)).EndInit();
             this.gBox_chat.ResumeLayout(false);
             this.gBox_chat.PerformLayout();
+            this.panel_Guess.ResumeLayout(false);
+            this.panel_Dados.ResumeLayout(false);
+            this.panel_Dados.PerformLayout();
+            this.panel_guess1.ResumeLayout(false);
+            this.panel_guess2.ResumeLayout(false);
+            this.panel_guess3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_check1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_check2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_check3)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -318,6 +484,19 @@
         private System.Windows.Forms.TextBox tBox_write;
         private System.Windows.Forms.Label lbl_write;
         private System.Windows.Forms.GroupBox gBox_chat;
+        private System.Windows.Forms.Panel panel_Guess;
+        private System.Windows.Forms.Label lbl_room;
+        private System.Windows.Forms.Label lbl_weap;
+        private System.Windows.Forms.Label lbl_suspect;
+        private System.Windows.Forms.Button btt_guess;
+        private System.Windows.Forms.Button btt_solve;
+        private System.Windows.Forms.Panel panel_Dados;
+        private System.Windows.Forms.Panel panel_guess3;
+        private System.Windows.Forms.Panel panel_guess2;
+        private System.Windows.Forms.Panel panel_guess1;
+        private System.Windows.Forms.PictureBox pBox_check3;
+        private System.Windows.Forms.PictureBox pBox_check2;
+        private System.Windows.Forms.PictureBox pBox_check1;
     }
 }
 

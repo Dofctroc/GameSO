@@ -38,9 +38,33 @@ Only invite other players if hosting a game
 Cannot invite a player if already in two games					|ASIER|
 Increase max length of some C variables
 
-data grid falla
+ _______________
+| MY TODO LIST: |
+|_______________|
 
+-/ Error: data grid falla
+Error: Cuando logIn con usuario ya conectado, desconecta a ese usuario
+	Probar a que lo desconecte el server automaticamente
+Cada notepad diferente segun la partida
+-/ Acabar datagrids rankings
+Incluir mucha mas mutual exclusion
+Añadir foticos a invitation
 
+Change logic when connected users' datagrid is clicked
+-/ Update displayedGame variable when needed and use it
 
-Delete the "host" variable in menuPartida as variable usage has changed
-Notification of new incoming message or event in other game
+~/ Switch logic of disconnection of player from Client to Server
+		(When player disconnects, send information to all game lobbies they are in, including ongoing games)
+
+-/ Delete the "host" variable in menuPartida as variable usage has changed
+-/ Notification of new incoming message or event in other game
+
+For turns to work, change Enable of the board panel
+Add a End Turn button
+
+Rename all forms
+	Game form named after host
+
+Cards:
+1. When clicked, shows dorso of card
+

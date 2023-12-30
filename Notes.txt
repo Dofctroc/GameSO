@@ -14,6 +14,10 @@ Shiva ports: 75-79
 11 - ComandoInd1 (puntuacion total jugador)
 12 - ComandoInd2 (puntuacion partidas jugadas)
 13 - ComandoInd3 (ganador de partida)
+14 - Consulta Ranking 1			14/
+15 - Consulta Ranking 2			15/
+16 - Consulta infoPlayer		16/
+17 - Consulta infoPartida		17/
 
 20 - Crear una partida			20/Host			(Host crea una nueva partida)
 21 - Invitacion a partida		21/Host/Jug1.Jug2.Jug3	(JugX son invitados a partida)
@@ -34,13 +38,17 @@ Shiva ports: 75-79
 2 - LogIn correcto			2/0
 2 - LogIn error 			2/TextoDeError
 
-3 - SignOut error nombre usuario	3/TextoDeError
-3 - SignOut error contraseña		3/TextoDeError
+3 - SignOut				3/0
+3 - SignOut error 			3/TextoDeError
 
 10 - ConsultaConectados
 11 - Consulta1
 12 - Consulta2
 13 - Consulta3
+14 - Consulta Ranking 1			14/...		14/0 -> Error
+15 - Consulta Ranking 2			15/...		15/0 -> Error
+16 - Consulta infoPlayer		16/...		16/0 -> Error
+17 - Consulta infoGame			17/... 		17/0 -> Error
 
 20 - Respuesta a creacion de partida	20/Host/0 -> Good 	20/-1 -> Error	(SentTo: Host)
 21 - Respuesta a invitacion a partida	21/Host/0 -> Good	21/-1 -> Error	(SentTo: Host)

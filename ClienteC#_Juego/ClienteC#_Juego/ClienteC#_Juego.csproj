@@ -62,11 +62,17 @@
     <Compile Include="InGameNotes.Designer.cs">
       <DependentUpon>InGameNotes.cs</DependentUpon>
     </Compile>
-    <Compile Include="tableroPartida.cs">
+    <Compile Include="menuRankings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="tableroPartida.Designer.cs">
-      <DependentUpon>tableroPartida.cs</DependentUpon>
+    <Compile Include="menuRankings.Designer.cs">
+      <DependentUpon>menuRankings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="gameBoard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="gameBoard.Designer.cs">
+      <DependentUpon>gameBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="menuUsuario.cs">
       <SubType>Form</SubType>
@@ -89,8 +95,11 @@
     <EmbeddedResource Include="InGameNotes.resx">
       <DependentUpon>InGameNotes.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="tableroPartida.resx">
-      <DependentUpon>tableroPartida.cs</DependentUpon>
+    <EmbeddedResource Include="menuRankings.resx">
+      <DependentUpon>menuRankings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gameBoard.resx">
+      <DependentUpon>gameBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="menuUsuario.resx">
       <DependentUpon>menuUsuario.cs</DependentUpon>

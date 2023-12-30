@@ -1,25 +1,25 @@
 ﻿using ClienteC__Juego.Properties;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Net.Sockets;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Threading;
+using System.Net.Sockets;
+using System.Drawing;
 
 namespace ClienteC__Juego
 {
     public partial class menuPartida : Form
     {
-        PictureBox pbox_Invite = new PictureBox();
-
         string username, selectedPlayerToKick;
-        bool hosting_gameLobby, in_gameLobby;
+        bool hostingGame;
+
         int displayedGame;      // Corresponds to the currently shown on screen game
         List<string> partida1, partida2;        // Vectors of each game where all players are state, first one is the host. Ex: partida1[0] = host
         List<List<string>> partidas;            // Vector including both previous game vectors partidas[0] = game 1 & partidas[1] = game 2
@@ -28,26 +28,27 @@ namespace ClienteC__Juego
         List<GroupBox> partidasGroups;                          // Vector of the two GroupBoxes that contain all the display of each game. Each contains: (dataGrid, kick button, chatBox, etc)
         List<DataGridView> partidasDataGrids;                   // Vector of the two datagridViews displaying the players of each game
         List<RichTextBox> partidasChats;                        // Vector of the two chatTextBox of each game
-        List<PictureBox> partidasNotifications;
+        List<PictureBox> partidasNotifPanels;
+
+        List<Panel> invitacionesPaneles;
+        List<System.Windows.Forms.Timer> invitacionesTimers;
 
         menuUsuario menuUsuario;
         Socket server;
-        Thread atender;
 
-        public menuPartida(menuUsuario menuUsuario, Socket server, Thread atender, string username)
+        menuRankings menu_rankings;
+
+        public menuPartida(menuUsuario menuUsuario, Socket server, string username)
         {
             InitializeComponent();
             this.server = server;
             this.username = username;
-            this.atender = atender;
             this.menuUsuario = menuUsuario;
         }
 
         private void principal_Load(object sender, EventArgs e)
         {
             // Variables declaration
-            hosting_gameLobby = false;
-            in_gameLobby = false;
             partida1 = new List<string>();
             partida2 = new List<string>();
             partidas = new List<List<string>> { partida1, partida2 }; ;
@@ -56,7 +57,11 @@ namespace ClienteC__Juego
             partidasButtons = new List<System.Windows.Forms.Button> { btt_partida0, btt_partida1};
             partidasGroups = new List<GroupBox> { gBox_partida0, gBox_partida1};
             partidasChats = new List<RichTextBox> { tbox_read0, tbox_read1 };
-            partidasNotifications = new List<PictureBox> { pBox_notif0, pBox_notif1 };
+            partidasNotifPanels = new List<PictureBox> { pBox_notif0, pBox_notif1 };
+
+            invitacionesPaneles = new List<Panel> (10);
+            invitacionesTimers = new List<System.Windows.Forms.Timer> (10);
+
             lbl_userName.Text = "Usuario: " + username;
             displayedGame = 0;
 
@@ -124,26 +129,15 @@ namespace ClienteC__Juego
             pBox_notif0.Visible = pBox_notif1.Visible = false;
             btt_partida0.Visible = btt_partida1.Visible = false;
 
+            hostingGame = false;
+
             CenterFormOnScreen();
         }
 
         private void menuPartida_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (hosting_gameLobby)
-            {
-                // Sends server delete message, will shutdown upon receive
-                string mensaje = "26/" + username;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-            }
-            else if (in_gameLobby)
-            {
-                menuUsuario.serverShutdown();
-            }
-            else
-            {
-                menuUsuario.serverShutdown();
-            }
+            // The logic behind when disconnecting, sending messages of disconnection to other users is on the server
+            menuUsuario.serverShutdown();
         }
 
         /// <summary>
@@ -174,7 +168,7 @@ namespace ClienteC__Juego
 
         private void button_partidanueva_Click(object sender, EventArgs e)
         {
-            if (!hosting_gameLobby)
+            if ((partida1.Count == 0 || partida2.Count == 0) && !hostingGame)
             {
                 string mensaje = "20/" + username;
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -222,8 +216,8 @@ namespace ClienteC__Juego
 
         private void button_Jugar_Click(object sender, EventArgs e)
         {
-            gameBoard tablero = new gameBoard();
-            tablero.Show();
+            if (partidas[displayedGame].Count > 0 && partidas[displayedGame][0] == username)
+                StartNewGame(username, displayedGame);
         }
 
         private void btt_partida0_Click(object sender, EventArgs e)
@@ -306,10 +300,15 @@ namespace ClienteC__Juego
             Console.WriteLine("     ----------------------      ");
 
             // Each time a msg arrives from server, at the end, it checks which game lobbies you are in and displays its corresponding button
+            hostingGame = false;
             for (int b = 0; b < 2; b++)
             {
                 if (partidas[b].Count != 0)
+                {
                     partidasButtons[b].Visible = true;
+                    if (partidas[b][0] == username)
+                        hostingGame = true;
+                }
                 else
                     partidasButtons[b].Visible = false;
             }
@@ -400,7 +399,7 @@ namespace ClienteC__Juego
             bool nuevo = true;
             bool invitable = true;
             string playerName;
-            if (hosting_gameLobby && e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            if ((partida1[0] == username || partida2[0] == username) && e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
                 DataGridViewRow filaSeleccionada = dgrid_listaUsuarios.Rows[e.RowIndex];
                 playerName = filaSeleccionada.Cells[0].Value.ToString();
@@ -447,7 +446,7 @@ namespace ClienteC__Juego
 
         private void dgrid_miPartida_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 1 && hosting_gameLobby)
+            if (e.RowIndex >= 0 && (partida1[0] == username || partida2[0] == username))
             {
                 dgrid_miPartida0.ClearSelection();
                 btt_kickPlayer0.Visible = true;
@@ -575,6 +574,18 @@ namespace ClienteC__Juego
 
             switch (codigo)
             {
+                case 14:
+                    menu_rankings.onReceive_DisplayInfo(mensaje);
+                    break;
+                case 15:
+                    menu_rankings.onReceive_DisplayInfo(mensaje);
+                    break;
+                case 16:
+                    menu_rankings.onReceive_DisplayInfo(mensaje);
+                    break;
+                case 17:
+                    menu_rankings.onReceive_DisplayInfo(mensaje);
+                    break;
                 case 20: // Servidor confirma la creación de partida en que tu eres host
                     if (Convert.ToInt32(mensaje[2]) == 0)
                     {
@@ -597,9 +608,6 @@ namespace ClienteC__Juego
                             else
                                 partidasGroups[i].Visible = false;
 
-                        hosting_gameLobby = true;
-                        in_gameLobby = true;
-
                         chatMSG = "Has creado una nueva partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
                     }
@@ -617,21 +625,8 @@ namespace ClienteC__Juego
                     {
                     }
                     break;
-                case 22: // Te llega una invitacion de un host
-                    DialogResult result = MessageBox.Show("El usuario " + nameHost + " te ha invitado a una partida",
-                            "Incoming Message", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
-                    {
-                        string mensaje2 = "23/" + nameHost + "/" + username + "/Yes";
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
-                        server.Send(msg);
-                    }
-                    else
-                    {
-                        string mensaje2 = "23/" + nameHost + "/" + username + "/No";
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
-                        server.Send(msg);
-                    }
+                case 22: // Te llega una invitación de un host
+                    this.Invoke(new Action(() => { CreateInvitationPanel(nameHost); }));
                     break;
                 case 23: // Respuesta cuando un jugador ha aceptado o no una invitación
                     // Mensaje que le llega a todos los jugadores en partida
@@ -648,7 +643,7 @@ namespace ClienteC__Juego
                             WriteInChatTITLE(gameIndex, chatMSG, Color.ForestGreen);
 
                             if (displayedGame != gameIndex)
-                                partidasNotifications[gameIndex].Visible = true;
+                                partidasNotifPanels[gameIndex].Visible = true;
                         }
                         else
                         {
@@ -700,7 +695,7 @@ namespace ClienteC__Juego
                         partidasChats[gameIndex].AppendText(Environment.NewLine);
 
                         if (displayedGame != gameIndex)
-                            partidasNotifications[gameIndex].Visible = true;
+                            partidasNotifPanels[gameIndex].Visible = true;
                     }
                     else
                     {
@@ -711,7 +706,7 @@ namespace ClienteC__Juego
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
 
                         if (displayedGame != gameIndex)
-                            partidasNotifications[gameIndex].Visible = true;
+                            partidasNotifPanels[gameIndex].Visible = true;
                     }
                     break;
                 case 25: // Jugador abandona partida voluntariamente
@@ -745,12 +740,151 @@ namespace ClienteC__Juego
                     WriteInChatMESSAGE(gameIndex, sender, chatMSG, Color.Black);
 
                     if (displayedGame != gameIndex)
-                        partidasNotifications[gameIndex].Visible = true;
+                        partidasNotifPanels[gameIndex].Visible = true;
 
                     break;
             }
+            if (codigo != 27)
+                updateStatusPartidas();
+        }
 
-            updateStatusPartidas();
+        private void StartNewGame(string gameHost, int gameNum)
+        {
+            gameBoard tablero = new gameBoard(server, gameNum, gameHost);
+            tablero.Show();
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Timer timer = (System.Windows.Forms.Timer)sender;
+
+            object hostName = timer.Tag;
+            string mensaje2 = "23/" + hostName + "/" + username + "/No";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+            server.Send(msg);
+
+            invitacionesPaneles[0].Dispose();
+            invitacionesPaneles.RemoveAt(0);
+
+            timer.Stop();
+            timer.Dispose();
+            invitacionesTimers.RemoveAt(0);
+
+            if (invitacionesPaneles.Count > 0)
+            {
+                int posX = this.ClientSize.Width - invitacionesPaneles[0].Width - 10;
+                int posY = this.ClientSize.Height - invitacionesPaneles[0].Height - 10;
+
+                for (int i = 0; i < invitacionesPaneles.Count; i++)
+                {
+                    invitacionesPaneles[i].Location = new Point(posX, posY - i * (invitacionesPaneles[i].Height + 2));
+                }
+            }
+        }
+
+        private void CreateInvitationPanel(string host)
+        {
+            int b = 60;
+            int h = 20;
+
+            Panel panel = new Panel();
+            panel.Tag = host;
+            panel.BackColor = Color.Goldenrod; // Set background color if needed
+            panel.Size = new Size(b*2 + 30, h + 30); // Adjust the size as needed
+            panel.Location = new Point(this.ClientSize.Width - panel.Width - 10, this.ClientSize.Height - panel.Height - 10 - (panel.Height + 2) * invitacionesPaneles.Count);
+
+            // Create the green PictureBox on the bottom left
+            PictureBox greenPictureBox = new PictureBox();
+            greenPictureBox.BackColor = Color.Green;
+            greenPictureBox.Size = new Size(b, h); // Adjust the size as needed
+            greenPictureBox.Location = new Point(10, panel.Height - greenPictureBox.Height - 5);
+            greenPictureBox.MouseClick += pBox_invitacion_Click;
+            panel.Controls.Add(greenPictureBox);
+
+            // Create the red PictureBox on the bottom right
+            PictureBox redPictureBox = new PictureBox();
+            redPictureBox.BackColor = Color.Red;
+            redPictureBox.Tag = invitacionesPaneles.Count;
+            redPictureBox.Size = new Size(b, h); // Adjust the size as needed
+            redPictureBox.Location = new Point(panel.Width - redPictureBox.Width - 10, panel.Height - redPictureBox.Height - 5);
+            redPictureBox.MouseClick += pBox_invitacion_Click;
+            panel.Controls.Add(redPictureBox);
+
+            // Create the label on top of both PictureBoxes
+            System.Windows.Forms.Label label = new System.Windows.Forms.Label();
+            label.Text = "Invited by: " + host;
+            label.AutoSize = true;
+            label.BackColor = Color.Transparent; // Make label background transparent
+            label.Location = new Point(5, 5); // Adjust the location as needed
+            panel.Controls.Add(label);
+
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+            timer.Interval = 5000; // Set the interval to 5000 milliseconds (5 seconds)
+            timer.Tag = host;
+            timer.Tick += timer_Tick;
+
+            this.Controls.Add(panel);
+            panel.BringToFront();
+            invitacionesPaneles.Add(panel);
+            invitacionesTimers.Add(timer);
+
+            timer.Start();
+        }
+
+        private void pBox_invitacion_Click(object sender, EventArgs e)
+        {
+            PictureBox clickedPBox = (PictureBox)sender;
+            Panel parentPanel = (Panel)clickedPBox.Parent;
+
+            object hostName = parentPanel.Tag;
+
+            if (clickedPBox.BackColor == Color.Green)
+            {
+                string mensaje2 = "23/" + hostName + "/" + username + "/Yes";
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+                server.Send(msg);
+            }
+            else
+            {
+                string mensaje2 = "23/" + hostName + "/" + username + "/No";
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+                server.Send(msg);
+            }
+
+            for (int i = invitacionesPaneles.Count - 1; i >= 0; i--)
+            {
+                if (invitacionesPaneles[i].Tag == hostName)
+                {
+                    invitacionesPaneles[i].Dispose();
+                    invitacionesTimers[i].Stop();
+                    invitacionesTimers[i].Dispose();
+
+                    invitacionesPaneles.RemoveAt(i);
+                    invitacionesTimers.RemoveAt(i);
+
+                    if (invitacionesPaneles.Count > 0)
+                    {
+                        int posX = this.ClientSize.Width - invitacionesPaneles[0].Width - 10;
+                        int posY = this.ClientSize.Height - invitacionesPaneles[0].Height - 10;
+
+                        for (int j = 0; j < invitacionesPaneles.Count; j++)
+                            invitacionesPaneles[j].Location = new Point(posX, posY - j * (invitacionesPaneles[j].Height + 2));
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        private void openRankingsEXPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            menu_rankings = new menuRankings(server);
+            menu_rankings.Show();
+        }
+
+        private void receiveInviteEXPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateInvitationPanel("Asier");
         }
     }
 }

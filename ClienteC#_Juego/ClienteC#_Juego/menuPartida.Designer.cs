@@ -62,6 +62,10 @@
             this.dgrid_miPartida1 = new System.Windows.Forms.DataGridView();
             this.pBox_notif0 = new System.Windows.Forms.PictureBox();
             this.pBox_notif1 = new System.Windows.Forms.PictureBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.opcionesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.receiveInviteEXPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.openRankingsEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_listaInvitar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_miPartida0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_listaUsuarios)).BeginInit();
@@ -73,6 +77,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_miPartida1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif1)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgrid_listaInvitar
@@ -94,15 +99,15 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgrid_listaInvitar.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dgrid_listaInvitar.Location = new System.Drawing.Point(793, 273);
-            this.dgrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgrid_listaInvitar.Location = new System.Drawing.Point(780, 280);
+            this.dgrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_listaInvitar.Name = "dgrid_listaInvitar";
             this.dgrid_listaInvitar.ReadOnly = true;
             this.dgrid_listaInvitar.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrid_listaInvitar.RowHeadersVisible = false;
             this.dgrid_listaInvitar.RowHeadersWidth = 50;
             this.dgrid_listaInvitar.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dgrid_listaInvitar.Size = new System.Drawing.Size(100, 197);
+            this.dgrid_listaInvitar.Size = new System.Drawing.Size(100, 200);
             this.dgrid_listaInvitar.TabIndex = 20;
             this.dgrid_listaInvitar.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgrid_listaInvitar_CellClick);
             // 
@@ -110,8 +115,9 @@
             // 
             this.button_partidanueva.AutoSize = true;
             this.button_partidanueva.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.button_partidanueva.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_partidanueva.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_partidanueva.Location = new System.Drawing.Point(48, 53);
+            this.button_partidanueva.Location = new System.Drawing.Point(48, 73);
             this.button_partidanueva.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_partidanueva.Name = "button_partidanueva";
             this.button_partidanueva.Size = new System.Drawing.Size(196, 42);
@@ -124,8 +130,9 @@
             // 
             this.button_LogOut.AutoSize = true;
             this.button_LogOut.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.button_LogOut.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_LogOut.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_LogOut.Location = new System.Drawing.Point(87, 368);
+            this.button_LogOut.Location = new System.Drawing.Point(87, 388);
             this.button_LogOut.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_LogOut.Name = "button_LogOut";
             this.button_LogOut.Size = new System.Drawing.Size(123, 42);
@@ -154,7 +161,7 @@
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgrid_miPartida0.DefaultCellStyle = dataGridViewCellStyle4;
             this.dgrid_miPartida0.Location = new System.Drawing.Point(7, 22);
-            this.dgrid_miPartida0.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgrid_miPartida0.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_miPartida0.Name = "dgrid_miPartida0";
             this.dgrid_miPartida0.ReadOnly = true;
             this.dgrid_miPartida0.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
@@ -171,8 +178,9 @@
             // 
             this.button_Jugar.AutoSize = true;
             this.button_Jugar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.button_Jugar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_Jugar.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_Jugar.Location = new System.Drawing.Point(87, 321);
+            this.button_Jugar.Location = new System.Drawing.Point(87, 341);
             this.button_Jugar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Jugar.Name = "button_Jugar";
             this.button_Jugar.Size = new System.Drawing.Size(116, 42);
@@ -184,12 +192,13 @@
             // button_Invitar
             // 
             this.button_Invitar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button_Invitar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_Invitar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_Invitar.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
-            this.button_Invitar.Location = new System.Drawing.Point(793, 242);
+            this.button_Invitar.Location = new System.Drawing.Point(780, 250);
             this.button_Invitar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Invitar.Name = "button_Invitar";
-            this.button_Invitar.Size = new System.Drawing.Size(100, 28);
+            this.button_Invitar.Size = new System.Drawing.Size(100, 30);
             this.button_Invitar.TabIndex = 29;
             this.button_Invitar.Text = "Invitar";
             this.button_Invitar.UseVisualStyleBackColor = true;
@@ -207,8 +216,8 @@
             this.dgrid_listaUsuarios.ColumnHeadersHeight = 25;
             this.dgrid_listaUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgrid_listaUsuarios.GridColor = System.Drawing.SystemColors.ActiveBorder;
-            this.dgrid_listaUsuarios.Location = new System.Drawing.Point(901, 10);
-            this.dgrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgrid_listaUsuarios.Location = new System.Drawing.Point(885, 20);
+            this.dgrid_listaUsuarios.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_listaUsuarios.Name = "dgrid_listaUsuarios";
             this.dgrid_listaUsuarios.ReadOnly = true;
             this.dgrid_listaUsuarios.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
@@ -227,7 +236,7 @@
             // lbl_userName
             // 
             this.lbl_userName.AutoSize = true;
-            this.lbl_userName.Location = new System.Drawing.Point(12, 10);
+            this.lbl_userName.Location = new System.Drawing.Point(12, 40);
             this.lbl_userName.Name = "lbl_userName";
             this.lbl_userName.Size = new System.Drawing.Size(60, 16);
             this.lbl_userName.TabIndex = 33;
@@ -239,7 +248,7 @@
             this.textBox_write0.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox_write0.Font = new System.Drawing.Font("Calibri", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_write0.Location = new System.Drawing.Point(63, 428);
-            this.textBox_write0.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox_write0.Margin = new System.Windows.Forms.Padding(4);
             this.textBox_write0.Multiline = true;
             this.textBox_write0.Name = "textBox_write0";
             this.textBox_write0.Size = new System.Drawing.Size(225, 25);
@@ -251,7 +260,7 @@
             this.tbox_read0.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbox_read0.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbox_read0.Location = new System.Drawing.Point(7, 249);
-            this.tbox_read0.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbox_read0.Margin = new System.Windows.Forms.Padding(4);
             this.tbox_read0.Name = "tbox_read0";
             this.tbox_read0.ReadOnly = true;
             this.tbox_read0.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -264,10 +273,10 @@
             this.pBox_mostrarConn.BackColor = System.Drawing.Color.Transparent;
             this.pBox_mostrarConn.BackgroundImage = global::ClienteC__Juego.Properties.Resources.bottonConn1;
             this.pBox_mostrarConn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_mostrarConn.Location = new System.Drawing.Point(873, 10);
+            this.pBox_mostrarConn.Location = new System.Drawing.Point(860, 20);
             this.pBox_mostrarConn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pBox_mostrarConn.Name = "pBox_mostrarConn";
-            this.pBox_mostrarConn.Size = new System.Drawing.Size(20, 39);
+            this.pBox_mostrarConn.Size = new System.Drawing.Size(20, 40);
             this.pBox_mostrarConn.TabIndex = 36;
             this.pBox_mostrarConn.TabStop = false;
             this.pBox_mostrarConn.Click += new System.EventHandler(this.pBox_mostrarConn_Click);
@@ -313,7 +322,7 @@
             this.gBox_partida0.Controls.Add(this.dgrid_miPartida0);
             this.gBox_partida0.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gBox_partida0.ForeColor = System.Drawing.Color.Maroon;
-            this.gBox_partida0.Location = new System.Drawing.Point(349, 10);
+            this.gBox_partida0.Location = new System.Drawing.Point(349, 20);
             this.gBox_partida0.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gBox_partida0.Name = "gBox_partida0";
             this.gBox_partida0.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -340,7 +349,7 @@
             this.btt_partida0.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.btt_partida0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btt_partida0.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btt_partida0.Location = new System.Drawing.Point(315, 50);
+            this.btt_partida0.Location = new System.Drawing.Point(315, 60);
             this.btt_partida0.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btt_partida0.Name = "btt_partida0";
             this.btt_partida0.Size = new System.Drawing.Size(29, 30);
@@ -354,7 +363,7 @@
             this.btt_partida1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
             this.btt_partida1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btt_partida1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btt_partida1.Location = new System.Drawing.Point(315, 100);
+            this.btt_partida1.Location = new System.Drawing.Point(315, 110);
             this.btt_partida1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btt_partida1.Name = "btt_partida1";
             this.btt_partida1.Size = new System.Drawing.Size(29, 30);
@@ -375,7 +384,7 @@
             this.gBox_partida1.Controls.Add(this.dgrid_miPartida1);
             this.gBox_partida1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gBox_partida1.ForeColor = System.Drawing.Color.Maroon;
-            this.gBox_partida1.Location = new System.Drawing.Point(400, 10);
+            this.gBox_partida1.Location = new System.Drawing.Point(400, 20);
             this.gBox_partida1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gBox_partida1.Name = "gBox_partida1";
             this.gBox_partida1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -402,7 +411,7 @@
             this.tbox_read1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbox_read1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbox_read1.Location = new System.Drawing.Point(7, 249);
-            this.tbox_read1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbox_read1.Margin = new System.Windows.Forms.Padding(4);
             this.tbox_read1.Name = "tbox_read1";
             this.tbox_read1.ReadOnly = true;
             this.tbox_read1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -429,7 +438,7 @@
             this.textBox_write1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox_write1.Font = new System.Drawing.Font("Calibri", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_write1.Location = new System.Drawing.Point(63, 428);
-            this.textBox_write1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox_write1.Margin = new System.Windows.Forms.Padding(4);
             this.textBox_write1.Multiline = true;
             this.textBox_write1.Name = "textBox_write1";
             this.textBox_write1.Size = new System.Drawing.Size(225, 25);
@@ -468,7 +477,7 @@
             dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgrid_miPartida1.DefaultCellStyle = dataGridViewCellStyle8;
             this.dgrid_miPartida1.Location = new System.Drawing.Point(7, 22);
-            this.dgrid_miPartida1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgrid_miPartida1.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_miPartida1.Name = "dgrid_miPartida1";
             this.dgrid_miPartida1.ReadOnly = true;
             this.dgrid_miPartida1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
@@ -486,7 +495,7 @@
             this.pBox_notif0.BackColor = System.Drawing.Color.Transparent;
             this.pBox_notif0.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Icono_Notificacion;
             this.pBox_notif0.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_notif0.Location = new System.Drawing.Point(329, 35);
+            this.pBox_notif0.Location = new System.Drawing.Point(329, 45);
             this.pBox_notif0.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pBox_notif0.Name = "pBox_notif0";
             this.pBox_notif0.Size = new System.Drawing.Size(20, 20);
@@ -498,12 +507,48 @@
             this.pBox_notif1.BackColor = System.Drawing.Color.Transparent;
             this.pBox_notif1.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Icono_Notificacion;
             this.pBox_notif1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_notif1.Location = new System.Drawing.Point(329, 85);
+            this.pBox_notif1.Location = new System.Drawing.Point(329, 95);
             this.pBox_notif1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pBox_notif1.Name = "pBox_notif1";
             this.pBox_notif1.Size = new System.Drawing.Size(20, 20);
             this.pBox_notif1.TabIndex = 44;
             this.pBox_notif1.TabStop = false;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.opcionesToolStripMenuItem1});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1093, 28);
+            this.menuStrip1.TabIndex = 45;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // opcionesToolStripMenuItem1
+            // 
+            this.opcionesToolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.opcionesToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.receiveInviteEXPToolStripMenuItem1,
+            this.openRankingsEXPToolStripMenuItem});
+            this.opcionesToolStripMenuItem1.Name = "opcionesToolStripMenuItem1";
+            this.opcionesToolStripMenuItem1.Size = new System.Drawing.Size(75, 24);
+            this.opcionesToolStripMenuItem1.Text = "Options";
+            // 
+            // receiveInviteEXPToolStripMenuItem1
+            // 
+            this.receiveInviteEXPToolStripMenuItem1.Name = "receiveInviteEXPToolStripMenuItem1";
+            this.receiveInviteEXPToolStripMenuItem1.Size = new System.Drawing.Size(230, 26);
+            this.receiveInviteEXPToolStripMenuItem1.Text = "Receive Invite (EXP)";
+            this.receiveInviteEXPToolStripMenuItem1.Click += new System.EventHandler(this.receiveInviteEXPToolStripMenuItem_Click);
+            // 
+            // openRankingsEXPToolStripMenuItem
+            // 
+            this.openRankingsEXPToolStripMenuItem.Name = "openRankingsEXPToolStripMenuItem";
+            this.openRankingsEXPToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
+            this.openRankingsEXPToolStripMenuItem.Text = "Open Rankings (EXP)";
+            this.openRankingsEXPToolStripMenuItem.Click += new System.EventHandler(this.openRankingsEXPToolStripMenuItem_Click);
             // 
             // menuPartida
             // 
@@ -512,7 +557,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackgroundImage = global::ClienteC__Juego.Properties.Resources.fondoDetectiveTile;
-            this.ClientSize = new System.Drawing.Size(1116, 482);
+            this.ClientSize = new System.Drawing.Size(1093, 487);
             this.Controls.Add(this.pBox_notif1);
             this.Controls.Add(this.pBox_notif0);
             this.Controls.Add(this.btt_partida0);
@@ -527,10 +572,11 @@
             this.Controls.Add(this.button_LogOut);
             this.Controls.Add(this.button_partidanueva);
             this.Controls.Add(this.dgrid_listaInvitar);
+            this.Controls.Add(this.menuStrip1);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.Name = "menuPartida";
-            this.Text = "principal";
+            this.Text = "Game Lobby";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.menuPartida_FormClosing);
             this.Load += new System.EventHandler(this.principal_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_listaInvitar)).EndInit();
@@ -546,6 +592,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_miPartida1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif1)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -579,5 +627,9 @@
         private System.Windows.Forms.DataGridView dgrid_miPartida1;
         private System.Windows.Forms.PictureBox pBox_notif0;
         private System.Windows.Forms.PictureBox pBox_notif1;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem opcionesToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem receiveInviteEXPToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem openRankingsEXPToolStripMenuItem;
     }
 }

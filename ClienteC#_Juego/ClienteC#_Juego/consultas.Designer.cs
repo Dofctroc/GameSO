@@ -28,165 +28,172 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gBox_individualInfo = new System.Windows.Forms.GroupBox();
+            this.richBox_console = new System.Windows.Forms.RichTextBox();
             this.textbox_partida = new System.Windows.Forms.MaskedTextBox();
             this.textbox_nombre = new System.Windows.Forms.MaskedTextBox();
             this.command_3 = new System.Windows.Forms.RadioButton();
             this.command_1 = new System.Windows.Forms.RadioButton();
             this.command_2 = new System.Windows.Forms.RadioButton();
-            this.button_enviar = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.consoleTextBox = new System.Windows.Forms.TextBox();
-            this.groupBox1.SuspendLayout();
+            this.btt_askInfo = new System.Windows.Forms.Button();
+            this.lbl_Game = new System.Windows.Forms.Label();
+            this.lbl_Jug = new System.Windows.Forms.Label();
+            this.gBox_individualInfo.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // gBox_individualInfo
             // 
-            this.groupBox1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.groupBox1.Controls.Add(this.textbox_partida);
-            this.groupBox1.Controls.Add(this.textbox_nombre);
-            this.groupBox1.Controls.Add(this.command_3);
-            this.groupBox1.Controls.Add(this.command_1);
-            this.groupBox1.Controls.Add(this.command_2);
-            this.groupBox1.Controls.Add(this.button_enviar);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(14, 16);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.groupBox1.Size = new System.Drawing.Size(414, 279);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Formulario Solicitud";
+            this.gBox_individualInfo.BackColor = System.Drawing.Color.Tan;
+            this.gBox_individualInfo.Controls.Add(this.richBox_console);
+            this.gBox_individualInfo.Controls.Add(this.textbox_partida);
+            this.gBox_individualInfo.Controls.Add(this.textbox_nombre);
+            this.gBox_individualInfo.Controls.Add(this.command_3);
+            this.gBox_individualInfo.Controls.Add(this.command_1);
+            this.gBox_individualInfo.Controls.Add(this.command_2);
+            this.gBox_individualInfo.Controls.Add(this.btt_askInfo);
+            this.gBox_individualInfo.Controls.Add(this.lbl_Game);
+            this.gBox_individualInfo.Controls.Add(this.lbl_Jug);
+            this.gBox_individualInfo.Location = new System.Drawing.Point(10, 10);
+            this.gBox_individualInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.gBox_individualInfo.Name = "gBox_individualInfo";
+            this.gBox_individualInfo.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.gBox_individualInfo.Size = new System.Drawing.Size(350, 320);
+            this.gBox_individualInfo.TabIndex = 0;
+            this.gBox_individualInfo.TabStop = false;
+            this.gBox_individualInfo.Text = "Check for Specific Information";
+            // 
+            // richBox_console
+            // 
+            this.richBox_console.Cursor = System.Windows.Forms.Cursors.Default;
+            this.richBox_console.Location = new System.Drawing.Point(10, 190);
+            this.richBox_console.Name = "richBox_console";
+            this.richBox_console.ReadOnly = true;
+            this.richBox_console.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.richBox_console.Size = new System.Drawing.Size(330, 120);
+            this.richBox_console.TabIndex = 1;
+            this.richBox_console.Text = "";
             // 
             // textbox_partida
             // 
-            this.textbox_partida.Location = new System.Drawing.Point(145, 79);
-            this.textbox_partida.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.textbox_partida.Location = new System.Drawing.Point(110, 60);
+            this.textbox_partida.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_partida.Name = "textbox_partida";
-            this.textbox_partida.Size = new System.Drawing.Size(112, 26);
+            this.textbox_partida.Size = new System.Drawing.Size(100, 22);
             this.textbox_partida.TabIndex = 2;
             // 
             // textbox_nombre
             // 
-            this.textbox_nombre.Location = new System.Drawing.Point(145, 45);
-            this.textbox_nombre.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.textbox_nombre.Location = new System.Drawing.Point(110, 30);
+            this.textbox_nombre.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textbox_nombre.Name = "textbox_nombre";
-            this.textbox_nombre.Size = new System.Drawing.Size(112, 26);
+            this.textbox_nombre.Size = new System.Drawing.Size(100, 22);
             this.textbox_nombre.TabIndex = 1;
             // 
             // command_3
             // 
             this.command_3.AutoSize = true;
-            this.command_3.Location = new System.Drawing.Point(27, 201);
-            this.command_3.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.command_3.BackColor = System.Drawing.Color.Transparent;
+            this.command_3.Location = new System.Drawing.Point(40, 150);
+            this.command_3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.command_3.Name = "command_3";
-            this.command_3.Size = new System.Drawing.Size(225, 24);
+            this.command_3.Size = new System.Drawing.Size(181, 20);
             this.command_3.TabIndex = 3;
             this.command_3.TabStop = true;
-            this.command_3.Text = "Dime ganador de la partida";
-            this.command_3.UseVisualStyleBackColor = true;
+            this.command_3.Text = "Check winner of the Match";
+            this.command_3.UseVisualStyleBackColor = false;
             // 
             // command_1
             // 
             this.command_1.AutoSize = true;
-            this.command_1.Location = new System.Drawing.Point(27, 139);
-            this.command_1.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.command_1.BackColor = System.Drawing.Color.Transparent;
+            this.command_1.Location = new System.Drawing.Point(40, 100);
+            this.command_1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.command_1.Name = "command_1";
-            this.command_1.Size = new System.Drawing.Size(271, 24);
+            this.command_1.Size = new System.Drawing.Size(183, 20);
             this.command_1.TabIndex = 3;
             this.command_1.TabStop = true;
-            this.command_1.Text = "Dime puntuacion total del jugador";
-            this.command_1.UseVisualStyleBackColor = true;
+            this.command_1.Text = "Check total Player\'s score";
+            this.command_1.UseVisualStyleBackColor = false;
             // 
             // command_2
             // 
             this.command_2.AutoSize = true;
-            this.command_2.Location = new System.Drawing.Point(27, 169);
-            this.command_2.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.command_2.BackColor = System.Drawing.Color.Transparent;
+            this.command_2.Location = new System.Drawing.Point(40, 125);
+            this.command_2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.command_2.Name = "command_2";
-            this.command_2.Size = new System.Drawing.Size(366, 24);
+            this.command_2.Size = new System.Drawing.Size(204, 20);
             this.command_2.TabIndex = 3;
             this.command_2.TabStop = true;
-            this.command_2.Text = "Dime puntuacion en las partidas que ha jugado";
-            this.command_2.UseVisualStyleBackColor = true;
+            this.command_2.Text = "Check Player\'s scores history";
+            this.command_2.UseVisualStyleBackColor = false;
             // 
-            // button_enviar
+            // btt_askInfo
             // 
-            this.button_enviar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_enviar.AutoSize = true;
-            this.button_enviar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_enviar.Location = new System.Drawing.Point(303, 230);
-            this.button_enviar.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.button_enviar.Name = "button_enviar";
-            this.button_enviar.Size = new System.Drawing.Size(107, 46);
-            this.button_enviar.TabIndex = 4;
-            this.button_enviar.Text = "Solicitar";
-            this.button_enviar.UseVisualStyleBackColor = true;
-            this.button_enviar.Click += new System.EventHandler(this.button_enviar_Click);
+            this.btt_askInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btt_askInfo.AutoSize = true;
+            this.btt_askInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btt_askInfo.Location = new System.Drawing.Point(287, 140);
+            this.btt_askInfo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btt_askInfo.Name = "btt_askInfo";
+            this.btt_askInfo.Size = new System.Drawing.Size(53, 30);
+            this.btt_askInfo.TabIndex = 4;
+            this.btt_askInfo.Text = "INFO";
+            this.btt_askInfo.UseVisualStyleBackColor = true;
+            this.btt_askInfo.Click += new System.EventHandler(this.button_enviar_Click);
             // 
-            // label2
+            // lbl_Game
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(44, 75);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(87, 26);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Partida:";
+            this.lbl_Game.AutoSize = true;
+            this.lbl_Game.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_Game.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Game.Location = new System.Drawing.Point(40, 60);
+            this.lbl_Game.Name = "lbl_Game";
+            this.lbl_Game.Size = new System.Drawing.Size(62, 19);
+            this.lbl_Game.TabIndex = 1;
+            this.lbl_Game.Text = "Match:";
             // 
-            // label1
+            // lbl_Jug
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(42, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(107, 29);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Nombre:";
-            // 
-            // consoleTextBox
-            // 
-            this.consoleTextBox.Location = new System.Drawing.Point(15, 304);
-            this.consoleTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.consoleTextBox.Multiline = true;
-            this.consoleTextBox.Name = "consoleTextBox";
-            this.consoleTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.consoleTextBox.Size = new System.Drawing.Size(409, 106);
-            this.consoleTextBox.TabIndex = 12;
+            this.lbl_Jug.AutoSize = true;
+            this.lbl_Jug.BackColor = System.Drawing.Color.Transparent;
+            this.lbl_Jug.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Jug.Location = new System.Drawing.Point(40, 30);
+            this.lbl_Jug.Name = "lbl_Jug";
+            this.lbl_Jug.Size = new System.Drawing.Size(64, 19);
+            this.lbl_Jug.TabIndex = 0;
+            this.lbl_Jug.Text = "Player:";
             // 
             // consultas
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(441, 429);
-            this.Controls.Add(this.consoleTextBox);
-            this.Controls.Add(this.groupBox1);
-            this.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.ClientSize = new System.Drawing.Size(373, 343);
+            this.Controls.Add(this.gBox_individualInfo);
+            this.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "consultas";
-            this.Text = "Pagina Principal";
+            this.Text = "Consultations Form";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.gBox_individualInfo.ResumeLayout(false);
+            this.gBox_individualInfo.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gBox_individualInfo;
         private System.Windows.Forms.MaskedTextBox textbox_partida;
         private System.Windows.Forms.MaskedTextBox textbox_nombre;
         private System.Windows.Forms.RadioButton command_3;
         private System.Windows.Forms.RadioButton command_1;
         private System.Windows.Forms.RadioButton command_2;
-        private System.Windows.Forms.Button button_enviar;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox consoleTextBox;
+        private System.Windows.Forms.Button btt_askInfo;
+        private System.Windows.Forms.Label lbl_Game;
+        private System.Windows.Forms.Label lbl_Jug;
+        private System.Windows.Forms.RichTextBox richBox_console;
     }
 }
 

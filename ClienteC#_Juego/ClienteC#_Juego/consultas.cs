@@ -17,7 +17,7 @@ namespace ClienteC__Juego
     {
         bool conectado_conServer;
         Socket server;
-        string username;
+
         public consultas(bool conectado_conServer, Socket server)
         {
             InitializeComponent();
@@ -28,7 +28,7 @@ namespace ClienteC__Juego
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            gBox_individualInfo.BackColor = Color.FromArgb(100, Color.Gray);
         }
 
         public void responseReceived(string[] mensaje, int caso)
@@ -36,24 +36,24 @@ namespace ClienteC__Juego
             if (caso == 11)
             {
                 if (mensaje[1] == "-1")
-                    consoleTextBox.AppendText(String.Format("El jugador ~{0}~ no existe en la base de datos", textbox_nombre.Text) + Environment.NewLine);
+                    richBox_console.AppendText(String.Format("El jugador ~{0}~ no existe en la base de datos", textbox_nombre.Text) + Environment.NewLine);
                 else
-                    consoleTextBox.AppendText(String.Format("Puntuación total de {0}: {1}", textbox_nombre.Text, mensaje[1]) + Environment.NewLine);
+                    richBox_console.AppendText(String.Format("Puntuación total de {0}: {1}", textbox_nombre.Text, mensaje[1]) + Environment.NewLine);
             }
             if (caso == 12)
             {
                 if (mensaje[1] == "NULL")
-                    consoleTextBox.AppendText(String.Format("El jugador ~{0}~ no existe en la base de datos", textbox_nombre.Text) + Environment.NewLine);
+                    richBox_console.AppendText(String.Format("El jugador ~{0}~ no existe en la base de datos", textbox_nombre.Text) + Environment.NewLine);
                 else
                     for (int i = 1; i < mensaje.Length; i++)
-                        consoleTextBox.AppendText(String.Format("Puntuación en la partida {0}: {1}", i, mensaje[i]) + Environment.NewLine);
+                        richBox_console.AppendText(String.Format("Puntuación en la partida {0}: {1}", i, mensaje[i]) + Environment.NewLine);
             }
             if (caso == 13)
             {
                 if (mensaje[1] == "NULL")
-                    consoleTextBox.AppendText(String.Format("La partida ~{0}~ no existe en la base de datos", textbox_partida.Text) + Environment.NewLine);
+                    richBox_console.AppendText(String.Format("La partida ~{0}~ no existe en la base de datos", textbox_partida.Text) + Environment.NewLine);
                 else
-                    consoleTextBox.AppendText(String.Format("Ganador de la partida {0}: {1}", textbox_partida.Text, mensaje[1]) + Environment.NewLine);
+                    richBox_console.AppendText(String.Format("Ganador de la partida {0}: {1}", textbox_partida.Text, mensaje[1]) + Environment.NewLine);
             }
         }
 

@@ -17,9 +17,11 @@ namespace ClienteC__Juego
 {
     public partial class InGameNotes : Form
     {
-        public static string txtGrid = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataGrid.txt";     // File name where normal grid status is saved
-        public static string txtGrid2 = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataGrid2.txt";   // File name where names grid status is saved
-        public static string txtBox = AppDomain.CurrentDomain.BaseDirectory + @"\notepadDataBox.txt";       // File name where written text is saved
+        int partidaNum;
+
+        string txtGrid;   // File name where normal grid status is saved
+        string txtGrid2;   // File name where names grid status is saved
+        string txtBox;   // File name where written text is saved
 
         int rows, cols, rows2, cols2, marginCols, marginRows, marginCols2, marginRows2;     // Variables involving the
         int tileWidth, tileHeight, tileWidth2, tileHeight2;                                 // creation of the grids
@@ -29,13 +31,18 @@ namespace ClienteC__Juego
 
         PictureBox[,] grid, gridNames;         // Picture Box grids 
 
-        public InGameNotes()
+        public InGameNotes(int partidaNum)
         {
             InitializeComponent();
+            this.partidaNum = partidaNum;
         }
 
         private void InGameNotes_Load(object sender, EventArgs e)
         {
+            txtGrid = AppDomain.CurrentDomain.BaseDirectory + @"\notepad_tiles_" + partidaNum + ".txt";     // File name where normal grid status is saved
+            txtGrid2 = AppDomain.CurrentDomain.BaseDirectory + @"\notepad_names_" + partidaNum + ".txt";   // File name where names grid status is saved
+            txtBox = AppDomain.CurrentDomain.BaseDirectory + @"\NotePad_notes_" + partidaNum + ".txt";       // File name where written text is saved
+
             panel_NotePad.Size = new Size(600, 580);
 
             rows = 21; cols = 8;

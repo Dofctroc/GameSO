@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +17,16 @@ namespace ClienteC__Juego
 {
     public partial class gameBoard : Form
     {
-        public gameBoard()
+        Socket server;
+        string gameHost;
+        int gameNum;
+
+        public gameBoard(Socket server, int gameNum, string gameHost)
         {
             InitializeComponent();
+            this.server = server;
+            this.gameHost = gameHost;
+            this.gameNum = gameNum;
         }
 
         int rows; int columns; int cornerBoardMargin;
@@ -38,6 +46,8 @@ namespace ClienteC__Juego
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.Text = "Game of " + gameNum;
+
             cardsOrderedDeck = new List<Image> { Properties.Resources.room1, Properties.Resources.room2, Properties.Resources.room3, Properties.Resources.room4,
                 Properties.Resources.room5, Properties.Resources.room6, Properties.Resources.room7, Properties.Resources.room8, Properties.Resources.room9,
                 Properties.Resources.suspect1, Properties.Resources.suspect2, Properties.Resources.suspect3, Properties.Resources.suspect4, Properties.Resources.suspect5, Properties.Resources.suspect6,
@@ -81,15 +91,18 @@ namespace ClienteC__Juego
             panel_Board.Size = new Size(tileWidth*columns + 2*(tileWidth + cornerBoardMargin), tileHeight*rows + 2*(tileHeight + cornerBoardMargin));
             panel_Board.Location = new Point(300,10);
 
+            panel_Dados.Size = new Size(panel_Board.Location.X - 20, 130);
+            panel_Dados.Location = new Point(panel_Board.Location.X / 2 - panel_Dados.Width / 2, panel_Board.Location.Y);
+
             btt_dado.Size = new Size(120, 25);
             lbl_diceRoll.Size = new Size(60, 20);
             btt_dado.Font = new Font("Arial", 10, FontStyle.Bold);
-            btt_dado.Location = new Point(panel_Board.Location.X / 2 - btt_dado.Width / 2, panel_Board.Location.Y);
+            btt_dado.Location = new Point(panel_Dados.Width / 2 - btt_dado.Width / 2, panel_Board.Location.Y);
             lbl_diceRoll.Location = new Point(btt_dado.Location.X + btt_dado.Width + 5, btt_dado.Location.Y + btt_dado.Height - lbl_diceRoll.Height);
 
             pBox_dice1.Size = pBox_dice2.Size = new Size(80, 80);
-            pBox_dice1.Location = new Point(panel_Board.Location.X / 2 - 5 - pBox_dice1.Width, btt_dado.Location.Y + btt_dado.Height + 5);
-            pBox_dice2.Location = new Point(panel_Board.Location.X / 2 + 5, btt_dado.Location.Y + btt_dado.Height + 5);
+            pBox_dice1.Location = new Point(panel_Dados.Width / 2 - 5 - pBox_dice1.Width, btt_dado.Location.Y + btt_dado.Height + 5);
+            pBox_dice2.Location = new Point(panel_Dados.Width / 2 + 5, pBox_dice1.Location.Y);
             pBox_dice1.BackgroundImageLayout = pBox_dice2.BackgroundImageLayout = ImageLayout.Stretch;
             pBox_dice1.BackColor = pBox_dice2.BackColor = Color.Transparent;
 
@@ -108,7 +121,7 @@ namespace ClienteC__Juego
             pBox_card2.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5);
             pBox_card3.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5 + pBox_card2.Height + 5);
 
-            gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 200);
+            gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 300);
             gBox_chat.Location = new Point(10, panel_Board.Location.Y + panel_Board.Height - gBox_chat.Height);
             richtBox_read.Location = new Point(5, 15);
             richtBox_read.Size = new Size(gBox_chat.Width - 10, gBox_chat.Height - 50);
@@ -118,6 +131,23 @@ namespace ClienteC__Juego
             tBox_write.Location = new Point(lbl_write.Location.X + lbl_write.Width + 5, lbl_write.Location.Y);
             pBox_sendText.Location = new Point(tBox_write.Location.X + tBox_write.Width + 5, lbl_write.Location.Y);
 
+            panel_Guess.Location = new Point(panel_Dados.Location.X, panel_Dados.Location.Y + panel_Dados.Height + 20);
+            panel_Guess.Size = new Size(panel_Dados.Width, 200);
+            lbl_suspect.Size = lbl_weap.Size = lbl_room.Size = new Size(85, 20);
+            lbl_suspect.Location = new Point(5,5);
+            lbl_weap.Location = new Point(lbl_suspect.Location.X + lbl_suspect.Width + 5, 5);
+            lbl_room.Location = new Point(lbl_weap.Location.X + lbl_weap.Width + 5, 5);
+            lbl_suspect.Font = lbl_weap.Font = lbl_room.Font = new Font("Arial", 10, FontStyle.Regular);
+            panel_guess1.Size = panel_guess2.Size = panel_guess3.Size = new Size(lbl_suspect.Width,130);
+            panel_guess1.Location = new Point(5, lbl_suspect.Location.Y + lbl_suspect.Height + 5);
+            panel_guess2.Location = new Point(panel_guess1.Location.X + panel_guess1.Width + 5, panel_guess1.Location.Y);
+            panel_guess3.Location = new Point(panel_guess2.Location.X + panel_guess2.Width + 5, panel_guess1.Location.Y);
+            btt_guess.Location = new Point(panel_Guess.Width / 2 - btt_guess.Width / 2, panel_guess1.Location.Y + panel_guess1.Height + 5);
+            pBox_check1.Size = pBox_check2.Size = pBox_check3.Size = new Size(50, 50);
+            pBox_check1.Location = pBox_check2.Location = pBox_check3.Location = new Point(panel_guess1.Width / 2 - pBox_check1.Width / 2, panel_guess1.Height / 2 - pBox_check1.Height / 2);
+
+            btt_solve.Size = new Size(100,50);
+            btt_solve.Location = new Point(panel_Board.Location.X / 2 - btt_solve.Width / 2, panel_Guess.Location.Y + panel_Guess.Height + 20);
             // Cards logic
 
             string cardTypeName = "room";
@@ -595,7 +625,7 @@ namespace ClienteC__Juego
 
         private void pBox_notePad_Click(object sender, EventArgs e)
         {
-            InGameNotes notePad = new InGameNotes();
+            InGameNotes notePad = new InGameNotes(gameNum);
             notePad.Show();
         }
 
