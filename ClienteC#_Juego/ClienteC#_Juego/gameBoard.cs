@@ -18,15 +18,16 @@ namespace ClienteC__Juego
     public partial class gameBoard : Form
     {
         Socket server;
-        string gameHost;
+        string gameHost; string userName;
         int gameNum;
 
-        public gameBoard(Socket server, int gameNum, string gameHost)
+        public gameBoard(Socket server, int gameNum, string gameHost, string userName)
         {
             InitializeComponent();
             this.server = server;
             this.gameHost = gameHost;
             this.gameNum = gameNum;
+            this.userName = userName;
         }
 
         int rows; int columns; int cornerBoardMargin;
@@ -150,7 +151,11 @@ namespace ClienteC__Juego
             pBox_check1.Location = pBox_check2.Location = pBox_check3.Location = new Point(panel_guess1.Width / 2 - pBox_check1.Width / 2, panel_guess1.Height / 2 - pBox_check1.Height / 2);
 
             btt_solve.Size = new Size(100,50);
-            btt_solve.Location = new Point(panel_Board.Location.X / 2 - btt_solve.Width / 2, panel_Guess.Location.Y + panel_Guess.Height + 20);
+            btt_solve.Location = new Point(panel_Guess.Location.X, panel_Guess.Location.Y + panel_Guess.Height + 20);
+            //btt_solve.Location = new Point(panel_Board.Location.X / 2 - btt_solve.Width / 2, panel_Guess.Location.Y + panel_Guess.Height + 20);
+
+            btt_endturn.Size = new Size(100, 50);
+            btt_endturn.Location = new Point(panel_Guess.Location.X + panel_Guess.Width - btt_endturn.Width, panel_Guess.Location.Y + panel_Guess.Height + 20);
             // Cards logic
 
             string cardTypeName = "room";
@@ -648,7 +653,7 @@ namespace ClienteC__Juego
             }
         }
 
-        // -------------------- FUNCTIONS INVOLVING CARDS LOGIC AND WORK -----------------------------------------------------
+        // -------------------- FUNCTIONS INVOLVING TURN LOGIC AND WORK -----------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------
 
         public void AtenderPartida(string[] mensaje)
@@ -663,7 +668,15 @@ namespace ClienteC__Juego
                     break;
             }
         }
-        
+
+        private void btt_endturn_Click(object sender, EventArgs e)      //Un jugador ha acabado el turno y le toca al siguiente
+        {
+            string mensaje = "42/" + gameHost + "/" + userName;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+            myturn = false;
+            ComprovarTurno(myturn);
+        }
 
         private void ComprovarTurno (bool turno)
         {

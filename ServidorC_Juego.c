@@ -113,6 +113,14 @@ int JugadoresEnPartida(ListaPartidas* listaP, char sockets_receptores[], char ho
 	return 0;
 }
 
+int TurnoSiguienteJugador (ListaPartidas* listaP, char sockets_receptores[], char host[], char jugador[], char infoJugadoresPartida[])
+{
+	//JugadoresEnPartida(&listaP, sockets_receptores, host, infoJugadoresPartida);
+	//char* p = strtok(infoJugadoresPartida, ".");
+	//strcpy(host, p);
+	//p = strtok(NULL, ".");
+}
+
 // ------------------------- ELIMINACIONES ---------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------
 int EliminarConectado(ListaConectados* lista, char nombre[])
@@ -827,6 +835,10 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 			}
 			sprintf(respuesta, "41/%s", host);
+		}
+		else if (codigo == 42)
+		{
+			
 		}
 		if ((codigo != 0) && (codigo != 4))
 		{

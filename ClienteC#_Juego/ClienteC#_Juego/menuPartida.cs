@@ -749,7 +749,7 @@ namespace ClienteC__Juego
 
                     break;
                 case 40:
-                    this.Invoke(new Action(() => { StartNewGame(nameHost, gameIndex); }));
+                    this.Invoke(new Action(() => { StartNewGame(nameHost, gameIndex, username); }));
                     break;
                 case 41:
                     tablero.AtenderPartida(mensaje);
@@ -759,9 +759,9 @@ namespace ClienteC__Juego
                 updateStatusPartidas();
         }
 
-        private void StartNewGame(string gameHost, int gameNum)
+        private void StartNewGame(string gameHost, int gameNum, string username)
         {
-            tablero = new gameBoard(server, gameNum, gameHost);
+            tablero = new gameBoard(server, gameNum, gameHost, username);
             tablero.Show();
         }
 

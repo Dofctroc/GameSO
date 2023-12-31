@@ -150,7 +150,7 @@ namespace ClienteC__Juego
 
         private void tableroToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            gameBoard tablero = new gameBoard(server, 0, "ELPATRON");
+            gameBoard tablero = new gameBoard(server, 0, "ELPATRON", username);
             tablero.Show();
         }
 
