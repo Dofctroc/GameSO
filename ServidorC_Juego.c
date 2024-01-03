@@ -1168,6 +1168,38 @@ void AtenderCliente(void* socket)
 			
 			strcpy(respuesta, "");
 		}
+		else if (codigo == 46)
+		{
+			char suspect[20];
+			char weapon[20];
+			char room[20];
+			char mensajeguess[200];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(userName, p);
+			p = strtok(NULL, "/");
+			strcpy(suspect, p);
+			p = strtok(NULL, "/");
+			strcpy(weapon, p);
+			p = strtok(NULL, "/");
+			strcpy(room, p);
+			sprintf(mensajeguess, "46/%s/%s/%s/%s/%s", host, userName, suspect, weapon, room);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn){
+					write(socketUsuario, mensajeguess, strlen(mensajeguess));
+					printf("Sent message guess: %s \n",mensajeguess);
+				}
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, "");
+		}
 		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45))
 		{
 			printf("Respuesta: %s\n", respuesta);
@@ -1213,7 +1245,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9078; 		//Linux
+	int puerto = 9075; 		//Linux
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
 

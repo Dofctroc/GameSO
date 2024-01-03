@@ -34,6 +34,7 @@ Shiva ports: 75-79
 43 - Send info cards			43/Host/Sol1.Sol2.Sol3/C1.C2.C3/C1.C2.C3/...
 44 -
 45 - Nueva posicion casilla de JugX	45/Host/JugX/PrePosCol.PosRow/PrePosCol.PosRow
+46 - Envio de Guess de JugX		46/Host/JugX/Suspect/Weapon/Tool
 
 
  _____________________________________________________________________________________________
@@ -76,6 +77,7 @@ Shiva ports: 75-79
 43 - Confirm info sent			43/0 or 43/-1
 44 - Notification of all cards		44/Host/Sol1.Sol2.Sol3/Jug1.Jug2.Jug3/C1,C2,C3.C1,C2,C3.C1,C2,C3
 45 - Notificacion nueva pos de JugX	45/Host/JugX/PrePosCol.PrePosRow/PosCol.PosRow
+46 - Envio Guess de JugX		46/Host/JugX/Suspect/Weapon/Room
 
 
 

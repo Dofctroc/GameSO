@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace ClienteC__Juego
 {
@@ -37,6 +38,10 @@ namespace ClienteC__Juego
         int diceRoll, diceRoll1, diceRoll2;
         bool myturn;
 
+        int countSuspect = 0;
+        int countWeapon = 0;
+        int countRoom = 0;
+
         Position myPos;         // Current position of the player in the grid
         PictureBox[,] grid;     // Grid of pictureBoxes representing each tile
         BoardDistribution boardGrids;   // Initalizes variables from custom class <BoardDistribution>
@@ -52,6 +57,10 @@ namespace ClienteC__Juego
         List<List<Card>> playersCards;
         List<Card> myCards;
         List<Card> cardsSolution;
+        List<Card> myguessCards;
+        List<Card> guessSuspect;
+        List<Card> guessWeapon;
+        List<Card> guessRoom;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -161,6 +170,8 @@ namespace ClienteC__Juego
             pBox_check1.Size = pBox_check2.Size = pBox_check3.Size = new Size(50, 50);
             pBox_check1.Location = pBox_check2.Location = pBox_check3.Location = new Point(panel_guess1.Width / 2 - pBox_check1.Width / 2, panel_guess1.Height / 2 - pBox_check1.Height / 2);
 
+
+
             btt_solve.Size = new Size(100,50);
             btt_solve.Location = new Point(panel_Guess.Location.X, panel_Guess.Location.Y + panel_Guess.Height + 20);
 
@@ -187,6 +198,26 @@ namespace ClienteC__Juego
             }
 
             CenterFormOnScreen();
+
+            //INITIALIZATION OF CARDS OF GUESS PER TYPE
+            guessSuspect = new List<Card>();
+            guessWeapon = new List<Card>();
+            guessRoom = new List<Card>();
+            foreach (Card card in cardsList)
+            {
+                if (card.type == "suspect")
+                    guessSuspect.Add(card);
+                if (card.type == "weapon")
+                    guessWeapon.Add(card);
+                if (card.type == "room")
+                    guessRoom.Add(card);
+            }
+            panel_guess1.BackgroundImage = guessSuspect[0].image;
+            panel_guess2.BackgroundImage = guessWeapon[0].image;
+            panel_guess3.BackgroundImage = guessRoom[0].image;
+            tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}, Weapon: {1}, Room: {2}", guessSuspect[0].ID.ToString(), guessWeapon[0].ID.ToString(), guessRoom[0].ID.ToString()) + Environment.NewLine);
+            panel_OtrosGuess.Visible = panel1_OtrosGuess.Visible = panel2_OtrosGuess.Visible = panel3_OtrosGuess.Visible = false;
+
         }
 
         private void CenterFormOnScreen()
@@ -771,6 +802,9 @@ namespace ClienteC__Juego
                     if (posX != -1 && posY != -1)
                         grid[posX, posY].BackgroundImage = playerTileImg[playerIndex];
                     break;
+                case 46:
+                    panel_OtrosGuess.Visible = panel1_OtrosGuess.Visible = panel2_OtrosGuess.Visible = panel3_OtrosGuess.Visible = true;
+                    break;
             }
         }
 
@@ -786,6 +820,47 @@ namespace ClienteC__Juego
             lbl_diceRoll.Text = diceRoll.ToString();
 
             displayDiceNum(diceRoll1, diceRoll2);
+        }
+
+        private void btt_guess_Click(object sender, EventArgs e)
+        {
+            string suspect = guessSuspect[countSuspect].ID.ToString();
+            string weapon = guessWeapon[countWeapon].ID.ToString();
+            string room = guessRoom[countRoom].ID.ToString();
+
+            string mensaje = "46/" + gameHost + "/" + userName + "/" + suspect + "/" + weapon + "/" + room;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+        
+        private void panel_guess1_Click(object sender, EventArgs e)
+        {
+            countSuspect++;
+            if (countSuspect > 5)
+                countSuspect = 0;
+            panel_guess1.BackgroundImage = guessSuspect[countSuspect].image;
+            
+            tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}", guessSuspect[countSuspect].ID.ToString() + Environment.NewLine));
+        }
+
+        private void panel_guess2_Click(object sender, EventArgs e)
+        {
+            countWeapon++;
+            if (countWeapon > 5)
+                countWeapon = 0;
+            panel_guess2.BackgroundImage = guessWeapon[countWeapon].image;
+
+            tbox_info.AppendText(String.Format("CartasGuess: Weapon: {0}", guessWeapon[countWeapon].ID.ToString() + Environment.NewLine));
+        }
+
+        private void panel_guess3_Click(object sender, EventArgs e)
+        {
+            countRoom++;
+            if (countRoom > 8)
+                countRoom = 0;
+            panel_guess3.BackgroundImage = guessRoom[countRoom].image;
+
+            tbox_info.AppendText(String.Format("CartasGuess: Room: {0}", guessRoom[countRoom].ID.ToString() + Environment.NewLine));
         }
 
         private void btt_endturn_Click(object sender, EventArgs e)      //Un jugador ha acabado el turno y le toca al siguiente
