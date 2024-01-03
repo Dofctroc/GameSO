@@ -150,7 +150,7 @@ namespace ClienteC__Juego
 
         private void tableroToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            gameBoard tablero = new gameBoard(server, 0, "ELPATRON", username);
+            gameBoard tablero = new gameBoard(server, new List<string> { "Asier","Gu"} ,0 , "Asier", textbox_username.Text);
             tablero.Show();
         }
 
@@ -169,7 +169,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.101"; int puerto = 9076;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9078;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -319,7 +319,7 @@ namespace ClienteC__Juego
             while (true)
             {
                 //Recibimos el mensaje del servidor
-                byte[] msg2 = new byte[80];
+                byte[] msg2 = new byte[200];
                 server.Receive(msg2);
                 string msje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 Console.WriteLine(msje);
@@ -402,6 +402,18 @@ namespace ClienteC__Juego
                         menuPartida.onResponse(mensaje);
                         break;
                     case 41:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 42:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 43:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 44:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 45:
                         menuPartida.onResponse(mensaje);
                         break;
                 }

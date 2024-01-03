@@ -37,7 +37,9 @@ namespace ClienteC__Juego
         Socket server;
 
         menuRankings menu_rankings;
-        gameBoard tablero;
+        gameBoard tablero0;
+        gameBoard tablero1;
+        List<gameBoard> tableros;
 
         public menuPartida(menuUsuario menuUsuario, Socket server, string username)
         {
@@ -62,6 +64,8 @@ namespace ClienteC__Juego
 
             invitacionesPaneles = new List<Panel> (10);
             invitacionesTimers = new List<System.Windows.Forms.Timer> (10);
+
+            tableros = new List<gameBoard> { tablero0, tablero1 };
 
             lbl_userName.Text = "Usuario: " + username;
             displayedGame = 0;
@@ -749,20 +753,32 @@ namespace ClienteC__Juego
 
                     break;
                 case 40:
-                    this.Invoke(new Action(() => { StartNewGame(nameHost, gameIndex, username); }));
+                    this.Invoke(new Action(() => { StartNewGame(nameHost, gameIndex, username, displayedGame); }));
                     break;
                 case 41:
-                    tablero.AtenderPartida(mensaje);
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 42:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 43:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 44:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 45:
+                    tableros[gameIndex].AtenderPartida(mensaje);
                     break;
             }
-            if (codigo != 27)
+            if (codigo != 27 && codigo < 40)
                 updateStatusPartidas();
         }
 
-        private void StartNewGame(string gameHost, int gameNum, string username)
+        private void StartNewGame(string gameHost, int gameNum, string username, int dispGame)
         {
-            tablero = new gameBoard(server, gameNum, gameHost, username);
-            tablero.Show();
+            tableros[gameNum] = new gameBoard(server, partidas[displayedGame], gameNum, gameHost, username);
+            tableros[gameNum].Show();
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -800,30 +816,39 @@ namespace ClienteC__Juego
 
             Panel panel = new Panel();
             panel.Tag = host;
-            panel.BackColor = Color.Goldenrod; // Set background color if needed
+            panel.BackColor = Color.PaleGoldenrod; // Set background color if needed
             panel.Size = new Size(b*2 + 30, h + 30); // Adjust the size as needed
             panel.Location = new Point(this.ClientSize.Width - panel.Width - 10, this.ClientSize.Height - panel.Height - 10 - (panel.Height + 2) * invitacionesPaneles.Count);
 
             // Create the green PictureBox on the bottom left
             PictureBox greenPictureBox = new PictureBox();
+            greenPictureBox.Cursor = Cursors.Hand;
             greenPictureBox.BackColor = Color.Green;
+            greenPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
             greenPictureBox.Size = new Size(b, h); // Adjust the size as needed
             greenPictureBox.Location = new Point(10, panel.Height - greenPictureBox.Height - 5);
+            greenPictureBox.MouseEnter += pBox_invitacion_Enter;
+            greenPictureBox.MouseLeave += pBox_invitacion_Leave;
             greenPictureBox.MouseClick += pBox_invitacion_Click;
             panel.Controls.Add(greenPictureBox);
 
             // Create the red PictureBox on the bottom right
             PictureBox redPictureBox = new PictureBox();
+            redPictureBox.Cursor = Cursors.Hand;
             redPictureBox.BackColor = Color.Red;
+            redPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
             redPictureBox.Tag = invitacionesPaneles.Count;
             redPictureBox.Size = new Size(b, h); // Adjust the size as needed
             redPictureBox.Location = new Point(panel.Width - redPictureBox.Width - 10, panel.Height - redPictureBox.Height - 5);
+            redPictureBox.MouseEnter += pBox_invitacion_Enter;
+            redPictureBox.MouseLeave += pBox_invitacion_Leave;
             redPictureBox.MouseClick += pBox_invitacion_Click;
             panel.Controls.Add(redPictureBox);
 
             // Create the label on top of both PictureBoxes
             System.Windows.Forms.Label label = new System.Windows.Forms.Label();
             label.Text = "Invited by: " + host;
+            label.Font = new Font("Modern No. 20", 10, FontStyle.Regular);
             label.AutoSize = true;
             label.BackColor = Color.Transparent; // Make label background transparent
             label.Location = new Point(5, 5); // Adjust the location as needed
@@ -885,6 +910,21 @@ namespace ClienteC__Juego
                     break;
                 }
             }
+        }
+
+        private void pBox_invitacion_Enter(object sender, EventArgs e)
+        {
+            PictureBox hoveredPBox = (PictureBox)sender;
+            if (hoveredPBox.BackColor == Color.Green)
+                hoveredPBox.BackgroundImage = Properties.Resources.Accept;
+            else
+                hoveredPBox.BackgroundImage = Properties.Resources.Cross;
+
+        }
+        private void pBox_invitacion_Leave(object sender, EventArgs e)
+        {
+            PictureBox hoveredPBox = (PictureBox)sender;
+            hoveredPBox.BackgroundImage = null;
         }
 
         private void openRankingsEXPToolStripMenuItem_Click(object sender, EventArgs e)

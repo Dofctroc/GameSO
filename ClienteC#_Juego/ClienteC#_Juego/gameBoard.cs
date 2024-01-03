@@ -19,47 +19,45 @@ namespace ClienteC__Juego
     {
         Socket server;
         string gameHost; string userName;
+        List<string> partida;
         int gameNum;
 
-        public gameBoard(Socket server, int gameNum, string gameHost, string userName)
+        public gameBoard(Socket server, List<string> partida, int gameNum, string gameHost, string userName)
         {
             InitializeComponent();
             this.server = server;
             this.gameHost = gameHost;
             this.gameNum = gameNum;
             this.userName = userName;
+            this.partida = partida;
         }
 
         int rows; int columns; int cornerBoardMargin;
         int tileWidth; int tileHeight;
         int diceRoll, diceRoll1, diceRoll2;
         bool myturn;
+
         Position myPos;         // Current position of the player in the grid
         PictureBox[,] grid;     // Grid of pictureBoxes representing each tile
         BoardDistribution boardGrids;   // Initalizes variables from custom class <BoardDistribution>
         Image[] dicesImg;       // Vector including all images a dice can have, ordered from 0 to 6 (0 being empty throw)
+        Image[] playerTileImg;
+        int myIndex;
 
-        List<Image> cardsOrderedDeck;
-        List<Image> cardsDeck;
-        List<Image> roomCards;
-        List<Image> suspectCards;
-        List<Image> weaponCards;
+        List<PictureBox> myCardsPBox;
+        List<Image> cardsImageList;
 
+        List<Card> cardsList;
+        List<Card> cardsDeck;
+        List<List<Card>> playersCards;
+        List<Card> myCards;
+        List<Card> cardsSolution;
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.Text = "Game of " + gameHost;
+            this.Text = "Game of " + gameHost + ", Player is " + userName;
             myturn = false;
             ComprovarTurno(myturn);
-
-            cardsOrderedDeck = new List<Image> { Properties.Resources.room1, Properties.Resources.room2, Properties.Resources.room3, Properties.Resources.room4,
-                Properties.Resources.room5, Properties.Resources.room6, Properties.Resources.room7, Properties.Resources.room8, Properties.Resources.room9,
-                Properties.Resources.suspect1, Properties.Resources.suspect2, Properties.Resources.suspect3, Properties.Resources.suspect4, Properties.Resources.suspect5, Properties.Resources.suspect6,
-                Properties.Resources.weapon1, Properties.Resources.weapon2, Properties.Resources.weapon3, Properties.Resources.weapon4, Properties.Resources.weapon5, Properties.Resources.weapon6};
-
-            roomCards = new List<Image> (9);
-            suspectCards = new List<Image>(6);
-            weaponCards = new List<Image>(6);
 
             // Variables assignment
             rows = 25; columns = 24;
@@ -70,6 +68,11 @@ namespace ClienteC__Juego
             boardGrids = new BoardDistribution();
             dicesImg = new Image[] {Properties.Resources.DiceEmpty, Properties.Resources.Dice1, Properties.Resources.Dice2,
                 Properties.Resources.Dice3, Properties.Resources.Dice4, Properties.Resources.Dice5, Properties.Resources.Dice6};
+            playerTileImg = new Image[] { Properties.Resources.playerTile1, Properties.Resources.playerTile2, Properties.Resources.playerTile3, 
+                Properties.Resources.playerTile4, Properties.Resources.playerTile5, Properties.Resources.playerTile6};
+            myIndex = partida.IndexOf(userName);
+
+            myCardsPBox = new List<PictureBox> { pBox_card1,pBox_card2,pBox_card3,pBox_card4,pBox_card5,pBox_card6, pBox_card7, pBox_card8, pBox_card9 };
 
             myPos = new Position(-1, -1);
 
@@ -120,10 +123,18 @@ namespace ClienteC__Juego
             lbl_notePad.Location = new Point(pBox_notePad.Location.X, pBox_notePad.Location.Y - lbl_notePad.Height - 5);
             lbl_cards.Location = new Point(pBox_notePad.Location.X, panel_Board.Location.Y);
 
-            pBox_card1.Size = pBox_card2.Size = pBox_card3.Size = new Size(130,178);
+            pBox_card1.Size = pBox_card2.Size = pBox_card3.Size = pBox_card4.Size = pBox_card5.Size = pBox_card6.Size = pBox_card7.Size = pBox_card8.Size = pBox_card9.Size = new Size(130,178);
+            pBox_card1.Visible = pBox_card2.Visible = pBox_card3.Visible = pBox_card4.Visible = pBox_card5.Visible = pBox_card6.Visible = pBox_card7.Visible = pBox_card8.Visible = pBox_card9.Visible = false;
+            pBox_card1.BackgroundImage = pBox_card2.BackgroundImage = pBox_card3.BackgroundImage = pBox_card4.BackgroundImage = pBox_card5.BackgroundImage = pBox_card6.BackgroundImage = pBox_card7.BackgroundImage = pBox_card8.BackgroundImage = pBox_card9.BackgroundImage = null;
             pBox_card1.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5);
             pBox_card2.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5);
             pBox_card3.Location = new Point(lbl_cards.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card1.Height + 5 + pBox_card2.Height + 5);
+            pBox_card4.Location = new Point(lbl_cards.Location.X + pBox_card1.Width + 5, panel_Board.Location.Y + lbl_cards.Height + 5);
+            pBox_card5.Location = new Point(pBox_card4.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card4.Height + 5);
+            pBox_card6.Location = new Point(pBox_card4.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card4.Height + 5 + pBox_card5.Height + 5);
+            pBox_card7.Location = new Point(lbl_cards.Location.X + pBox_card1.Width + 5 + pBox_card4.Width + 5, panel_Board.Location.Y + lbl_cards.Height + 5);
+            pBox_card8.Location = new Point(pBox_card7.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card7.Height + 5);
+            pBox_card9.Location = new Point(pBox_card7.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card7.Height + 5 + pBox_card8.Height + 5);
 
             gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 300);
             gBox_chat.Location = new Point(10, panel_Board.Location.Y + panel_Board.Height - gBox_chat.Height);
@@ -152,40 +163,28 @@ namespace ClienteC__Juego
 
             btt_solve.Size = new Size(100,50);
             btt_solve.Location = new Point(panel_Guess.Location.X, panel_Guess.Location.Y + panel_Guess.Height + 20);
-            //btt_solve.Location = new Point(panel_Board.Location.X / 2 - btt_solve.Width / 2, panel_Guess.Location.Y + panel_Guess.Height + 20);
 
             btt_endturn.Size = new Size(100, 50);
             btt_endturn.Location = new Point(panel_Guess.Location.X + panel_Guess.Width - btt_endturn.Width, panel_Guess.Location.Y + panel_Guess.Height + 20);
-            // Cards logic
 
-            string cardTypeName = "room";
-            int n = 1;
-            foreach (Image card in cardsOrderedDeck)
+            // INITIAL CARDS LOGIC IF HOST
+            cardsSolution = new List<Card>(3);
+            myCards = new List<Card>();
+            CreateCards();
+
+            if (gameHost == userName)
             {
-                card.Tag = cardTypeName;
-                if (n == 9)
-                    cardTypeName = "suspect";
-                if (n == 15)
-                    cardTypeName = "weapon";
-                n++;
+                cardsDeck = new List<Card>(cardsList);
+                Shuffle(cardsDeck);
+
+                PrintCardsDeck(cardsDeck);
+
+                DistributeCards(cardsDeck);
+
+                SendCardsServer();
+
+                DisplayMyCards(playersCards[0]);
             }
-
-            cardsDeck = cardsOrderedDeck;
-            Shuffle(cardsDeck);
-
-            foreach (Image card in cardsDeck)
-            {
-                if (card.Tag.ToString() == "room")
-                    roomCards.Add(card); 
-                else if (card.Tag.ToString() == "suspect")
-                    suspectCards.Add(card);
-                else if (card.Tag.ToString() == "weapon")
-                    weaponCards.Add(card);
-            }
-
-            pBox_card1.BackgroundImage = suspectCards[0];
-            pBox_card2.BackgroundImage = weaponCards[1];
-            pBox_card3.BackgroundImage = roomCards[2];
 
             CenterFormOnScreen();
         }
@@ -209,6 +208,11 @@ namespace ClienteC__Juego
         {
             pBox_dice1.BackgroundImage = dicesImg[num1];
             pBox_dice2.BackgroundImage = dicesImg[num2];
+            int num = num1 + num2;
+            if (num > 0)
+                lbl_diceRoll.Text = num.ToString();
+            else if (num == 0)
+                lbl_diceRoll.Text = "-tirar-";
         }
 
         private void Tile_mouseEnter(object sender, EventArgs e)
@@ -216,12 +220,6 @@ namespace ClienteC__Juego
             Position myPosTemp = myPos;
             Position hoveredPos = new Position(0, 0);
             PictureBox hoveredPBox = (PictureBox)sender;
-
-            int diceRoll;
-            if (lbl_diceRoll.Text != "-tirar-")
-                diceRoll = Convert.ToInt32(lbl_diceRoll.Text);
-            else
-                diceRoll = 0;
 
             if ((myPosTemp.X != -1) && (hoveredPBox.Tag.ToString() == "hway" || hoveredPBox.Tag.ToString().Split('/')[0] == "door"))
             {
@@ -307,9 +305,8 @@ namespace ClienteC__Juego
             tbox_info.AppendText(String.Format("Posicion Previa: {0},{1}", myPos.X.ToString(), myPos.Y.ToString()) + Environment.NewLine);
 
             // Left click and when you have throws left
-            if ((e.Button == MouseButtons.Left) && (lbl_diceRoll.Text != "-tirar-"))
+            if ((e.Button == MouseButtons.Left) && (diceRoll != 0) && (clickedPBox.BackgroundImage == null))
             {
-                int diceRoll = Convert.ToInt32(lbl_diceRoll.Text);
                 int remainingMoves = diceRoll;
 
                 // Search positon clicked
@@ -395,15 +392,23 @@ namespace ClienteC__Juego
                         n1 = remainingMoves;
                         n2 = 0;
                     }
+                    diceRoll = remainingMoves;
                     displayDiceNum(n1,n2);
                 }
 
                 // Case for still not have played, thus place the player in the tile selected
                 else if (clickedPBox.Tag.ToString().Split('/')[0] == "Origin")
                 {
-                    clickedPBox.BackgroundImage = Properties.Resources.playerTile1;
+                    clickedPBox.BackgroundImage = playerTileImg[myIndex];
                     myPos = clickedPos;
                 }
+
+                string msgPrePos = prePos.X.ToString() + "." + prePos.Y.ToString();
+                string msgPos = myPos.X.ToString() + "." + myPos.Y.ToString();
+                string mensaje = "45/" + gameHost + "/" + userName + "/" + msgPrePos + "/" + msgPos;
+                Console.WriteLine("Position info sent to server:" + mensaje);
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
             }
 
             else if (e.Button == MouseButtons.Right)
@@ -427,14 +432,14 @@ namespace ClienteC__Juego
             {
                 grid[prePos.X, prePos.Y].BackgroundImage = null;
                 myPos = clickedPos;
-                nextPBox.BackgroundImage = Properties.Resources.playerTile1;
+                nextPBox.BackgroundImage = playerTileImg[myIndex];
             }
             else if (nextPBox.Tag.ToString().Split('/')[0] == "door")
             {
                 int doorNum = Convert.ToInt32(nextPBox.Tag.ToString().Split('/')[1]);
                 grid[prePos.X, prePos.Y].BackgroundImage = null;
                 myPos = boardGrids.moveToRoom(doorNum, grid);
-                grid[myPos.X, myPos.Y].BackgroundImage = Properties.Resources.playerTile1;
+                grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myIndex];
             }
 
             // Clear all background from previous path
@@ -470,9 +475,10 @@ namespace ClienteC__Juego
             }
             grid[myPos.X, myPos.Y].BackgroundImage = null;
             myPos = boardGrids.moveToRoom(nextRoomNum, grid);
-            grid[myPos.X, myPos.Y].BackgroundImage = Properties.Resources.playerTile1;
+            grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myIndex];
             
             lbl_diceRoll.Text = "-tirar-";
+            diceRoll = 0;
             displayDiceNum(0,0);
         }
 
@@ -506,67 +512,6 @@ namespace ClienteC__Juego
                     step++;
                 }
             }
-        }
-
-        private void btton_pruebas_Click(object sender, EventArgs e)
-        {
-            int gridSizeX = 5;
-            int gridSizeY = 5;
-
-            // Initialize the grid
-            Position[,] grid = new Position[gridSizeX, gridSizeY];
-
-            // Populate the grid with nodes
-            for (int x = 0; x < gridSizeX; x++)
-            {
-                for (int y = 0; y < gridSizeY; y++)
-                {
-                    // For simplicity, assume all nodes are walkable initially
-                    bool isWalkable = true;
-
-                    // Block some nodes
-                    if ((x == 1 && y <= 3) || (x == 3 && y >= 1))
-                    {
-                        isWalkable = false;
-                    }
-
-                    // Create the node and add it to the grid
-                    grid[x, y] = new Position(x, y, isWalkable);
-                }
-            }
-
-            // Mark the start and end nodes (for testing purposes)
-            Position startPosition = grid[0, 0];
-            Position endPosition = grid[gridSizeX - 1, gridSizeY - 1];
-
-            // Example: Output the grid
-            for (int x = 0; x < gridSizeX; x++)
-            {
-                for (int y = 0; y < gridSizeY; y++)
-                {
-                    if (grid[x, y] == startPosition) {
-                        Console.Write("S ");  // Start node
-                    }
-                    else if (grid[x, y] == endPosition) {
-                        Console.Write("E ");  // End node
-                    }
-                    else if (grid[x, y].IsWalkable) {
-                        Console.Write(". ");  // Blocked node
-                    }
-                    else {
-                        Console.Write("X ");  // Walkable node
-                    }
-                }
-                Console.WriteLine();
-            }
-
-            List<Position> path = startPosition.FindPath(startPosition, endPosition, grid);
-            foreach (Position pathPosition in path)
-            {
-                Console.Write(pathPosition.X + "," + pathPosition.Y);
-                Console.Write(" -> ");
-            }
-            Console.WriteLine();
         }
 
         private void pBox_notePad_MouseEnter(object sender, EventArgs e)
@@ -619,18 +564,6 @@ namespace ClienteC__Juego
             }
         }
 
-        private void button_Dado1_Click(object sender, EventArgs e)
-        {
-            Random random = new Random();
-            // Generate a random integer between 1 and 6
-            diceRoll1 = random.Next(1, 7);
-            diceRoll2 = random.Next(1, 7);
-            diceRoll = diceRoll1 + diceRoll2;
-            lbl_diceRoll.Text = diceRoll.ToString();
-
-            displayDiceNum(diceRoll1, diceRoll2);
-        }
-
         private void pBox_notePad_Click(object sender, EventArgs e)
         {
             InGameNotes notePad = new InGameNotes(gameNum);
@@ -640,7 +573,92 @@ namespace ClienteC__Juego
         // -------------------- FUNCTIONS INVOLVING CARDS LOGIC AND WORK -----------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------
 
-        static void Shuffle<T>(List<T> list)
+        private void CreateCards()
+        {
+            string cardType = "room";
+            cardsImageList = new List<Image> { Properties.Resources.room1, Properties.Resources.room2, Properties.Resources.room3, Properties.Resources.room4,
+                Properties.Resources.room5, Properties.Resources.room6, Properties.Resources.room7, Properties.Resources.room8, Properties.Resources.room9,
+                Properties.Resources.suspect1, Properties.Resources.suspect2, Properties.Resources.suspect3, Properties.Resources.suspect4, Properties.Resources.suspect5, Properties.Resources.suspect6,
+                Properties.Resources.weapon1, Properties.Resources.weapon2, Properties.Resources.weapon3, Properties.Resources.weapon4, Properties.Resources.weapon5, Properties.Resources.weapon6};
+            cardsList = new List<Card>();
+
+            for (int i = 0; i < cardsImageList.Count; i++)
+            {
+                if (i == 9)
+                    cardType = "suspect";
+                if (i == 15)
+                    cardType = "weapon";
+
+                Card card = new Card(i, cardsImageList[i], cardType);
+                cardsList.Add(card);
+            }
+        }
+
+        private void DistributeCards(List<Card> shuffledDeck)
+        {
+            int count = partida.Count;
+
+            // First select three cards that will be the solution
+            bool room = false;
+            bool suspect = false;
+            bool weapon = false;
+            List<Card> exShuffledDeck = new List<Card>(shuffledDeck);
+            foreach (Card card in exShuffledDeck) {
+                if (!room || !suspect || !weapon)
+                {
+                    if (!room && card.type == "room") {
+                        cardsSolution.Add(card);
+                        shuffledDeck.Remove(card);
+                        room = true;
+                    }
+                    else if (!suspect && card.type == "suspect") {
+                        cardsSolution.Add(card);
+                        shuffledDeck.Remove(card);
+                        suspect = true;
+                    }
+                    else if (!weapon && card.type == "weapon") {
+                        cardsSolution.Add(card);
+                        shuffledDeck.Remove(card);
+                        weapon = true;
+                    }
+                }
+                else
+                    break;
+            }
+
+            tbox_info.AppendText(String.Format("Solutions cards: ") + Environment.NewLine);
+            PrintCardsDeck(cardsSolution);
+
+            // Then distribute all remaining cards
+            playersCards = new List<List<Card>>(count);
+            for (int i = 0; i < count; i++) {
+                playersCards.Add(new List<Card>());
+            }
+
+            bool end = false;
+            for (int i = 0; i < shuffledDeck.Count ; i += count)
+            {
+                if (end)
+                    break;
+
+                for (int j = 0; j < count; j++) {
+                    if (shuffledDeck.Count > i + j)
+                        playersCards[j].Add(shuffledDeck[i + j]);
+                    else {
+                        end = true;
+                        break;
+                    }
+                }         
+            }
+
+            foreach (List<Card> cards in playersCards)
+            {
+                tbox_info.AppendText(String.Format("Deck: ") + Environment.NewLine);
+                PrintCardsDeck(cards);
+            }
+        }
+
+        private void Shuffle<T>(List<T> list)
         {
             Random random = new Random();
             int n = list.Count;
@@ -650,6 +668,48 @@ namespace ClienteC__Juego
                 T temp = list[i];
                 list[i] = list[j];
                 list[j] = temp;
+            }
+        }
+
+        private void DisplayMyCards(List<Card> cards)
+        {
+            int count = cards.Count;
+
+            for (int i= 0; i < count; i++)
+            {
+                myCardsPBox[i].Visible = true;
+                myCardsPBox[i].BackgroundImage = cards[i].image;
+            }
+        }
+
+        private void SendCardsServer()
+        {
+            string msgSolCards = cardsSolution[0].ID.ToString() + "." + cardsSolution[1].ID.ToString() + "." + cardsSolution[2].ID.ToString();
+
+            string msgPlyCards = "";
+            string msgPlyCards2 = "";
+            // Solo se envia el del resto de jugadores, no el del host
+            for (int i = 0; i < playersCards.Count; i++)
+            {
+                msgPlyCards = "";
+                foreach (Card card in playersCards[i])
+                {
+                    msgPlyCards += card.ID.ToString() + ",";
+                }
+                msgPlyCards2 += msgPlyCards.ToString().Substring(0, msgPlyCards.Length - 1);
+                msgPlyCards2 += ".";
+            }
+
+            string mensaje = "43/" + gameHost + "/" + msgSolCards + "/" + msgPlyCards2;
+            Console.WriteLine("Deck info sent to server:" + mensaje);
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void PrintCardsDeck(List<Card> deck)
+        {
+            foreach (Card card in deck) {
+                tbox_info.AppendText(String.Format("c{0}{1}, ", card.ID, card.type));
             }
         }
 
@@ -666,16 +726,78 @@ namespace ClienteC__Juego
                     myturn = true;
                     ComprovarTurno(myturn);
                     break;
+                case 42:
+                    break;
+                case 43: // All cards info sent confirmation
+                    break;
+                case 44: // Solutions cards info
+                    string[] cardsSolIndex = mensaje[2].Split('.');
+
+                    // Take solution cards
+                    cardsSolution = new List<Card>(3);
+                    for (int i = 0; i < cardsSolIndex.Length; i++) {
+                        cardsSolution.Add(cardsList[Convert.ToInt32(cardsSolIndex[i])]);
+                    }
+                    PrintCardsDeck(cardsSolution);
+
+                    // Split players and players cards to search mine
+                    string[] players = mensaje[3].Split('.');
+                    string[] playersCards = mensaje[4].Split('.');
+
+                    for (int i = 0; i < players.Length; i++)
+                    {
+                        if (players[i] == userName)
+                        {
+                            string[] myCardsID = playersCards[i].Split(',');
+                            for (int j = 0; j < myCardsID.Length; j++)
+                                myCards.Add(cardsList[Convert.ToInt32(myCardsID[j])]);
+                        }
+                    }
+                    PrintCardsDeck(myCards);
+                    DisplayMyCards(myCards);
+                    break;
+                case 45: // Player moved
+                    string player = mensaje[2];
+                    int playerIndex = partida.IndexOf(player);
+                    string[] prePosition = mensaje[3].Split('.');
+                    int prePosX = Convert.ToInt32(prePosition[0]);
+                    int prePosY = Convert.ToInt32(prePosition[1]);
+                    string[] position = mensaje[4].Split('.');
+                    int posX = Convert.ToInt32(position[0]);
+                    int posY = Convert.ToInt32(position[1]);
+
+                    if (prePosX != -1 && prePosY != -1)
+                        grid[prePosX, prePosY].BackgroundImage = null;
+                    if (posX != -1 && posY != -1)
+                        grid[posX, posY].BackgroundImage = playerTileImg[playerIndex];
+                    break;
             }
+        }
+
+        private void btt_dado_Click(object sender, EventArgs e)
+        {
+            btt_dado.Enabled = false;
+
+            Random random = new Random();
+            // Generate a random integer between 1 and 6
+            diceRoll1 = random.Next(1, 7);
+            diceRoll2 = random.Next(1, 7);
+            diceRoll = diceRoll1 + diceRoll2;
+            lbl_diceRoll.Text = diceRoll.ToString();
+
+            displayDiceNum(diceRoll1, diceRoll2);
         }
 
         private void btt_endturn_Click(object sender, EventArgs e)      //Un jugador ha acabado el turno y le toca al siguiente
         {
+            displayDiceNum(0,0);
+            myturn = false;
+            ComprovarTurno(myturn);
+
             string mensaje = "42/" + gameHost + "/" + userName;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
-            myturn = false;
-            ComprovarTurno(myturn);
+
         }
 
         private void ComprovarTurno (bool turno)

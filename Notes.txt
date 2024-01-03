@@ -30,7 +30,12 @@ Shiva ports: 75-79
 
 40 - Empieza la partida			40/Host
 41 - 
-42 - Acaba mi turno			42/Host/JugX
+42 - Acaba mi turno			42/Host
+43 - Send info cards			43/Host/Sol1.Sol2.Sol3/C1.C2.C3/C1.C2.C3/...
+44 -
+45 - Nueva posicion casilla de JugX	45/Host/JugX/PrePosCol.PosRow/PrePosCol.PosRow
+
+
  _____________________________________________________________________________________________
 |											      |
 |--------------------------- Codigos mensaje que envia Server: -------------------------------|
@@ -68,10 +73,13 @@ Shiva ports: 75-79
 40 - Notificación inicio game 		40/Host
 41 - Empieza mi turno			41/Host
 42 - 
+43 - Confirm info sent			43/0 or 43/-1
+44 - Notification of all cards		44/Host/Sol1.Sol2.Sol3/Jug1.Jug2.Jug3/C1,C2,C3.C1,C2,C3.C1,C2,C3
+45 - Notificacion nueva pos de JugX	45/Host/JugX/PrePosCol.PrePosRow/PosCol.PosRow
+
 
 
 One player MUST only be able to host ONE game
-
 Now ALL server responses of game lobby MUST have the following structure:
 	CODIGO / HOST / etc...
 
