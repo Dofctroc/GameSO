@@ -36,7 +36,9 @@ Shiva ports: 75-79
 45 - Nueva posicion casilla de JugX	45/Host/JugX/PrePosCol.PosRow/PrePosCol.PosRow
 46 - Envio de Guess de JugX		46/Host/JugX/Suspect.Weapon.Tool
 47 - JugY responde Guess de JugX	47/Host/JugX/JugY/Respuesta
-
+48 - 
+49 - Solve iniciado			49/Host/JugX
+50 - Cambio en el solve			50/Host/JugX/Suspect.Weapon.Tool
 
  _____________________________________________________________________________________________
 |											      |
@@ -81,6 +83,8 @@ Shiva ports: 75-79
 46 - Envio Guess de JugX		46/Host/JugX/Suspect.Weapon.Room
 47 - Turno de JugY (nuevo)		47/Host/JugX				(No se ha respondido el guess, turno de JugY de intentarlo) (Solo se envia a JugY)
 48 - Respuesta final de JugY		48/Host/JugX/JugY/Respuesta		(Solo si se ha respondido al guess)
+49 - Inicio Solve			49/Host/JugX
+50 - Cambio de carta de solve 		50/Host/JugX/Suspect.Weapon.Room
 
 
 One player MUST only be able to host ONE game

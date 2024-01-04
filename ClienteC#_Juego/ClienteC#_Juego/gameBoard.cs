@@ -19,7 +19,7 @@ namespace ClienteC__Juego
     public partial class gameBoard : Form
     {
         Socket server;
-        string gameHost, userName, playerGuess;
+        string gameHost, userName, playerGuess, playerSolve;
         List<string> partida;
         int gameNum;
 
@@ -41,6 +41,8 @@ namespace ClienteC__Juego
         int countSuspect = 0;
         int countWeapon = 0;
         int countRoom;
+
+        int countsolve1, countsolve2, countsolve3;
 
         Position myPos;         // Current position of the player in the grid
         PictureBox[,] grid;     // Grid of pictureBoxes representing each tile
@@ -209,6 +211,28 @@ namespace ClienteC__Juego
             panel_OtrosGuess.Location = new Point(panel_Board.Location.X + (panel_Board.Width - panel_OtrosGuess.Width) / 2, panel_Board.Location.Y + (panel_Board.Height - panel_OtrosGuess.Height) / 2);
             panel_OtrosGuess.BackColor = Color.YellowGreen;
             panel_OtrosGuess.BackColor = Color.Tan;
+
+            // SOLVE PANEL DESIGN
+            panel_Solve.Visible = false;
+            panel_Solve.Enabled = false;
+            countsolve1 = countsolve2 = countsolve3 = 0;
+            lbl_solve.Size = new Size(panel_Solve.Width - 10, 20);
+            lbl_solve.Location = new Point(5, 5);
+            lbl_solve1.Size = lbl_solve2.Size = lbl_solve3.Size = new Size(100, 20);
+            lbl_solve1.Location = new Point(5, lbl_solve.Location.Y + lbl_solve.Height + 5);
+            lbl_solve2.Location = new Point(lbl_solve1.Location.X + lbl_solve1.Width + 5, lbl_solve1.Location.Y);
+            lbl_solve3.Location = new Point(lbl_solve2.Location.X + lbl_solve2.Width + 5, lbl_solve1.Location.Y);
+            lbl_solve.Font = new Font("Arial", 10, FontStyle.Bold);
+            lbl_solve1.Font = lbl_solve2.Font = lbl_solve3.Font = new Font("Arial", 9, FontStyle.Regular);
+            panel_Solve1.Size = panel_Solve2.Size = panel_Solve3.Size = new Size(100, 150);
+            panel_Solve1.Location = new Point(5, lbl_solve1.Location.Y + lbl_solve1.Height);
+            panel_Solve2.Location = new Point(panel_Solve1.Location.X + panel_Solve1.Width + 5, panel_Solve1.Location.Y);
+            panel_Solve3.Location = new Point(panel_Solve2.Location.X + panel_Solve2.Width + 5, panel_Solve1.Location.Y);
+            lbl_solve.Size = new Size(panel_Guess.Width - 10, 20);
+            btt_makeaccusation.Location = new Point(lbl_guessPass.Location.X + lbl_guessPass.Width + 5, lbl_guessPass.Location.Y);
+            btt_makeaccusation.Size = new Size(100, 30);
+            panel_Solve.Size = new Size(5 + (5 + panel_Solve1.Width) * 3, 20 + lbl_solve.Height + lbl_solve1.Height + panel_Solve1.Height + lbl_guessPass.Height);
+            panel_Solve.Location = new Point(panel_Board.Location.X + (panel_Board.Width - panel_Solve.Width) / 2, panel_Board.Location.Y + (panel_Board.Height - panel_Solve.Height) / 2);
 
             // INITIAL CARDS LOGIC IF HOST
             cardsSolution = new List<Card>(3);
@@ -976,7 +1000,16 @@ namespace ClienteC__Juego
                     }
                     break;
                 case 49:
-
+                    playerSolve = mensaje[2];
+                    panel_Solve.Visible = true;
+                    break;
+                case 50:
+                    int idsuspect = Convert.ToInt32(mensaje[3]);
+                    panel_Solve1.BackgroundImage = cardsList[idsuspect].image;
+                    int idweapon = Convert.ToInt32(mensaje[3]);
+                    panel_Solve2.BackgroundImage = cardsList[idweapon].image;
+                    int idroom = Convert.ToInt32(mensaje[3]);
+                    panel_Solve3.BackgroundImage = cardsList[idroom].image;
                     break;
             }
         }
@@ -1055,6 +1088,7 @@ namespace ClienteC__Juego
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
+
         private void panel_OtrosGuess2_Click(object sender, EventArgs e)
         {
             panel_OtrosGuess.Enabled = false;
@@ -1065,6 +1099,7 @@ namespace ClienteC__Juego
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
+
         private void panel_OtrosGuess3_Click(object sender, EventArgs e)
         {
             panel_OtrosGuess.Enabled = false;
@@ -1072,6 +1107,65 @@ namespace ClienteC__Juego
             lbl_guessPass.Text = "Not your Turn";
 
             string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[2].ID;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void btt_makeaccusation_Click(object sender, EventArgs e)
+        {
+            if (guessSuspect[countsolve1] == cardsSolution[0] && guessWeapon[countsolve2] == cardsSolution[1] && guessRoom[countsolve3] == cardsSolution[2])
+            {
+
+            }
+        }
+
+        private void btt_solve_Click(object sender, EventArgs e)
+        {
+            panel_Solve.Visible = true;
+            panel_Solve.Enabled = true;
+            string mensaje = "49/" + gameHost + "/" + userName;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void panel_Solve1_Click(object sender, EventArgs e)
+        {
+            countsolve1++;
+            if (countsolve1 > 5)
+                countsolve1 = 0;
+            panel_Solve1.BackgroundImage = guessSuspect[countsolve1].image;
+
+            tbox_info.AppendText(String.Format("CartasSolve: Suspect: {0}", guessSuspect[countsolve1].ID.ToString() + Environment.NewLine));
+
+            string mensaje = "50/" + gameHost + "/" + playerSolve + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void panel_Solve2_Click(object sender, EventArgs e)
+        {
+            countsolve2++;
+            if (countsolve2 > 5)
+                countsolve2 = 0;
+            panel_guess2.BackgroundImage = guessWeapon[countsolve2].image;
+
+            tbox_info.AppendText(String.Format("CartasSolve: Weapon: {0}", guessWeapon[countsolve2].ID.ToString() + Environment.NewLine));
+
+            string mensaje = "50/" + gameHost + "/" + playerSolve + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void panel_Solve3_Click(object sender, EventArgs e)
+        {
+            countsolve3++;
+            if (countsolve3 > 8)
+                countsolve3 = 0;
+            panel_guess2.BackgroundImage = guessRoom[countsolve3].image;
+
+            tbox_info.AppendText(String.Format("CartasSolve: Room: {0}", guessRoom[countsolve3].ID.ToString() + Environment.NewLine));
+
+            string mensaje = "50/" + gameHost + "/" + playerSolve + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
