@@ -770,6 +770,18 @@ namespace ClienteC__Juego
                 case 45:
                     tableros[gameIndex].AtenderPartida(mensaje);
                     break;
+                case 46:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 47:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 48:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 49:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
             }
             if (codigo != 27 && codigo < 40)
                 updateStatusPartidas();

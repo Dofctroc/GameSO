@@ -59,12 +59,42 @@ Change logic when connected users' datagrid is clicked
 -/ Delete the "host" variable in menuPartida as variable usage has changed
 -/ Notification of new incoming message or event in other game
 
-For turns to work, change Enable of the board panel
-Add a End Turn button
+-/ For turns to work, change Enable of the board panel
+-/ Add a End Turn button
+
+LobbyPartida = ActivePartida; add int variable to Partida (0=Lobby, 1=Active)
 
 Rename all forms
-	Game form named after host
+	-/ Game form named after host
 
 Cards:
 1. When clicked, shows dorso of card
 
+ _______________
+| MY CARD LIST: |
+|_______________|
+
+Server-Client code
+40- Start game
+41- Initial cards info
+41- Start turn
+42- End turn
+43- Make guess
+44- Solve
+
+Client game:
+1, On start: Show(" Preparing game, please wait... ")
+2, Once prepared, show your cards and "put" solutions cards in middle
+3, Now allow first turn to start (Host)
+4, Proceed with turns...
+5, When player attempts solve two opt:
+    a, Everyone must make a solution guess (in order to assign positions and points)
+    b, Only player who solves is considered
+   To solve: show new panel where you can select the three cards
+
+Cards logic management:
+A, Create a CARD class in client:
+    Int num;
+    Image img;
+    String type;
+B, Host randomizes a deck of cards, selects solution cards and each player's cards and sends all info to all players.

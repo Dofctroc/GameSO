@@ -19,7 +19,7 @@ namespace ClienteC__Juego
     public partial class gameBoard : Form
     {
         Socket server;
-        string gameHost; string userName;
+        string gameHost, userName, playerGuess;
         List<string> partida;
         int gameNum;
 
@@ -57,7 +57,7 @@ namespace ClienteC__Juego
         List<List<Card>> playersCards;
         List<Card> myCards;
         List<Card> cardsSolution;
-        List<Card> myguessCards;
+        List<Card> guessCards;
         List<Card> guessSuspect;
         List<Card> guessWeapon;
         List<Card> guessRoom;
@@ -110,21 +110,21 @@ namespace ClienteC__Juego
             panel_Dados.Size = new Size(panel_Board.Location.X - 20, 130);
             panel_Dados.Location = new Point(panel_Board.Location.X / 2 - panel_Dados.Width / 2, panel_Board.Location.Y);
 
+            // DICES PANELS DESIGN
             btt_dado.Size = new Size(120, 25);
             lbl_diceRoll.Size = new Size(60, 20);
             btt_dado.Font = new Font("Arial", 10, FontStyle.Bold);
             btt_dado.Location = new Point(panel_Dados.Width / 2 - btt_dado.Width / 2, panel_Board.Location.Y);
             lbl_diceRoll.Location = new Point(btt_dado.Location.X + btt_dado.Width + 5, btt_dado.Location.Y + btt_dado.Height - lbl_diceRoll.Height);
-
             pBox_dice1.Size = pBox_dice2.Size = new Size(80, 80);
             pBox_dice1.Location = new Point(panel_Dados.Width / 2 - 5 - pBox_dice1.Width, btt_dado.Location.Y + btt_dado.Height + 5);
             pBox_dice2.Location = new Point(panel_Dados.Width / 2 + 5, pBox_dice1.Location.Y);
             pBox_dice1.BackgroundImageLayout = pBox_dice2.BackgroundImageLayout = ImageLayout.Stretch;
             pBox_dice1.BackColor = pBox_dice2.BackColor = Color.Transparent;
 
+            // NOTEPAD ICON AND LABEL DESIGN
             pBox_notePad.Size = new Size(130, 130);
             pBox_notePad.Location = new Point(panel_Board.Location.X + panel_Board.Width + 5, panel_Board.Location.Y + panel_Board.Height - pBox_notePad.Height);
-
             lbl_notePad.Size = lbl_cards.Size = new Size(130, 20);
             lbl_notePad.BorderStyle = lbl_cards.BorderStyle = BorderStyle.None;
             lbl_notePad.Font = lbl_cards.Font = new Font("Arial", 11, FontStyle.Regular);
@@ -132,6 +132,7 @@ namespace ClienteC__Juego
             lbl_notePad.Location = new Point(pBox_notePad.Location.X, pBox_notePad.Location.Y - lbl_notePad.Height - 5);
             lbl_cards.Location = new Point(pBox_notePad.Location.X, panel_Board.Location.Y);
 
+            // YOUR CARDS DESIGN
             pBox_card1.Size = pBox_card2.Size = pBox_card3.Size = pBox_card4.Size = pBox_card5.Size = pBox_card6.Size = pBox_card7.Size = pBox_card8.Size = pBox_card9.Size = new Size(130,178);
             pBox_card1.Visible = pBox_card2.Visible = pBox_card3.Visible = pBox_card4.Visible = pBox_card5.Visible = pBox_card6.Visible = pBox_card7.Visible = pBox_card8.Visible = pBox_card9.Visible = false;
             pBox_card1.BackgroundImage = pBox_card2.BackgroundImage = pBox_card3.BackgroundImage = pBox_card4.BackgroundImage = pBox_card5.BackgroundImage = pBox_card6.BackgroundImage = pBox_card7.BackgroundImage = pBox_card8.BackgroundImage = pBox_card9.BackgroundImage = null;
@@ -145,6 +146,7 @@ namespace ClienteC__Juego
             pBox_card8.Location = new Point(pBox_card7.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card7.Height + 5);
             pBox_card9.Location = new Point(pBox_card7.Location.X, panel_Board.Location.Y + lbl_cards.Height + 5 + pBox_card7.Height + 5 + pBox_card8.Height + 5);
 
+            // CHAT PANEL DESIGN
             gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 300);
             gBox_chat.Location = new Point(10, panel_Board.Location.Y + panel_Board.Height - gBox_chat.Height);
             richtBox_read.Location = new Point(5, 15);
@@ -155,6 +157,7 @@ namespace ClienteC__Juego
             tBox_write.Location = new Point(lbl_write.Location.X + lbl_write.Width + 5, lbl_write.Location.Y);
             pBox_sendText.Location = new Point(tBox_write.Location.X + tBox_write.Width + 5, lbl_write.Location.Y);
 
+            // GUESS PANEL DESIGN
             panel_Guess.Location = new Point(panel_Dados.Location.X, panel_Dados.Location.Y + panel_Dados.Height + 20);
             panel_Guess.Size = new Size(panel_Dados.Width, 200);
             lbl_suspect.Size = lbl_weap.Size = lbl_room.Size = new Size(85, 20);
@@ -162,6 +165,7 @@ namespace ClienteC__Juego
             lbl_weap.Location = new Point(lbl_suspect.Location.X + lbl_suspect.Width + 5, 5);
             lbl_room.Location = new Point(lbl_weap.Location.X + lbl_weap.Width + 5, 5);
             lbl_suspect.Font = lbl_weap.Font = lbl_room.Font = new Font("Arial", 10, FontStyle.Regular);
+            pBox_check1.Visible = pBox_check2.Visible = pBox_check3.Visible = false;
             panel_guess1.Size = panel_guess2.Size = panel_guess3.Size = new Size(lbl_suspect.Width,130);
             panel_guess1.Location = new Point(5, lbl_suspect.Location.Y + lbl_suspect.Height + 5);
             panel_guess2.Location = new Point(panel_guess1.Location.X + panel_guess1.Width + 5, panel_guess1.Location.Y);
@@ -170,13 +174,39 @@ namespace ClienteC__Juego
             pBox_check1.Size = pBox_check2.Size = pBox_check3.Size = new Size(50, 50);
             pBox_check1.Location = pBox_check2.Location = pBox_check3.Location = new Point(panel_guess1.Width / 2 - pBox_check1.Width / 2, panel_guess1.Height / 2 - pBox_check1.Height / 2);
 
-
-
+            // SOLVE AND END-TURN BUTTONS DESIGN
             btt_solve.Size = new Size(100,50);
             btt_solve.Location = new Point(panel_Guess.Location.X, panel_Guess.Location.Y + panel_Guess.Height + 20);
-
             btt_endturn.Size = new Size(100, 50);
             btt_endturn.Location = new Point(panel_Guess.Location.X + panel_Guess.Width - btt_endturn.Width, panel_Guess.Location.Y + panel_Guess.Height + 20);
+
+            // OTHERS GUESS PANEL DESIGN
+            panel_OtrosGuess.Visible = false;
+            btt_guessPass.Enabled = false;
+            lbl_otrosGuess.Size = new Size(panel_Guess.Width - 10, 20);
+            lbl_otrosGuess.Location = new Point(5, 5);
+            lbl_otrosSuspect.Size = lbl_otrosWeapon.Size = lbl_otrosRoom.Size = new Size(100, 20);
+            lbl_otrosSuspect.Location = new Point(5, lbl_otrosGuess.Location.Y + lbl_otrosGuess.Height + 5);
+            lbl_otrosWeapon.Location = new Point(lbl_otrosSuspect.Location.X + lbl_otrosSuspect.Width + 5, lbl_otrosSuspect.Location.Y);
+            lbl_otrosRoom.Location = new Point(lbl_otrosWeapon.Location.X + lbl_otrosWeapon.Width + 5, lbl_otrosSuspect.Location.Y);
+            lbl_otrosGuess.Font = new Font("Arial", 10, FontStyle.Bold);
+            lbl_otrosSuspect.Font = lbl_otrosWeapon.Font = lbl_otrosRoom.Font = new Font("Arial", 9, FontStyle.Regular);
+            pBox_guessCheck1.Visible = pBox_guessCheck2.Visible = pBox_guessCheck3.Visible = false;
+            pBox_guessCheck1.Size = pBox_guessCheck2.Size = pBox_guessCheck3.Size = new Size(50, 50);
+            pBox_guessCheck1.Location = pBox_guessCheck2.Location = pBox_guessCheck3.Location = new Point(panel_OtrosGuess1.Width / 2 - pBox_guessCheck1.Width / 2, panel_OtrosGuess1.Height / 2 - pBox_guessCheck1.Height / 2);
+            panel_OtrosGuess1.Size = panel_OtrosGuess2.Size = panel_OtrosGuess3.Size = new Size(100, 150);
+            panel_OtrosGuess1.Location = new Point(5, lbl_otrosSuspect.Location.Y + lbl_otrosSuspect.Height);
+            panel_OtrosGuess2.Location = new Point(panel_OtrosGuess1.Location.X + panel_OtrosGuess1.Width + 5, panel_OtrosGuess1.Location.Y);
+            panel_OtrosGuess3.Location = new Point(panel_OtrosGuess2.Location.X + panel_OtrosGuess2.Width + 5, panel_OtrosGuess1.Location.Y);
+            lbl_otrosGuess.Size = new Size(panel_Guess.Width - 10, 20);
+            lbl_guessPass.Location = new Point(5, panel_OtrosGuess1.Location.Y + panel_OtrosGuess1.Height + 5);
+            lbl_guessPass.Size = new Size(panel_OtrosGuess1.Width*2 + 5, 30);
+            btt_guessPass.Location = new Point(lbl_guessPass.Location.X + lbl_guessPass.Width + 5, lbl_guessPass.Location.Y);
+            btt_guessPass.Size = new Size(100, 30);
+            panel_OtrosGuess.Size = new Size(5 + (5 + panel_OtrosGuess1.Width) * 3, 20 + lbl_otrosGuess.Height + lbl_otrosSuspect.Height + panel_OtrosGuess1.Height + lbl_guessPass.Height);
+            panel_OtrosGuess.Location = new Point(panel_Board.Location.X + (panel_Board.Width - panel_OtrosGuess.Width) / 2, panel_Board.Location.Y + (panel_Board.Height - panel_OtrosGuess.Height) / 2);
+            panel_OtrosGuess.BackColor = Color.YellowGreen;
+            panel_OtrosGuess.BackColor = Color.Tan;
 
             // INITIAL CARDS LOGIC IF HOST
             cardsSolution = new List<Card>(3);
@@ -197,8 +227,6 @@ namespace ClienteC__Juego
                 DisplayMyCards(playersCards[0]);
             }
 
-            CenterFormOnScreen();
-
             //INITIALIZATION OF CARDS OF GUESS PER TYPE
             guessSuspect = new List<Card>();
             guessWeapon = new List<Card>();
@@ -215,9 +243,10 @@ namespace ClienteC__Juego
             panel_guess1.BackgroundImage = guessSuspect[0].image;
             panel_guess2.BackgroundImage = guessWeapon[0].image;
             panel_guess3.BackgroundImage = guessRoom[0].image;
-            tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}, Weapon: {1}, Room: {2}", guessSuspect[0].ID.ToString(), guessWeapon[0].ID.ToString(), guessRoom[0].ID.ToString()) + Environment.NewLine);
-            panel_OtrosGuess.Visible = panel1_OtrosGuess.Visible = panel2_OtrosGuess.Visible = panel3_OtrosGuess.Visible = false;
 
+            tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}, Weapon: {1}, Room: {2}", guessSuspect[0].ID.ToString(), guessWeapon[0].ID.ToString(), guessRoom[0].ID.ToString()) + Environment.NewLine);
+
+            CenterFormOnScreen();
         }
 
         private void CenterFormOnScreen()
@@ -749,7 +778,7 @@ namespace ClienteC__Juego
 
         public void AtenderPartida(string[] mensaje)
         {
-            int codigo;
+            int codigo, n;
             codigo = Convert.ToInt32(mensaje[0]);
             switch (codigo)
             {
@@ -803,7 +832,90 @@ namespace ClienteC__Juego
                         grid[posX, posY].BackgroundImage = playerTileImg[playerIndex];
                     break;
                 case 46:
-                    panel_OtrosGuess.Visible = panel1_OtrosGuess.Visible = panel2_OtrosGuess.Visible = panel3_OtrosGuess.Visible = true;
+                    playerGuess = mensaje[2];
+                    string[] cardsGuess = mensaje[3].Split('.');
+                    guessCards = new List<Card> { cardsList[Convert.ToInt32(cardsGuess[0])] , cardsList[Convert.ToInt32(cardsGuess[1])] , cardsList[Convert.ToInt32(cardsGuess[2])] };
+
+                    panel_OtrosGuess.Enabled = false;
+                    panel_OtrosGuess1.BackgroundImage = guessCards[0].image;
+                    panel_OtrosGuess2.BackgroundImage = guessCards[1].image;
+                    panel_OtrosGuess3.BackgroundImage = guessCards[2].image;
+                    lbl_otrosGuess.Text = "Player " + playerGuess + " made a guess: ";
+                    panel_OtrosGuess1.Enabled = panel_OtrosGuess2.Enabled = panel_OtrosGuess3.Enabled = false;
+                    pBox_guessCheck1.Visible = pBox_guessCheck1.Visible = pBox_guessCheck1.Visible = false;
+                    panel_OtrosGuess.Visible = true;
+
+                    if ((partida.IndexOf(playerGuess) + 1 == partida.IndexOf(userName)) || (partida.IndexOf(playerGuess) + 1 == partida.Count && partida.IndexOf(userName) == 0))
+                    {
+                        lbl_guessPass.Text = "Your Turn";
+                        panel_OtrosGuess.Enabled = true;
+                        btt_guessPass.Enabled = true;
+                        n = 0;
+                        foreach (Card card in guessCards) {
+                            foreach (Card card2 in myCards)
+                            {
+                                if (card.ID == card2.ID)
+                                {
+                                    if (n == 0)
+                                        panel_OtrosGuess1.Enabled = true;
+                                    if (n == 1)
+                                        panel_OtrosGuess2.Enabled = true;
+                                    if (n == 2)
+                                        panel_OtrosGuess3.Enabled = true;
+                                }
+                            }
+                            n++;
+                        }
+                        if(panel_OtrosGuess1.Enabled == true || panel_OtrosGuess2.Enabled == true || panel_OtrosGuess3.Enabled == true)
+                            btt_guessPass.Enabled = false;
+                    }
+                    break;
+                case 47:
+                    lbl_guessPass.Text = "Your Turn";
+                    panel_OtrosGuess.Enabled = true;
+                    btt_guessPass.Enabled = true;
+                    n = 0;
+                    foreach (Card card in guessCards)
+                    {
+                        foreach (Card card2 in myCards)
+                        {
+                            if (card.ID == card2.ID)
+                            {
+                                if (n == 0)
+                                    panel_OtrosGuess1.Enabled = true;
+                                if (n == 1)
+                                    panel_OtrosGuess2.Enabled = true;
+                                if (n == 2)
+                                    panel_OtrosGuess3.Enabled = true;
+                            }
+                        }
+                        n++;
+                    }
+                    if (panel_OtrosGuess1.Enabled == true || panel_OtrosGuess2.Enabled == true || panel_OtrosGuess3.Enabled == true)
+                        btt_guessPass.Enabled = false;
+                    break;
+                case 48:
+                    playerGuess = mensaje[2];
+                    string playerResponded = mensaje[3];
+                    richtBox_read.AppendText(String.Format("Player {0} answered the guess from {1}.", playerResponded, playerGuess) + Environment.NewLine);
+
+                    panel_OtrosGuess.Visible = false;
+
+                    // If you are the one who guessed in the first place
+                    if (playerGuess == userName)
+                    {
+                        int answerCardID = Convert.ToInt32(mensaje[4]);
+                        Card answerCard = cardsList[answerCardID];
+                        if (answerCard.type == "suspect")
+                            pBox_check1.Visible = true;
+                        else if (answerCard.type == "weapon")
+                            pBox_check2.Visible = true;
+                        else if (answerCard.type == "room")
+                            pBox_check3.Visible = true;
+                    }
+                    break;
+                case 49:
+
                     break;
             }
         }
@@ -824,17 +936,24 @@ namespace ClienteC__Juego
 
         private void btt_guess_Click(object sender, EventArgs e)
         {
+            btt_dado.Enabled = false;
+            btt_guess.Enabled = false;
+            panel_Board.Enabled = false;
+            btt_solve.Enabled = false;
+
             string suspect = guessSuspect[countSuspect].ID.ToString();
             string weapon = guessWeapon[countWeapon].ID.ToString();
             string room = guessRoom[countRoom].ID.ToString();
 
-            string mensaje = "46/" + gameHost + "/" + userName + "/" + suspect + "/" + weapon + "/" + room;
+            string mensaje = "46/" + gameHost + "/" + userName + "/" + suspect + "." + weapon + "." + room;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
         
+        // Logic to iterate the guess cards selection
         private void panel_guess1_Click(object sender, EventArgs e)
         {
+            pBox_check1.Visible = false;
             countSuspect++;
             if (countSuspect > 5)
                 countSuspect = 0;
@@ -842,9 +961,9 @@ namespace ClienteC__Juego
             
             tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}", guessSuspect[countSuspect].ID.ToString() + Environment.NewLine));
         }
-
         private void panel_guess2_Click(object sender, EventArgs e)
         {
+            pBox_check2.Visible = false;
             countWeapon++;
             if (countWeapon > 5)
                 countWeapon = 0;
@@ -852,15 +971,56 @@ namespace ClienteC__Juego
 
             tbox_info.AppendText(String.Format("CartasGuess: Weapon: {0}", guessWeapon[countWeapon].ID.ToString() + Environment.NewLine));
         }
-
         private void panel_guess3_Click(object sender, EventArgs e)
         {
+            pBox_check3.Visible = false;
             countRoom++;
             if (countRoom > 8)
                 countRoom = 0;
             panel_guess3.BackgroundImage = guessRoom[countRoom].image;
 
             tbox_info.AppendText(String.Format("CartasGuess: Room: {0}", guessRoom[countRoom].ID.ToString() + Environment.NewLine));
+        }
+
+        // Events to handle response of guess
+        private void btt_guessPass_Click(object sender, EventArgs e)
+        {
+            panel_OtrosGuess.Enabled = false;
+            lbl_guessPass.Text = "Not your Turn";
+
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + "-1";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+        private void panel_OtrosGuess1_Click(object sender, EventArgs e)
+        {
+            panel_OtrosGuess.Enabled = false;
+            pBox_guessCheck1.Visible = true;
+            lbl_guessPass.Text = "Not your Turn";
+
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[0].ID;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+        private void panel_OtrosGuess2_Click(object sender, EventArgs e)
+        {
+            panel_OtrosGuess.Enabled = false;
+            pBox_guessCheck2.Visible = true;
+            lbl_guessPass.Text = "Not your Turn";
+
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[1].ID;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+        private void panel_OtrosGuess3_Click(object sender, EventArgs e)
+        {
+            panel_OtrosGuess.Enabled = false;
+            pBox_guessCheck3.Visible = true;
+            lbl_guessPass.Text = "Not your Turn";
+
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[2].ID;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
         }
 
         private void btt_endturn_Click(object sender, EventArgs e)      //Un jugador ha acabado el turno y le toca al siguiente
@@ -883,6 +1043,7 @@ namespace ClienteC__Juego
                 btt_guess.Enabled = true;
                 btt_solve.Enabled = true;
                 panel_Board.Enabled = true;
+                btt_endturn.Enabled = true;
             }
             else
             {
@@ -890,6 +1051,7 @@ namespace ClienteC__Juego
                 btt_guess.Enabled = false;
                 panel_Board.Enabled = false;
                 btt_solve.Enabled = false;
+                btt_endturn.Enabled =false;
             }
         }
     }

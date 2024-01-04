@@ -1170,22 +1170,16 @@ void AtenderCliente(void* socket)
 		}
 		else if (codigo == 46)
 		{
-			char suspect[20];
-			char weapon[20];
-			char room[20];
-			char mensajeguess[200];
+			char cardsGuess[20];
+			char mensajeGuess[200];
 			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
 			p = strtok(NULL, "/");
 			strcpy(userName, p);
 			p = strtok(NULL, "/");
-			strcpy(suspect, p);
-			p = strtok(NULL, "/");
-			strcpy(weapon, p);
-			p = strtok(NULL, "/");
-			strcpy(room, p);
-			sprintf(mensajeguess, "46/%s/%s/%s/%s/%s", host, userName, suspect, weapon, room);
+			strcpy(cardsGuess, p);
+			sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, cardsGuess);
 			
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 			p = strtok(sockets_receptores, "/");
@@ -1193,14 +1187,103 @@ void AtenderCliente(void* socket)
 			{
 				socketUsuario = atoi(p);
 				if (socketUsuario != sock_conn){
-					write(socketUsuario, mensajeguess, strlen(mensajeguess));
-					printf("Sent message guess: %s \n",mensajeguess);
+					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+					printf("Sent message guess: %s \n",mensajeGuess);
 				}
 				p = strtok(NULL, "/");
 			}
 			strcpy(respuesta, "");
 		}
-		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45))
+		else if (codigo == 47) // 47/Host/JugX/JugY/Suspect.Weapon.Room/Respuesta
+		{
+			int guessResponse;
+			char cardsGuess[20];
+			char playerGuess[20];
+			char playerResponse[20];
+			char mensajeGuess[200];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(playerGuess, p);
+			p = strtok(NULL, "/");
+			strcpy(playerResponse, p);
+			p = strtok(NULL, "/");
+			guessResponse = atoi(p);
+			
+			// If guess response is not -1, the guess has been answered -> end guess iterations
+			if (guessResponse != -1)
+			{
+				sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, guessResponse);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, "");
+			}
+			else
+			{
+				int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
+				int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas,playerResponse,partidaIndex);
+				
+				// Check if next player to guess is the player who guessed
+				if (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].userName,playerGuess) == 0)
+				{
+					sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, -1);
+					socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[0].socket;
+					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+				}
+				else
+				{
+					sprintf(mensajeGuess, "47/%s/%s", host, playerGuess);
+					
+					if (lista_Partidas.partidas[partidaIndex].numJugadores == jugadorIndex + 1)
+					{
+						socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[0].socket;
+						write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+					}
+					else
+					{
+						socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].socket;
+						write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+					}
+				}
+			}
+			
+			strcpy(respuesta, "");
+		}
+		else if (codigo == 48)
+		{
+			char playerGuess[20];
+			char mensajeGuess[200];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(userName, p);
+			p = strtok(NULL, "/");
+			strcpy(playerGuess, p);
+			sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, playerGuess);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn){
+					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+					printf("Sent message guess: %s \n",mensajeGuess);
+				}
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, "");
+		}
+		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47))
 		{
 			printf("Respuesta: %s\n", respuesta);
 			// Enviamos respuesta

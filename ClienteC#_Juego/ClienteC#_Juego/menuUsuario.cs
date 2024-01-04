@@ -416,6 +416,18 @@ namespace ClienteC__Juego
                     case 45:
                         menuPartida.onResponse(mensaje);
                         break;
+                    case 46:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 47:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 48:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 49:
+                        menuPartida.onResponse(mensaje);
+                        break;
                 }
             }
         }

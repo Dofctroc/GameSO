@@ -34,7 +34,8 @@ Shiva ports: 75-79
 43 - Send info cards			43/Host/Sol1.Sol2.Sol3/C1.C2.C3/C1.C2.C3/...
 44 -
 45 - Nueva posicion casilla de JugX	45/Host/JugX/PrePosCol.PosRow/PrePosCol.PosRow
-46 - Envio de Guess de JugX		46/Host/JugX/Suspect/Weapon/Tool
+46 - Envio de Guess de JugX		46/Host/JugX/Suspect.Weapon.Tool
+47 - JugY responde Guess de JugX	47/Host/JugX/JugY/Respuesta
 
 
  _____________________________________________________________________________________________
@@ -77,8 +78,9 @@ Shiva ports: 75-79
 43 - Confirm info sent			43/0 or 43/-1
 44 - Notification of all cards		44/Host/Sol1.Sol2.Sol3/Jug1.Jug2.Jug3/C1,C2,C3.C1,C2,C3.C1,C2,C3
 45 - Notificacion nueva pos de JugX	45/Host/JugX/PrePosCol.PrePosRow/PosCol.PosRow
-46 - Envio Guess de JugX		46/Host/JugX/Suspect/Weapon/Room
-
+46 - Envio Guess de JugX		46/Host/JugX/Suspect.Weapon.Room
+47 - Turno de JugY (nuevo)		47/Host/JugX				(No se ha respondido el guess, turno de JugY de intentarlo) (Solo se envia a JugY)
+48 - Respuesta final de JugY		48/Host/JugX/JugY/Respuesta		(Solo si se ha respondido al guess)
 
 
 One player MUST only be able to host ONE game
