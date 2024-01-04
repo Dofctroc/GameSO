@@ -70,14 +70,14 @@
             this.btt_guessPass = new System.Windows.Forms.Button();
             this.lbl_otrosGuess = new System.Windows.Forms.Label();
             this.panel_OtrosGuess3 = new System.Windows.Forms.Panel();
+            this.pBox_guessCheck3 = new System.Windows.Forms.PictureBox();
             this.panel_OtrosGuess2 = new System.Windows.Forms.Panel();
+            this.pBox_guessCheck2 = new System.Windows.Forms.PictureBox();
             this.panel_OtrosGuess1 = new System.Windows.Forms.Panel();
+            this.pBox_guessCheck1 = new System.Windows.Forms.PictureBox();
             this.lbl_otrosRoom = new System.Windows.Forms.Label();
             this.lbl_otrosWeapon = new System.Windows.Forms.Label();
             this.lbl_otrosSuspect = new System.Windows.Forms.Label();
-            this.pBox_guessCheck1 = new System.Windows.Forms.PictureBox();
-            this.pBox_guessCheck2 = new System.Windows.Forms.PictureBox();
-            this.pBox_guessCheck3 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card1)).BeginInit();
@@ -102,11 +102,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card7)).BeginInit();
             this.panel_OtrosGuess.SuspendLayout();
             this.panel_OtrosGuess3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck3)).BeginInit();
             this.panel_OtrosGuess2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck2)).BeginInit();
             this.panel_OtrosGuess1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck3)).BeginInit();
             this.SuspendLayout();
             // 
             // btt_dado
@@ -141,7 +141,7 @@
             this.tbox_info.Name = "tbox_info";
             this.tbox_info.ReadOnly = true;
             this.tbox_info.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbox_info.Size = new System.Drawing.Size(317, 168);
+            this.tbox_info.Size = new System.Drawing.Size(239, 168);
             this.tbox_info.TabIndex = 12;
             // 
             // lbl_cards
@@ -343,7 +343,7 @@
             this.panel_guess3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.room4;
             this.panel_guess3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel_guess3.Controls.Add(this.pBox_check3);
-            this.panel_guess3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.panel_guess3.Cursor = System.Windows.Forms.Cursors.Default;
             this.panel_guess3.Location = new System.Drawing.Point(156, 31);
             this.panel_guess3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel_guess3.Name = "panel_guess3";
@@ -635,6 +635,18 @@
             this.panel_OtrosGuess3.TabIndex = 8;
             this.panel_OtrosGuess3.Click += new System.EventHandler(this.panel_OtrosGuess3_Click);
             // 
+            // pBox_guessCheck3
+            // 
+            this.pBox_guessCheck3.BackColor = System.Drawing.Color.Transparent;
+            this.pBox_guessCheck3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
+            this.pBox_guessCheck3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pBox_guessCheck3.Location = new System.Drawing.Point(25, 61);
+            this.pBox_guessCheck3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.pBox_guessCheck3.Name = "pBox_guessCheck3";
+            this.pBox_guessCheck3.Size = new System.Drawing.Size(40, 39);
+            this.pBox_guessCheck3.TabIndex = 1;
+            this.pBox_guessCheck3.TabStop = false;
+            // 
             // panel_OtrosGuess2
             // 
             this.panel_OtrosGuess2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.weapon4;
@@ -647,6 +659,18 @@
             this.panel_OtrosGuess2.Size = new System.Drawing.Size(65, 100);
             this.panel_OtrosGuess2.TabIndex = 8;
             this.panel_OtrosGuess2.Click += new System.EventHandler(this.panel_OtrosGuess2_Click);
+            // 
+            // pBox_guessCheck2
+            // 
+            this.pBox_guessCheck2.BackColor = System.Drawing.Color.Transparent;
+            this.pBox_guessCheck2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
+            this.pBox_guessCheck2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pBox_guessCheck2.Location = new System.Drawing.Point(25, 61);
+            this.pBox_guessCheck2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.pBox_guessCheck2.Name = "pBox_guessCheck2";
+            this.pBox_guessCheck2.Size = new System.Drawing.Size(40, 39);
+            this.pBox_guessCheck2.TabIndex = 1;
+            this.pBox_guessCheck2.TabStop = false;
             // 
             // panel_OtrosGuess1
             // 
@@ -661,6 +685,17 @@
             this.panel_OtrosGuess1.Size = new System.Drawing.Size(65, 100);
             this.panel_OtrosGuess1.TabIndex = 7;
             this.panel_OtrosGuess1.Click += new System.EventHandler(this.panel_OtrosGuess1_Click);
+            // 
+            // pBox_guessCheck1
+            // 
+            this.pBox_guessCheck1.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
+            this.pBox_guessCheck1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pBox_guessCheck1.Location = new System.Drawing.Point(25, 60);
+            this.pBox_guessCheck1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.pBox_guessCheck1.Name = "pBox_guessCheck1";
+            this.pBox_guessCheck1.Size = new System.Drawing.Size(40, 39);
+            this.pBox_guessCheck1.TabIndex = 1;
+            this.pBox_guessCheck1.TabStop = false;
             // 
             // lbl_otrosRoom
             // 
@@ -692,41 +727,6 @@
             this.lbl_otrosSuspect.Text = "Suspect";
             this.lbl_otrosSuspect.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // pBox_guessCheck1
-            // 
-            this.pBox_guessCheck1.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
-            this.pBox_guessCheck1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_guessCheck1.Location = new System.Drawing.Point(25, 60);
-            this.pBox_guessCheck1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pBox_guessCheck1.Name = "pBox_guessCheck1";
-            this.pBox_guessCheck1.Size = new System.Drawing.Size(40, 39);
-            this.pBox_guessCheck1.TabIndex = 1;
-            this.pBox_guessCheck1.TabStop = false;
-            // 
-            // pBox_guessCheck2
-            // 
-            this.pBox_guessCheck2.BackColor = System.Drawing.Color.Transparent;
-            this.pBox_guessCheck2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
-            this.pBox_guessCheck2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_guessCheck2.Location = new System.Drawing.Point(25, 61);
-            this.pBox_guessCheck2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pBox_guessCheck2.Name = "pBox_guessCheck2";
-            this.pBox_guessCheck2.Size = new System.Drawing.Size(40, 39);
-            this.pBox_guessCheck2.TabIndex = 1;
-            this.pBox_guessCheck2.TabStop = false;
-            // 
-            // pBox_guessCheck3
-            // 
-            this.pBox_guessCheck3.BackColor = System.Drawing.Color.Transparent;
-            this.pBox_guessCheck3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.Cross;
-            this.pBox_guessCheck3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_guessCheck3.Location = new System.Drawing.Point(25, 61);
-            this.pBox_guessCheck3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pBox_guessCheck3.Name = "pBox_guessCheck3";
-            this.pBox_guessCheck3.Size = new System.Drawing.Size(40, 39);
-            this.pBox_guessCheck3.TabIndex = 1;
-            this.pBox_guessCheck3.TabStop = false;
-            // 
             // gameBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -734,7 +734,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(1491, 624);
+            this.ClientSize = new System.Drawing.Size(1420, 624);
             this.Controls.Add(this.panel_OtrosGuess);
             this.Controls.Add(this.pBox_card9);
             this.Controls.Add(this.pBox_card8);
@@ -787,11 +787,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card7)).EndInit();
             this.panel_OtrosGuess.ResumeLayout(false);
             this.panel_OtrosGuess3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck3)).EndInit();
             this.panel_OtrosGuess2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck2)).EndInit();
             this.panel_OtrosGuess1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pBox_guessCheck3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

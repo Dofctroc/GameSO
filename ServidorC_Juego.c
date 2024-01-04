@@ -30,6 +30,7 @@ typedef struct {
 typedef struct {
 	Usuario jugadores[6];
 	int numJugadores;
+	int status;	//1 for in game, 0 for in lobby
 } Partida;
 
 typedef struct {
@@ -111,14 +112,6 @@ int JugadoresEnPartida(ListaPartidas* listaP, char sockets_receptores[], char ho
 	printf("Jugadores: %s \n", infoJugadoresPartida);
 	printf("Sockets: %s \n", sockets_receptores);
 	return 0;
-}
-
-int TurnoSiguienteJugador(ListaPartidas* listaP, char sockets_receptores[], char host[], char jugador[], char infoJugadoresPartida[])
-{
-	//JugadoresEnPartida(&listaP, sockets_receptores, host, infoJugadoresPartida);
-	//char* p = strtok(infoJugadoresPartida, ".");
-	//strcpy(host, p);
-	//p = strtok(NULL, ".");
 }
 
 // Searches for the game where "player" is in lista_partidas
@@ -1076,6 +1069,7 @@ void AtenderCliente(void* socket)
 			strcpy(host, p);
 			
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
 			p = strtok(sockets_receptores, "/");
 			sprintf(mensajeiniciopartida, "40/%s", host);
 			while (p != NULL)
@@ -1231,12 +1225,21 @@ void AtenderCliente(void* socket)
 				int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
 				int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas,playerResponse,partidaIndex);
 				
-				// Check if next player to guess is the player who guessed
-				if (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].userName,playerGuess) == 0)
+				// Check if next player to guess is the player who guessed  partida.IndexOf(playerGuess) + 1 == partida.Count && partida.IndexOf(userName) == 0
+				if ( (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].userName,playerGuess) == 0) 
+					|| (jugadorIndex + 1 == lista_Partidas.partidas[partidaIndex].numJugadores && (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[0].userName,playerGuess) == 0)) )
 				{
 					sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, -1);
-					socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[0].socket;
-					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+					
+					JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+					p = strtok(sockets_receptores, "/");
+					while (p != NULL)
+					{
+						socketUsuario = atoi(p);
+						write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+						p = strtok(NULL, "/");
+					}
+					strcpy(respuesta, "");
 				}
 				else
 				{
@@ -1328,7 +1331,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9075; 		//Linux
+	int puerto = 9074; 		//Linux
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
 

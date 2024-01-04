@@ -40,7 +40,7 @@ namespace ClienteC__Juego
 
         int countSuspect = 0;
         int countWeapon = 0;
-        int countRoom = 0;
+        int countRoom;
 
         Position myPos;         // Current position of the player in the grid
         PictureBox[,] grid;     // Grid of pictureBoxes representing each tile
@@ -226,7 +226,8 @@ namespace ClienteC__Juego
 
                 SendCardsServer();
 
-                DisplayMyCards(playersCards[0]);
+                myCards = new List<Card>(playersCards[0]);
+                DisplayMyCards(myCards);
             }
 
             //INITIALIZATION OF CARDS OF GUESS PER TYPE
@@ -245,6 +246,7 @@ namespace ClienteC__Juego
             panel_guess1.BackgroundImage = guessSuspect[0].image;
             panel_guess2.BackgroundImage = guessWeapon[0].image;
             panel_guess3.BackgroundImage = guessRoom[0].image;
+            guessCards = new List<Card> { guessSuspect[0], guessWeapon[0], guessRoom[0] };
 
             tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}, Weapon: {1}, Room: {2}", guessSuspect[0].ID.ToString(), guessWeapon[0].ID.ToString(), guessRoom[0].ID.ToString()) + Environment.NewLine);
 
@@ -459,6 +461,7 @@ namespace ClienteC__Juego
                     clickedPBox.BackgroundImage = playerTileImg[myIndex];
                     myPos = clickedPos;
                 }
+
                 TileTypeCheck();
                 string msgPrePos = prePos.X.ToString() + "." + prePos.Y.ToString();
                 string msgPos = myPos.X.ToString() + "." + myPos.Y.ToString();
@@ -519,30 +522,39 @@ namespace ClienteC__Juego
                     switch (numtype)
                     {
                         case 1:
+                            guessCards[2] = guessRoom[3];
                             panel_guess3.BackgroundImage = cardsList[3].image;
                             break;
                         case 2:
+                            guessCards[2] = guessRoom[4];
                             panel_guess3.BackgroundImage = cardsList[4].image;
                             break;
                         case 3:
+                            guessCards[2] = guessRoom[5];
                             panel_guess3.BackgroundImage = cardsList[5].image;
                             break;
                         case 4:
+                            guessCards[2] = guessRoom[2];
                             panel_guess3.BackgroundImage = cardsList[2].image;
                             break;
                         case 5:
+                            guessCards[2] = guessRoom[6];
                             panel_guess3.BackgroundImage = cardsList[6].image;
                             break;
                         case 6:
+                            guessCards[2] = guessRoom[7];
                             panel_guess3.BackgroundImage = cardsList[7].image;
                             break;
                         case 7:
+                            guessCards[2] = guessRoom[1];
                             panel_guess3.BackgroundImage = cardsList[1].image;
                             break;
                         case 8:
+                            guessCards[2] = guessRoom[0];
                             panel_guess3.BackgroundImage = cardsList[0].image;
                             break;
                         case 9:
+                            guessCards[2] = guessRoom[8];
                             panel_guess3.BackgroundImage = cardsList[8].image;
                             break;
                     }
@@ -550,6 +562,8 @@ namespace ClienteC__Juego
                 }
                 else if (type == "center")
                     btt_solve.Enabled = true;
+                else
+                    btt_endturn.Enabled = true;
             }
         }
 
@@ -885,7 +899,7 @@ namespace ClienteC__Juego
                     panel_OtrosGuess3.BackgroundImage = guessCards[2].image;
                     lbl_otrosGuess.Text = "Player " + playerGuess + " made a guess: ";
                     panel_OtrosGuess1.Enabled = panel_OtrosGuess2.Enabled = panel_OtrosGuess3.Enabled = false;
-                    pBox_guessCheck1.Visible = pBox_guessCheck1.Visible = pBox_guessCheck1.Visible = false;
+                    pBox_guessCheck1.Visible = pBox_guessCheck2.Visible = pBox_guessCheck3.Visible = false;
                     panel_OtrosGuess.Visible = true;
 
                     if ((partida.IndexOf(playerGuess) + 1 == partida.IndexOf(userName)) || (partida.IndexOf(playerGuess) + 1 == partida.Count && partida.IndexOf(userName) == 0))
@@ -948,13 +962,17 @@ namespace ClienteC__Juego
                     if (playerGuess == userName)
                     {
                         int answerCardID = Convert.ToInt32(mensaje[4]);
-                        Card answerCard = cardsList[answerCardID];
-                        if (answerCard.type == "suspect")
-                            pBox_check1.Visible = true;
-                        else if (answerCard.type == "weapon")
-                            pBox_check2.Visible = true;
-                        else if (answerCard.type == "room")
-                            pBox_check3.Visible = true;
+                        if (answerCardID != -1)
+                        {
+                            Card answerCard = cardsList[answerCardID];
+                            if (answerCard.type == "suspect")
+                                pBox_check1.Visible = true;
+                            else if (answerCard.type == "weapon")
+                                pBox_check2.Visible = true;
+                            else if (answerCard.type == "room")
+                                pBox_check3.Visible = true;
+                        }
+                        btt_endturn.Enabled = true;
                     }
                     break;
                 case 49:
@@ -984,9 +1002,9 @@ namespace ClienteC__Juego
             panel_Board.Enabled = false;
             btt_solve.Enabled = false;
 
-            string suspect = guessSuspect[countSuspect].ID.ToString();
-            string weapon = guessWeapon[countWeapon].ID.ToString();
-            string room = guessRoom[countRoom].ID.ToString();
+            string suspect = guessCards[0].ID.ToString();
+            string weapon = guessCards[1].ID.ToString();
+            string room = guessCards[2].ID.ToString();
 
             string mensaje = "46/" + gameHost + "/" + userName + "/" + suspect + "." + weapon + "." + room;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -1001,6 +1019,7 @@ namespace ClienteC__Juego
             if (countSuspect > 5)
                 countSuspect = 0;
             panel_guess1.BackgroundImage = guessSuspect[countSuspect].image;
+            guessCards[0] = guessSuspect[countSuspect];
             
             tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}", guessSuspect[countSuspect].ID.ToString() + Environment.NewLine));
         }
@@ -1011,6 +1030,7 @@ namespace ClienteC__Juego
             if (countWeapon > 5)
                 countWeapon = 0;
             panel_guess2.BackgroundImage = guessWeapon[countWeapon].image;
+            guessCards[1] = guessWeapon[countWeapon];
 
             tbox_info.AppendText(String.Format("CartasGuess: Weapon: {0}", guessWeapon[countWeapon].ID.ToString() + Environment.NewLine));
         }
@@ -1074,8 +1094,10 @@ namespace ClienteC__Juego
             {
                 btt_dado.Enabled = true;
                 panel_Board.Enabled = true;
-                btt_endturn.Enabled = true;
-                TileTypeCheck();
+
+                if (myPos.X != -1)
+                    if (grid[myPos.X, myPos.Y].Tag.ToString().Split('/')[0] == "room")
+                        btt_guess.Enabled = true;
             }
             else
             {

@@ -408,7 +408,8 @@ namespace ClienteC__Juego
             bool nuevo = true;
             bool invitable = true;
             string playerName;
-            if ((partida1[0] == username || partida2[0] == username) && e.RowIndex >= 0 && e.ColumnIndex >= 0)
+
+            if (((partida1.Count > 0 && partida1[0] == username) || (partida2.Count > 0 && partida2[0] == username)) && e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
                 DataGridViewRow filaSeleccionada = dgrid_listaUsuarios.Rows[e.RowIndex];
                 playerName = filaSeleccionada.Cells[0].Value.ToString();

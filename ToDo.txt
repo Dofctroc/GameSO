@@ -42,15 +42,34 @@ Increase max length of some C variables
 | MY TODO LIST: |
 |_______________|
 
--/ Error: data grid falla
+!!!! Incluir mucha mas mutual exclusion !!!!
 Error: Cuando logIn con usuario ya conectado, desconecta a ese usuario
 	Probar a que lo desconecte el server automaticamente
-Cada notepad diferente segun la partida
--/ Acabar datagrids rankings
-Incluir mucha mas mutual exclusion
-Añadir foticos a invitation
+LobbyPartida != ActivePartida; 
+	add int variable to Partida (0=Lobby, 1=Active)
+Rename all forms
+	-/ Game form named after host
 
-Change logic when connected users' datagrid is clicked
+Cards:
+1. When clicked, shows dorso of card
+2. Put card torso on center of the board
+	( Easier logic to go to center ) -> Implement new grid of positions to use when center tile is hovered
+
+Toda la logica de Solve, incluyendo el panel central que se mostrara (simular o igual a guess)
+Toda la logica de acabar una partida
+Player se va de partida voluntariamente (no le echan)
+	Control de player se va de partida
+Chat in game (igual a menu partida), incluir algunos sucesos de la partida
+Dibuixar nom de cada room al Paint
+
+
+-/ Error: data grid falla
+-/ Cada notepad diferente segun la partida
+-/ Acabar datagrids rankings
+
+-/ Añadir foticos a invitation
+
+-/ Change logic when connected users' datagrid is clicked
 -/ Update displayedGame variable when needed and use it
 
 ~/ Switch logic of disconnection of player from Client to Server
@@ -62,39 +81,4 @@ Change logic when connected users' datagrid is clicked
 -/ For turns to work, change Enable of the board panel
 -/ Add a End Turn button
 
-LobbyPartida = ActivePartida; add int variable to Partida (0=Lobby, 1=Active)
 
-Rename all forms
-	-/ Game form named after host
-
-Cards:
-1. When clicked, shows dorso of card
-
- _______________
-| MY CARD LIST: |
-|_______________|
-
-Server-Client code
-40- Start game
-41- Initial cards info
-41- Start turn
-42- End turn
-43- Make guess
-44- Solve
-
-Client game:
-1, On start: Show(" Preparing game, please wait... ")
-2, Once prepared, show your cards and "put" solutions cards in middle
-3, Now allow first turn to start (Host)
-4, Proceed with turns...
-5, When player attempts solve two opt:
-    a, Everyone must make a solution guess (in order to assign positions and points)
-    b, Only player who solves is considered
-   To solve: show new panel where you can select the three cards
-
-Cards logic management:
-A, Create a CARD class in client:
-    Int num;
-    Image img;
-    String type;
-B, Host randomizes a deck of cards, selects solution cards and each player's cards and sends all info to all players.
