@@ -173,12 +173,14 @@ namespace ClienteC__Juego
             btt_guess.Location = new Point(panel_Guess.Width / 2 - btt_guess.Width / 2, panel_guess1.Location.Y + panel_guess1.Height + 5);
             pBox_check1.Size = pBox_check2.Size = pBox_check3.Size = new Size(50, 50);
             pBox_check1.Location = pBox_check2.Location = pBox_check3.Location = new Point(panel_guess1.Width / 2 - pBox_check1.Width / 2, panel_guess1.Height / 2 - pBox_check1.Height / 2);
+            btt_guess.Enabled = false;
 
             // SOLVE AND END-TURN BUTTONS DESIGN
             btt_solve.Size = new Size(100,50);
             btt_solve.Location = new Point(panel_Guess.Location.X, panel_Guess.Location.Y + panel_Guess.Height + 20);
             btt_endturn.Size = new Size(100, 50);
             btt_endturn.Location = new Point(panel_Guess.Location.X + panel_Guess.Width - btt_endturn.Width, panel_Guess.Location.Y + panel_Guess.Height + 20);
+            btt_solve.Enabled = false;
 
             // OTHERS GUESS PANEL DESIGN
             panel_OtrosGuess.Visible = false;
@@ -393,11 +395,10 @@ namespace ClienteC__Juego
                     {
                         int roomNum = Convert.ToInt32(myPBox.Tag.ToString().Split('/')[1]);
 
-                        if ((clickedPBox.Tag.ToString().Split('/')[0] == "Teleport") && (Convert.ToInt32(clickedPBox.Tag.ToString().Split('/')[1]) == roomNum))
+                        if (clickedPBox.Tag.ToString().Split('/')[0] == "Teleport")
                         {
                             int tpNum = Convert.ToInt32(clickedPBox.Tag.ToString().Split('/')[1]);
-                            teleportPlayer(tpNum, roomNum);
-                            return;
+                            teleportPlayer(roomNum);
                         }
                         else
                         {
@@ -434,13 +435,9 @@ namespace ClienteC__Juego
 
                             displayPathToNextPos(positionsPath,myPBox,remainingMoves);
                         }
-
-                        if (remainingMoves > 0)
-                            lbl_diceRoll.Text = remainingMoves.ToString();
-                        else if (remainingMoves == 0)
-                            lbl_diceRoll.Text = "-tirar-";
                     }
-
+                    if (grid[myPos.X, myPos.Y].Tag.ToString().Split('/')[0] == "room" || grid[myPos.X, myPos.Y].Tag.ToString().Split('/')[0] == "center")
+                        remainingMoves = 0;
                     int n1, n2;
                     if (remainingMoves >= 6)
                     {
@@ -462,7 +459,7 @@ namespace ClienteC__Juego
                     clickedPBox.BackgroundImage = playerTileImg[myIndex];
                     myPos = clickedPos;
                 }
-
+                TileTypeCheck();
                 string msgPrePos = prePos.X.ToString() + "." + prePos.Y.ToString();
                 string msgPos = myPos.X.ToString() + "." + myPos.Y.ToString();
                 string mensaje = "45/" + gameHost + "/" + userName + "/" + msgPrePos + "/" + msgPos;
@@ -507,14 +504,60 @@ namespace ClienteC__Juego
                 for (int col = 0; col < columns; col++) {
                     grid[row, col].BackColor = Color.Transparent;
                 }
+            } 
+        }
+
+        private void TileTypeCheck ()
+        {
+            if (myPos.X != -1 && myPos.Y != -1)
+            {
+                string[] tagpic = grid[myPos.X, myPos.Y].Tag.ToString().Split('/');
+                string type = tagpic[0];
+                if (type == "room")
+                {
+                    int numtype = Convert.ToInt32(tagpic[1]);
+                    switch (numtype)
+                    {
+                        case 1:
+                            panel_guess3.BackgroundImage = cardsList[3].image;
+                            break;
+                        case 2:
+                            panel_guess3.BackgroundImage = cardsList[4].image;
+                            break;
+                        case 3:
+                            panel_guess3.BackgroundImage = cardsList[5].image;
+                            break;
+                        case 4:
+                            panel_guess3.BackgroundImage = cardsList[2].image;
+                            break;
+                        case 5:
+                            panel_guess3.BackgroundImage = cardsList[6].image;
+                            break;
+                        case 6:
+                            panel_guess3.BackgroundImage = cardsList[7].image;
+                            break;
+                        case 7:
+                            panel_guess3.BackgroundImage = cardsList[1].image;
+                            break;
+                        case 8:
+                            panel_guess3.BackgroundImage = cardsList[0].image;
+                            break;
+                        case 9:
+                            panel_guess3.BackgroundImage = cardsList[8].image;
+                            break;
+                    }
+                    btt_guess.Enabled = true;
+                }
+                else if (type == "center")
+                    btt_solve.Enabled = true;
             }
         }
 
-        private void teleportPlayer(int tpNum, int roomNum)
+        private void teleportPlayer(int roomNum)
         {
             // Teleports go: 7 <-> 3 and 9 <-> 1
             int nextRoomNum = 0;
-            switch (tpNum)
+            switch (roomNum)
             {
                 case 1:
                     tbox_info.AppendText(String.Format("Teleported to room: 9") + Environment.NewLine);
@@ -971,16 +1014,6 @@ namespace ClienteC__Juego
 
             tbox_info.AppendText(String.Format("CartasGuess: Weapon: {0}", guessWeapon[countWeapon].ID.ToString() + Environment.NewLine));
         }
-        private void panel_guess3_Click(object sender, EventArgs e)
-        {
-            pBox_check3.Visible = false;
-            countRoom++;
-            if (countRoom > 8)
-                countRoom = 0;
-            panel_guess3.BackgroundImage = guessRoom[countRoom].image;
-
-            tbox_info.AppendText(String.Format("CartasGuess: Room: {0}", guessRoom[countRoom].ID.ToString() + Environment.NewLine));
-        }
 
         // Events to handle response of guess
         private void btt_guessPass_Click(object sender, EventArgs e)
@@ -1040,17 +1073,14 @@ namespace ClienteC__Juego
             if (turno)
             {
                 btt_dado.Enabled = true;
-                btt_guess.Enabled = true;
-                btt_solve.Enabled = true;
                 panel_Board.Enabled = true;
                 btt_endturn.Enabled = true;
+                TileTypeCheck();
             }
             else
             {
                 btt_dado.Enabled = false;
-                btt_guess.Enabled = false;
                 panel_Board.Enabled = false;
-                btt_solve.Enabled = false;
                 btt_endturn.Enabled =false;
             }
         }

@@ -349,7 +349,6 @@
             this.panel_guess3.Name = "panel_guess3";
             this.panel_guess3.Size = new System.Drawing.Size(65, 100);
             this.panel_guess3.TabIndex = 8;
-            this.panel_guess3.Click += new System.EventHandler(this.panel_guess3_Click);
             // 
             // pBox_check3
             // 
