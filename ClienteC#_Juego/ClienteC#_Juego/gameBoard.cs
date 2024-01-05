@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
@@ -36,7 +37,7 @@ namespace ClienteC__Juego
         int rows; int columns; int cornerBoardMargin;
         int tileWidth; int tileHeight;
         int diceRoll, diceRoll1, diceRoll2;
-        bool myturn;
+        bool myturn, hasfallado;
 
         int countSuspect = 0;
         int countWeapon = 0;
@@ -47,13 +48,13 @@ namespace ClienteC__Juego
         Position myPos;         // Current position of the player in the grid
         PictureBox[,] grid;     // Grid of pictureBoxes representing each tile
         BoardDistribution boardGrids;   // Initalizes variables from custom class <BoardDistribution>
-        Image[] dicesImg;       // Vector including all images a dice can have, ordered from 0 to 6 (0 being empty throw)
-        Image[] playerTileImg;
+        System.Drawing.Image[] dicesImg;       // Vector including all images a dice can have, ordered from 0 to 6 (0 being empty throw)
+        System.Drawing.Image[] playerTileImg;
         int myCharacter;        // Corresponde a la picturebox que usas debido al color seleccionado
         int myIndex;
 
         List<PictureBox> myCardsPBox;
-        List<Image> cardsImageList;
+        List<System.Drawing.Image> cardsImageList;
 
         List<Card> cardsList;
         List<Card> cardsDeck;
@@ -69,7 +70,8 @@ namespace ClienteC__Juego
         {
             this.Text = "Game of " + gameHost + ", Player is " + userName;
             myturn = false;
-            ComprovarTurno(myturn);
+            hasfallado = false;
+            ComprovarTurno();
 
             // Variables assignment
             rows = 25; columns = 24;
@@ -78,9 +80,9 @@ namespace ClienteC__Juego
             panel_Board.Size = new Size(tileWidth*columns, tileHeight*rows);
             grid = new PictureBox[rows, columns];
             boardGrids = new BoardDistribution();
-            dicesImg = new Image[] {Properties.Resources.DiceEmpty, Properties.Resources.Dice1, Properties.Resources.Dice2,
+            dicesImg = new System.Drawing.Image[] {Properties.Resources.DiceEmpty, Properties.Resources.Dice1, Properties.Resources.Dice2,
                 Properties.Resources.Dice3, Properties.Resources.Dice4, Properties.Resources.Dice5, Properties.Resources.Dice6};
-            playerTileImg = new Image[] { Properties.Resources.playerTile1, Properties.Resources.playerTile2, Properties.Resources.playerTile3, 
+            playerTileImg = new System.Drawing.Image[] { Properties.Resources.playerTile1, Properties.Resources.playerTile2, Properties.Resources.playerTile3, 
                 Properties.Resources.playerTile4, Properties.Resources.playerTile5, Properties.Resources.playerTile6};
             myIndex = partida.IndexOf(userName);
 
@@ -154,11 +156,11 @@ namespace ClienteC__Juego
             // CHAT PANEL DESIGN
             gBox_chat.Size = new Size(panel_Board.Location.X - 10 * 2, 300);
             gBox_chat.Location = new Point(10, panel_Board.Location.Y + panel_Board.Height - gBox_chat.Height);
-            richtBox_read.Location = new Point(5, 15);
-            richtBox_read.Size = new Size(gBox_chat.Width - 10, gBox_chat.Height - 50);
-            lbl_write.Location = new Point(richtBox_read.Location.X, richtBox_read.Location.Y + richtBox_read.Height + 5);
+            richBox_read.Location = new Point(5, 15);
+            richBox_read.Size = new Size(gBox_chat.Width - 10, gBox_chat.Height - 50);
+            lbl_write.Location = new Point(richBox_read.Location.X, richBox_read.Location.Y + richBox_read.Height + 5);
             lbl_write.Size = new Size(35, tBox_write.Height);
-            tBox_write.Width = richtBox_read.Width - lbl_write.Width - pBox_sendText.Width - 10;
+            tBox_write.Width = richBox_read.Width - lbl_write.Width - pBox_sendText.Width - 10;
             tBox_write.Location = new Point(lbl_write.Location.X + lbl_write.Width + 5, lbl_write.Location.Y);
             pBox_sendText.Location = new Point(tBox_write.Location.X + tBox_write.Width + 5, lbl_write.Location.Y);
 
@@ -512,7 +514,7 @@ namespace ClienteC__Juego
                 // Case for still not have played, thus place the player in the tile selected
                 else if (clickedPBox.Tag.ToString().Split('/')[0] == "Origin")
                 {
-                    clickedPBox.BackgroundImage = playerTileImg[myIndex];
+                    clickedPBox.BackgroundImage = playerTileImg[myCharacter];
                     myPos = clickedPos;
                 }
 
@@ -546,20 +548,20 @@ namespace ClienteC__Juego
             {
                 grid[prePos.X, prePos.Y].BackgroundImage = null;
                 myPos = clickedPos;
-                nextPBox.BackgroundImage = playerTileImg[myIndex];
+                nextPBox.BackgroundImage = playerTileImg[myCharacter];
             }
             else if (nextPBox.Tag.ToString().Split('/')[0] == "door")
             {
                 int doorNum = Convert.ToInt32(nextPBox.Tag.ToString().Split('/')[1]);
                 grid[prePos.X, prePos.Y].BackgroundImage = null;
                 myPos = boardGrids.moveToRoom(doorNum, grid);
-                grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myIndex];
+                grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myCharacter];
             }
             else if (nextPBox.Tag.ToString().Split('/')[0] == "center")
             {
                 grid[prePos.X, prePos.Y].BackgroundImage = null;
                 myPos = clickedPos;
-                grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myIndex];
+                grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myCharacter];
             }
 
             // Clear all background from previous path
@@ -652,7 +654,7 @@ namespace ClienteC__Juego
             }
             grid[myPos.X, myPos.Y].BackgroundImage = null;
             myPos = boardGrids.moveToRoom(nextRoomNum, grid);
-            grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myIndex];
+            grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myCharacter];
             
             lbl_diceRoll.Text = "-tirar-";
             diceRoll = 0;
@@ -727,10 +729,10 @@ namespace ClienteC__Juego
                 if (text != "")
                 {
                     e.SuppressKeyPress = true;
-                    richtBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Regular);
-                    richtBox_read.SelectionColor = Color.Black;
-                    richtBox_read.AppendText(text);
-                    richtBox_read.AppendText(Environment.NewLine);
+                    richBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Regular);
+                    richBox_read.SelectionColor = Color.Black;
+                    richBox_read.AppendText(text);
+                    richBox_read.AppendText(Environment.NewLine);
                     tBox_write.Clear();
                 }
                 else
@@ -753,7 +755,7 @@ namespace ClienteC__Juego
         private void CreateCards()
         {
             string cardType = "room";
-            cardsImageList = new List<Image> { Properties.Resources.room1, Properties.Resources.room2, Properties.Resources.room3, Properties.Resources.room4,
+            cardsImageList = new List<System.Drawing.Image> { Properties.Resources.room1, Properties.Resources.room2, Properties.Resources.room3, Properties.Resources.room4,
                 Properties.Resources.room5, Properties.Resources.room6, Properties.Resources.room7, Properties.Resources.room8, Properties.Resources.room9,
                 Properties.Resources.suspect1, Properties.Resources.suspect2, Properties.Resources.suspect3, Properties.Resources.suspect4, Properties.Resources.suspect5, Properties.Resources.suspect6,
                 Properties.Resources.weapon1, Properties.Resources.weapon2, Properties.Resources.weapon3, Properties.Resources.weapon4, Properties.Resources.weapon5, Properties.Resources.weapon6};
@@ -908,7 +910,7 @@ namespace ClienteC__Juego
                     }
 
                     myturn = true;
-                    ComprovarTurno(myturn);
+                    ComprovarTurno();
                     break;
                 case 42:
                     break;
@@ -952,7 +954,7 @@ namespace ClienteC__Juego
                     if (prePosX != -1 && prePosY != -1)
                         grid[prePosX, prePosY].BackgroundImage = null;
                     if (posX != -1 && posY != -1)
-                        grid[posX, posY].BackgroundImage = playerTileImg[playerIndex];
+                        grid[posX, posY].BackgroundImage = playerTileImg[myCharacter];
                     break;
                 case 46:
                     playerGuess = mensaje[2];
@@ -1020,7 +1022,7 @@ namespace ClienteC__Juego
                 case 48:
                     playerGuess = mensaje[2];
                     string playerResponded = mensaje[3];
-                    richtBox_read.AppendText(String.Format("Player {0} answered the guess from {1}.", playerResponded, playerGuess) + Environment.NewLine);
+                    richBox_read.AppendText(String.Format("Player {0} answered the guess from {1}.", playerResponded, playerGuess) + Environment.NewLine);
 
                     panel_OtrosGuess.Visible = false;
 
@@ -1051,6 +1053,25 @@ namespace ClienteC__Juego
                     panel_Solve1.BackgroundImage = cardsList[Convert.ToInt32(cardsSolve[0])].image;
                     panel_Solve2.BackgroundImage = cardsList[Convert.ToInt32(cardsSolve[1])].image;
                     panel_Solve3.BackgroundImage = cardsList[Convert.ToInt32(cardsSolve[2])].image;
+                    break;
+                case 51:
+                    int respuesta = Convert.ToInt32(mensaje[3]);
+                    string text;
+                    if (respuesta == 0) //Aqui la partida se acaba y te echa de la partida
+                    {
+                        text = "The player " + playerSolve.ToString() + " has guessed correctly";
+                    }
+                    else
+                        text = "The player " + playerSolve.ToString() + " has guessed incorrectly";
+                    richBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Bold);
+                    richBox_read.SelectionColor = Color.Green;
+                    richBox_read.AppendText(text + Environment.NewLine);
+                    panel_Solve.Visible = false;
+                    if ((partida.IndexOf(playerSolve) + 1 == partida.IndexOf(userName)) || (partida.IndexOf(playerSolve) + 1 == partida.Count && partida.IndexOf(userName) == 0))
+                    {
+                        myturn = true;
+                        ComprovarTurno();
+                    }
                     break;
             }
         }
@@ -1154,10 +1175,51 @@ namespace ClienteC__Juego
 
         private void btt_makeaccusation_Click(object sender, EventArgs e)
         {
-            if (guessSuspect[countsolve1] == cardsSolution[0] && guessWeapon[countsolve2] == cardsSolution[1] && guessRoom[countsolve3] == cardsSolution[2])
+            bool suspect = false;
+            bool weapon = false;
+            bool room = false;
+            string text;
+            foreach (Card card in cardsSolution)
             {
-
+                if (card.type == "suspect")
+                {
+                    if (card.ID == guessSuspect[countsolve1].ID)
+                        suspect = true;
+                }
+                else if (card.type == "weapon")
+                {
+                    if (card.ID == guessWeapon[countsolve2].ID)
+                        weapon = true;
+                }
+                else if (card.type == "room")
+                {
+                    if (card.ID == guessRoom[countsolve3].ID)
+                        room = true;
+                }
             }
+            if (suspect && weapon && room)
+            {
+                text = "The player " + userName.ToString() + " has guessed correctly";
+                tbox_info.AppendText(String.Format("Player {0} has won the game", userName + Environment.NewLine));
+                string mensaje = "51/" + gameHost + "/" + userName + "/0";
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            } 
+            else
+            {
+                hasfallado = true;
+                text = "The player " + userName.ToString() + " has guessed incorrectly";
+                tbox_info.AppendText(String.Format("Player {0} has lost the game", userName + Environment.NewLine));
+                string mensaje = "51/" + gameHost + "/" + userName + "/-1";
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+            richBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Bold);
+            richBox_read.SelectionColor = Color.Green;
+            richBox_read.AppendText(text + Environment.NewLine);
+            panel_Solve.Visible = false;
+            myturn = false;
+            ComprovarTurno();
         }
 
         private void btt_solve_Click(object sender, EventArgs e)
@@ -1165,9 +1227,12 @@ namespace ClienteC__Juego
             panel_Solve.Visible = true;
             panel_Solve.Enabled = true;
             playerSolve = userName;
+
             string mensaje = "49/" + gameHost + "/" + userName;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
+            lbl_solve.Text = userName + "'s Guess";
+            tbox_info.AppendText(String.Format("Cartas solution: {0} {1} {2}", cardsSolution[0].ID.ToString(), cardsSolution[1].ID.ToString(), cardsSolution[2].ID.ToString() + Environment.NewLine));
         }
 
         private void panel_Solve1_Click(object sender, EventArgs e)
@@ -1216,7 +1281,7 @@ namespace ClienteC__Juego
         {
             displayDiceNum(0,0);
             myturn = false;
-            ComprovarTurno(myturn);
+            ComprovarTurno();
 
             string mensaje = "42/" + gameHost + "/" + userName;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
@@ -1224,9 +1289,9 @@ namespace ClienteC__Juego
 
         }
 
-        private void ComprovarTurno (bool turno)
+        private void ComprovarTurno ()
         {
-            if (turno)
+            if (myturn && !hasfallado)
             {
                 btt_dado.Enabled = true;
                 panel_Board.Enabled = true;
@@ -1235,12 +1300,26 @@ namespace ClienteC__Juego
                     if (grid[myPos.X, myPos.Y].Tag.ToString().Split('/')[0] == "room")
                         btt_guess.Enabled = true;
             }
-            else
+            else if (myturn && hasfallado)
+            {
+                btt_dado.Enabled = false;
+                panel_Board.Enabled = false;
+                btt_endturn.Enabled =false;
+                btt_solve.Enabled = false;
+                panel_Guess.Enabled = false;
+
+                string mensaje = "42/" + gameHost + "/" + userName;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
+            else if (!myturn && !hasfallado)
             {
                 btt_dado.Enabled = false;
                 panel_Board.Enabled = false;
                 btt_endturn.Enabled =false;
             }
+            else if (hasfallado && !myturn)
+                btt_solve.Enabled = false;
         }
 
         private void ComprovarCasillaSalida (int color)

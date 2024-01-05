@@ -717,8 +717,6 @@ namespace ClienteC__Juego
                             "Incoming Message", MessageBoxButtons.OK);
                     }
                     pendingInvitation.Remove(invitado);
-                    // Mensaje que le llega solo al quien ha aceptado la invitacion, informando de todos los datos de la partida
-                    // Sera diferente de cero si ha aceptado la invitacion
                     break;
                 case 24: // El host de la partida te ha expulsado
                     string expulsado = mensaje[2];
@@ -739,8 +737,8 @@ namespace ClienteC__Juego
                     }
                     else
                     {
-                        partidas[gameIndex].Remove(expulsado);
                         listaMiPartida(gameIndex, expulsado, "nada");
+                        partidas[gameIndex].Remove(expulsado);
 
                         chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
@@ -847,6 +845,9 @@ namespace ClienteC__Juego
                     tableros[gameIndex].AtenderPartida(mensaje);
                     break;
                 case 50:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
+                case 51:
                     tableros[gameIndex].AtenderPartida(mensaje);
                     break;
             }

@@ -1446,6 +1446,34 @@ void AtenderCliente(void* socket)
 			}
 			strcpy(respuesta, "");
 		}
+		else if (codigo == 51)
+		{
+			char playerSolve[20];
+			int solucionsolve;
+			char mensajesolucionsolve[200];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(playerSolve, p);
+			p = strtok(NULL, "/");
+			solucionsolve = atoi(p);
+			
+			sprintf(mensajesolucionsolve, "51/%s/%s/%d", host, playerSolve, solucionsolve);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn){
+					write(socketUsuario, mensajesolucionsolve, strlen(mensajesolucionsolve));
+					printf("Sent message change solve cards: %s \n",mensajesolucionsolve);
+				}
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, "");
+		}
 		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47) && (codigo != 48) && (codigo != 49) && (codigo != 50))
 		{
 			printf("Respuesta: %s\n", respuesta);
