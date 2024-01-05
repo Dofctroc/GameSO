@@ -11,7 +11,7 @@ CREATE TABLE Jugador (
 
 CREATE TABLE Partida (
   ID INTEGER PRIMARY KEY NOT NULL,
-  diaFin TEXT NOT NULL,
+  dia TEXT NOT NULL,
   duracion INTEGER NOT NULL,
   ganador TEXT NOT NULL
 )ENGINE = InnoDB;
@@ -34,7 +34,7 @@ INSERT INTO Jugador VALUES (5,'Gu','777');
 
 INSERT INTO Partida VALUES (1,'01,01,23',20,'Asier');
 INSERT INTO Partida VALUES (2,'04,01,23',30,'Gu');
-INSERT INTO Partida VALUES (3,'26,01,23',24,'Julia');
+INSERT INTO Partida VALUES (3,'26,01,23',24,'Jan');
 
 INSERT INTO PartidasJugadores VALUES(1,1,1,120);
 INSERT INTO PartidasJugadores VALUES(1,2,2,110);
@@ -47,3 +47,4 @@ INSERT INTO PartidasJugadores VALUES(4,2,4,95);
 INSERT INTO PartidasJugadores VALUES(4,3,1,170);
 INSERT INTO PartidasJugadores VALUES(5,1,3,50);
 INSERT INTO PartidasJugadores VALUES(5,2,3,100);
+
