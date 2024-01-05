@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btt_IndInfo = new System.Windows.Forms.Button();
             this.btt_Rankings = new System.Windows.Forms.Button();
             this.dGrid_totScore = new System.Windows.Forms.DataGridView();
@@ -58,10 +58,10 @@
             // btt_IndInfo
             // 
             this.btt_IndInfo.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btt_IndInfo.Location = new System.Drawing.Point(15, 50);
+            this.btt_IndInfo.Location = new System.Drawing.Point(15, 96);
             this.btt_IndInfo.Name = "btt_IndInfo";
             this.btt_IndInfo.Size = new System.Drawing.Size(90, 50);
-            this.btt_IndInfo.TabIndex = 0;
+            this.btt_IndInfo.TabIndex = 1;
             this.btt_IndInfo.Text = "Individual Info";
             this.btt_IndInfo.UseVisualStyleBackColor = true;
             this.btt_IndInfo.Click += new System.EventHandler(this.btt_IndInfo_Click);
@@ -69,10 +69,10 @@
             // btt_Rankings
             // 
             this.btt_Rankings.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btt_Rankings.Location = new System.Drawing.Point(15, 111);
+            this.btt_Rankings.Location = new System.Drawing.Point(15, 28);
             this.btt_Rankings.Name = "btt_Rankings";
             this.btt_Rankings.Size = new System.Drawing.Size(90, 50);
-            this.btt_Rankings.TabIndex = 1;
+            this.btt_Rankings.TabIndex = 0;
             this.btt_Rankings.Text = "Global rankings";
             this.btt_Rankings.UseVisualStyleBackColor = true;
             this.btt_Rankings.Click += new System.EventHandler(this.btt_Rankings_Click);
@@ -84,14 +84,14 @@
             this.dGrid_totScore.AllowUserToResizeColumns = false;
             this.dGrid_totScore.AllowUserToResizeRows = false;
             this.dGrid_totScore.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dGrid_totScore.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dGrid_totScore.DefaultCellStyle = dataGridViewCellStyle1;
             this.dGrid_totScore.Location = new System.Drawing.Point(10, 40);
             this.dGrid_totScore.Name = "dGrid_totScore";
             this.dGrid_totScore.ReadOnly = true;
@@ -107,19 +107,20 @@
             this.dGrid_user.AllowUserToResizeColumns = false;
             this.dGrid_user.AllowUserToResizeRows = false;
             this.dGrid_user.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dGrid_user.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dGrid_user.DefaultCellStyle = dataGridViewCellStyle2;
             this.dGrid_user.Location = new System.Drawing.Point(10, 65);
             this.dGrid_user.Name = "dGrid_user";
             this.dGrid_user.ReadOnly = true;
             this.dGrid_user.RowHeadersWidth = 51;
             this.dGrid_user.RowTemplate.Height = 24;
+            this.dGrid_user.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dGrid_user.Size = new System.Drawing.Size(250, 250);
             this.dGrid_user.TabIndex = 3;
             // 
@@ -192,14 +193,14 @@
             this.dGrid_totGames.AllowUserToResizeColumns = false;
             this.dGrid_totGames.AllowUserToResizeRows = false;
             this.dGrid_totGames.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dGrid_totGames.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dGrid_totGames.DefaultCellStyle = dataGridViewCellStyle3;
             this.dGrid_totGames.Location = new System.Drawing.Point(270, 40);
             this.dGrid_totGames.Name = "dGrid_totGames";
             this.dGrid_totGames.ReadOnly = true;
@@ -247,19 +248,20 @@
             this.dGrid_game.AllowUserToResizeColumns = false;
             this.dGrid_game.AllowUserToResizeRows = false;
             this.dGrid_game.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.Navy;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dGrid_game.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Navy;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dGrid_game.DefaultCellStyle = dataGridViewCellStyle4;
             this.dGrid_game.Location = new System.Drawing.Point(270, 65);
             this.dGrid_game.Name = "dGrid_game";
             this.dGrid_game.ReadOnly = true;
             this.dGrid_game.RowHeadersWidth = 51;
             this.dGrid_game.RowTemplate.Height = 24;
+            this.dGrid_game.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.dGrid_game.Size = new System.Drawing.Size(250, 250);
             this.dGrid_game.TabIndex = 7;
             // 

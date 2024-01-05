@@ -22,7 +22,11 @@ namespace ClienteC__Juego
         Socket server;
         string gameHost, userName, playerGuess, playerSolve;
         List<string> partida;
+        string[] playersColors;
         int gameNum;
+
+        System.Windows.Forms.Timer timer;
+        int gameDurationSecs;
 
         public gameBoard(Socket server, List<string> partida, int gameNum, string gameHost, string userName)
         {
@@ -41,7 +45,6 @@ namespace ClienteC__Juego
 
         int countSuspect = 0;
         int countWeapon = 0;
-        int countRoom;
 
         int countsolve1, countsolve2, countsolve3;
 
@@ -107,8 +110,6 @@ namespace ClienteC__Juego
                     panel_Board.Controls.Add(grid[row, col]);
                 }
             }
-            pBox_Sol.Location = new Point(cornerBoardMargin + 12*tileWidth - tileWidth/2, cornerBoardMargin + 12*tileHeight - tileHeight / 2);
-            pBox_Sol.Size = new Size(3*tileWidth + tileWidth , 5*tileHeight + tileHeight);
 
             // All buttons arrangement in the form
             panel_Board.Size = new Size(tileWidth*columns + 2*(tileWidth + cornerBoardMargin), tileHeight*rows + 2*(tileHeight + cornerBoardMargin));
@@ -258,6 +259,12 @@ namespace ClienteC__Juego
 
                 myCards = new List<Card>(playersCards[0]);
                 DisplayMyCards(myCards);
+
+                timer = new System.Windows.Forms.Timer();
+                timer.Interval = 1000; // Set the interval to 5000 milliseconds (5 seconds)
+                timer.Tag = gameHost;
+                timer.Tick += timer_Tick;
+                timer.Start();
             }
 
             //INITIALIZATION OF CARDS OF GUESS PER TYPE
@@ -280,6 +287,8 @@ namespace ClienteC__Juego
 
             tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}, Weapon: {1}, Room: {2}", guessSuspect[0].ID.ToString(), guessWeapon[0].ID.ToString(), guessRoom[0].ID.ToString()) + Environment.NewLine);
 
+            pBox_Sol.Location = new Point(cornerBoardMargin + 12 * tileWidth - tileWidth / 2, cornerBoardMargin + 12 * tileHeight - tileHeight / 2);
+            pBox_Sol.Size = new Size(3 * tileWidth + tileWidth, 5 * tileHeight + tileHeight);
             CenterFormOnScreen();
         }
 
@@ -296,6 +305,18 @@ namespace ClienteC__Juego
 
             // Set the form's location
             this.Location = new Point(50, y);
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            gameDurationSecs++;
+            tbox_info.AppendText(String.Format("Duration: {0}", gameDurationSecs) + Environment.NewLine);
+        }
+
+        private void gameBoard_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (timer != null)
+                timer.Stop();
         }
 
         private void displayDiceNum(int num1, int num2)
@@ -623,7 +644,10 @@ namespace ClienteC__Juego
                     btt_guess.Enabled = true;
                 }
                 else if (type == "center")
+                {
                     btt_solve.Enabled = true;
+                    btt_guess.Enabled = false;
+                }
                 else
                     btt_endturn.Enabled = true;
             }
@@ -720,6 +744,14 @@ namespace ClienteC__Juego
             PictureBox card = (PictureBox)sender;
         }
 
+        private void btt_endGame_Click(object sender, EventArgs e)
+        {
+            int puntuationSolve = 200;
+            string mensaje = "52/" + gameHost + "/" + gameDurationSecs + "/" + playerSolve + "/" + puntuationSolve;
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
         private void tBox_write_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -785,15 +817,16 @@ namespace ClienteC__Juego
             foreach (Card card in exShuffledDeck) {
                 if (!room || !suspect || !weapon)
                 {
-                    if (!room && card.type == "room") {
-                        cardsSolution.Add(card);
-                        shuffledDeck.Remove(card);
-                        room = true;
-                    }
-                    else if (!suspect && card.type == "suspect") {
+                    if (!suspect && card.type == "suspect") {
                         cardsSolution.Add(card);
                         shuffledDeck.Remove(card);
                         suspect = true;
+                    }
+                    else if (!room && card.type == "room")
+                    {
+                        cardsSolution.Add(card);
+                        shuffledDeck.Remove(card);
+                        room = true;
                     }
                     else if (!weapon && card.type == "weapon") {
                         cardsSolution.Add(card);
@@ -904,8 +937,8 @@ namespace ClienteC__Juego
                 case 41:
                     if (mensaje.Length == 3)
                     {
-                        string[] vectColores = mensaje[2].Split('.');
-                        int myColor = Convert.ToInt32(vectColores[partida.IndexOf(userName)]);
+                        playersColors = mensaje[2].Split('.');
+                        int myColor = Convert.ToInt32(playersColors[partida.IndexOf(userName)]);
                         ComprovarCasillaSalida(myColor);
                     }
 
@@ -928,8 +961,8 @@ namespace ClienteC__Juego
 
                     // Split players and players cards to search mine
                     string[] players = mensaje[3].Split('.');
-                    string[] vectColors = mensaje[4].Split('.');
-                    int miColor = Convert.ToInt32(vectColors[partida.IndexOf(userName)]);
+                    playersColors = mensaje[4].Split('.');
+                    int miColor = Convert.ToInt32(playersColors[partida.IndexOf(userName)]);
                     ComprovarCasillaSalida(miColor);
 
                     string[] playersCards = mensaje[5].Split('.');
@@ -954,7 +987,7 @@ namespace ClienteC__Juego
                     if (prePosX != -1 && prePosY != -1)
                         grid[prePosX, prePosY].BackgroundImage = null;
                     if (posX != -1 && posY != -1)
-                        grid[posX, posY].BackgroundImage = playerTileImg[myCharacter];
+                        grid[posX, posY].BackgroundImage = playerTileImg[Convert.ToInt32(playersColors[playerIndex])];
                     break;
                 case 46:
                     playerGuess = mensaje[2];
@@ -1059,21 +1092,44 @@ namespace ClienteC__Juego
                     string text;
                     if (respuesta == 0) //Aqui la partida se acaba y te echa de la partida
                     {
-                        text = "The player " + playerSolve.ToString() + " has guessed correctly";
+                        text = playerSolve + "'s accusation is RIGHT! Thus, game has ended.";
+                        if (userName == gameHost) {
+                            this.Invoke(new Action(() => { CreateEndGameButton(); }));
+                        }
                     }
-                    else
-                        text = "The player " + playerSolve.ToString() + " has guessed incorrectly";
+                    else {
+                        text = playerSolve + "'s accusation is WRONG!";
+
+                        panel_Solve.Visible = false;
+                        if ((partida.IndexOf(playerSolve) + 1 == partida.IndexOf(userName)) || (partida.IndexOf(playerSolve) + 1 == partida.Count && partida.IndexOf(userName) == 0))
+                        {
+                            myturn = true;
+                            ComprovarTurno();
+                        }
+                    }
                     richBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Bold);
                     richBox_read.SelectionColor = Color.Green;
                     richBox_read.AppendText(text + Environment.NewLine);
-                    panel_Solve.Visible = false;
-                    if ((partida.IndexOf(playerSolve) + 1 == partida.IndexOf(userName)) || (partida.IndexOf(playerSolve) + 1 == partida.Count && partida.IndexOf(userName) == 0))
-                    {
-                        myturn = true;
-                        ComprovarTurno();
-                    }
+                    break;
+                case 52:
+                    this.Close();
                     break;
             }
+        }
+
+        private void CreateEndGameButton()
+        {
+            System.Windows.Forms.Button endGame = new System.Windows.Forms.Button();
+            endGame.Text = "END GAME";
+            endGame.Cursor = Cursors.Hand;
+            endGame.Font = new Font("Algerian", 22, FontStyle.Bold);
+            endGame.BackColor = Color.Crimson;
+            endGame.Size = new Size(160, 80);
+            endGame.MouseClick += btt_endGame_Click;
+            endGame.Location = new Point(panel_Board.Location.X + (panel_Board.Width - endGame.Width) / 2, panel_Board.Location.Y + (panel_Board.Height - endGame.Height) / 2);
+            this.Controls.Add(endGame);
+            endGame.BringToFront();
+            endGame.Visible = true;
         }
 
         private void btt_dado_Click(object sender, EventArgs e)
@@ -1178,7 +1234,6 @@ namespace ClienteC__Juego
             bool suspect = false;
             bool weapon = false;
             bool room = false;
-            string text;
             foreach (Card card in cardsSolution)
             {
                 if (card.type == "suspect")
@@ -1199,8 +1254,6 @@ namespace ClienteC__Juego
             }
             if (suspect && weapon && room)
             {
-                text = "The player " + userName.ToString() + " has guessed correctly";
-                tbox_info.AppendText(String.Format("Player {0} has won the game", userName + Environment.NewLine));
                 string mensaje = "51/" + gameHost + "/" + userName + "/0";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
@@ -1208,15 +1261,11 @@ namespace ClienteC__Juego
             else
             {
                 hasfallado = true;
-                text = "The player " + userName.ToString() + " has guessed incorrectly";
                 tbox_info.AppendText(String.Format("Player {0} has lost the game", userName + Environment.NewLine));
                 string mensaje = "51/" + gameHost + "/" + userName + "/-1";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
-            richBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Bold);
-            richBox_read.SelectionColor = Color.Green;
-            richBox_read.AppendText(text + Environment.NewLine);
             panel_Solve.Visible = false;
             myturn = false;
             ComprovarTurno();
@@ -1286,7 +1335,6 @@ namespace ClienteC__Juego
             string mensaje = "42/" + gameHost + "/" + userName;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
-
         }
 
         private void ComprovarTurno ()

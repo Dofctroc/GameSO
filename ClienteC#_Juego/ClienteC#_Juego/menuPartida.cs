@@ -13,12 +13,14 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Drawing;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Runtime.InteropServices;
 
 namespace ClienteC__Juego
 {
     public partial class menuPartida : Form
     {
-        string username, selectedPlayerToKick;
+        string username;
+        string[] selectedPlayerToKick;
         bool hostingGame;
 
         int displayedGame;      // Corresponds to the currently shown on screen game
@@ -59,13 +61,14 @@ namespace ClienteC__Juego
             partida1 = new List<string>();
             partida2 = new List<string>();
             partidas = new List<List<string>> { partida1, partida2 }; ;
-            pendingInvitation = new List<string> ();
+            pendingInvitation = new List<string>();
             partidasDataGrids = new List<DataGridView> { dgrid_miPartida0, dgrid_miPartida1 };
-            partidasButtons = new List<System.Windows.Forms.Button> { btt_partida0, btt_partida1};
+            partidasButtons = new List<System.Windows.Forms.Button> { btt_partida0, btt_partida1 };
             partidasKickButtons = new List<System.Windows.Forms.Button> { btt_kickPlayer0, btt_kickPlayer1 };
-            partidasGroups = new List<GroupBox> { gBox_partida0, gBox_partida1};
+            partidasGroups = new List<GroupBox> { gBox_partida0, gBox_partida1 };
             partidasChats = new List<RichTextBox> { tbox_read0, tbox_read1 };
             partidasNotifPanels = new List<PictureBox> { pBox_notif0, pBox_notif1 };
+            selectedPlayerToKick = new string[2];
 
             invitacionesPaneles = new List<Panel> (10);
             invitacionesTimers = new List<System.Windows.Forms.Timer> (10);
@@ -217,9 +220,9 @@ namespace ClienteC__Juego
         private void btt_kickPlayer_Click(object sender, EventArgs e)
         {
             // Solo se podra dar click a eliminar si eres el host (condicional presente en cell click de miPartida)
-            if (selectedPlayerToKick != null)
+            if (selectedPlayerToKick[displayedGame] != null)
             {
-                string mensaje = "24/" + username + "/" + selectedPlayerToKick;
+                string mensaje = "24/" + username + "/" + selectedPlayerToKick[displayedGame];
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
                 selectedPlayerToKick = null;
@@ -479,7 +482,7 @@ namespace ClienteC__Juego
             if (e.RowIndex > 0 && e.ColumnIndex < 2 && ((partida1.Count > 0 && partida1[0] == username) || (partida2.Count > 0 && partida2[0] == username)))
             {
                 partidasKickButtons[displayedGame].Visible = true;
-                selectedPlayerToKick = partidasDataGrids[displayedGame].Rows[e.RowIndex].Cells[1].Value.ToString();
+                selectedPlayerToKick[displayedGame] = partidasDataGrids[displayedGame].Rows[e.RowIndex].Cells[1].Value.ToString();
             }
             else
                 btt_kickPlayer0.Visible = false;
@@ -667,7 +670,6 @@ namespace ClienteC__Juego
                             }
                         }
                         listaMiPartida(gameIndex, username, true, mensaje[3]);
-                        Console.WriteLine("Game index is: " + gameIndex.ToString());
 
                         displayedGame = gameIndex;
                         for (int i = 0; i < partidasGroups.Count; i++)
@@ -676,6 +678,7 @@ namespace ClienteC__Juego
                             else
                                 partidasGroups[i].Visible = false;
 
+                        partidasChats[gameIndex].Text = "";
                         chatMSG = "Has creado una nueva partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
                     }
@@ -727,17 +730,19 @@ namespace ClienteC__Juego
 
                         // partidasGroups[gameIndex].Visible = false;
 
-                        chatMSG = "- El host " + nameHost + " te ha expulsado de la partida -";
+                        chatMSG = "El host " + nameHost + " te ha expulsado de la partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
-                        partidasChats[gameIndex].AppendText(Environment.NewLine);
-                        partidasChats[gameIndex].AppendText(Environment.NewLine);
 
-                        if (displayedGame != gameIndex)
-                            partidasNotifPanels[gameIndex].Visible = true;
+                        displayedGame = gameIndex;
+                        for (int i = 0; i < partidasGroups.Count; i++)
+                            if (i == gameIndex)
+                                partidasGroups[i].Visible = true;
+                            else
+                                partidasGroups[i].Visible = false;
                     }
                     else
                     {
-                        listaMiPartida(gameIndex, expulsado, "nada");
+                        listaMiPartida(gameIndex, expulsado, false, "nada");
                         partidas[gameIndex].Remove(expulsado);
 
                         chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
@@ -754,18 +759,11 @@ namespace ClienteC__Juego
                     if (nameHost == username)
                     {
                         // Add if in other game, it MUST exit it before shutdown !!!!!!!!!!!!
-                        menuUsuario.serverShutdown();
+                        // menuUsuario.serverShutdown();
                     }
                     else
                     {
-                        foreach (List<string> partida in partidas)
-                        {
-                            if (partida.Count != 0 && partida[0] == nameHost)
-                            {
-                                partida.Clear();
-                                break;
-                            }
-                        }
+                        partidas[gameIndex].Clear();
                         partidasDataGrids[gameIndex].Rows.Clear();
 
                         chatMSG = "El host " + nameHost + " ha eliminado la partida";
@@ -810,6 +808,7 @@ namespace ClienteC__Juego
                             else
                                 partidasGroups[i].Visible = false;
 
+                        partidasChats[gameIndex].Text = "";
                         chatMSG = "Te has unido a la partida de " + nameHost;
                         WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
                     }
@@ -850,14 +849,23 @@ namespace ClienteC__Juego
                 case 51:
                     tableros[gameIndex].AtenderPartida(mensaje);
                     break;
+                case 52:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+
+                    partidas[gameIndex].Clear();
+                    partidasDataGrids[gameIndex].Rows.Clear();
+
+                    chatMSG = "The game has ended!";
+                    WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+                    break;
             }
-            if (codigo != 27 && codigo < 40)
+            if (codigo == 52 || codigo != 27 && codigo < 40)
                 updateStatusPartidas();
         }
 
         private void StartNewGame(string gameHost, int gameNum, string username, int dispGame)
         {
-            string chatMSG = "El host ha empezado la partida!";
+            string chatMSG = "Host has started the game!";
             WriteInChatTITLE(gameNum, chatMSG, Color.Indigo);
 
             tableros[gameNum] = new gameBoard(server, partidas[displayedGame], gameNum, gameHost, username);
@@ -938,13 +946,13 @@ namespace ClienteC__Juego
             panel.Controls.Add(label);
 
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-            timer.Interval = 5000; // Set the interval to 5000 milliseconds (5 seconds)
+            timer.Interval = 10000; // Set the interval to 10000 milliseconds (10 seconds)
             timer.Tag = host;
             timer.Tick += timer_Tick;
 
             this.Controls.Add(panel);
             panel.BringToFront();
-            invitacionesPaneles.Add(panel);
+            invitacionesPaneles.Add(panel); 
             invitacionesTimers.Add(timer);
 
             timer.Start();
@@ -1002,8 +1010,14 @@ namespace ClienteC__Juego
                 hoveredPBox.BackgroundImage = Properties.Resources.Accept;
             else
                 hoveredPBox.BackgroundImage = Properties.Resources.Cross;
-
         }
+
+        private void strip1_Ranking_Click(object sender, EventArgs e)
+        {
+            menu_rankings = new menuRankings(server);
+            menu_rankings.Show();
+        }
+
         private void pBox_invitacion_Leave(object sender, EventArgs e)
         {
             PictureBox hoveredPBox = (PictureBox)sender;
@@ -1014,17 +1028,6 @@ namespace ClienteC__Juego
         {
             DataGridView dgrid = (DataGridView)sender;
             dgrid.ClearSelection();
-        }
-
-        private void openRankingsEXPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            menu_rankings = new menuRankings(server);
-            menu_rankings.Show();
-        }
-
-        private void receiveInviteEXPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CreateInvitationPanel("Asier");
         }
     }
 }

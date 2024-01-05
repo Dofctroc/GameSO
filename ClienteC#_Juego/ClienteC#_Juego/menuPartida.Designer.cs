@@ -64,7 +64,9 @@
             this.dgrid_miPartida1 = new System.Windows.Forms.DataGridView();
             this.pBox_notif0 = new System.Windows.Forms.PictureBox();
             this.pBox_notif1 = new System.Windows.Forms.PictureBox();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuOpciones = new System.Windows.Forms.MenuStrip();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.strip1_Ranking = new System.Windows.Forms.ToolStripMenuItem();
             this.opcionesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.receiveInviteEXPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openRankingsEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,6 +81,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_miPartida1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif1)).BeginInit();
+            this.menuOpciones.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgrid_listaInvitar
@@ -353,6 +356,7 @@
             // btt_partida0
             // 
             this.btt_partida0.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.btt_partida0.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btt_partida0.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btt_partida0.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btt_partida0.Location = new System.Drawing.Point(315, 60);
@@ -367,6 +371,7 @@
             // btt_partida1
             // 
             this.btt_partida1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.btt_partida1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btt_partida1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btt_partida1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btt_partida1.Location = new System.Drawing.Point(315, 110);
@@ -525,15 +530,34 @@
             this.pBox_notif1.TabIndex = 44;
             this.pBox_notif1.TabStop = false;
             // 
-            // menuStrip1
+            // menuOpciones
             // 
-            this.menuStrip1.BackColor = System.Drawing.Color.Transparent;
-            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1093, 24);
-            this.menuStrip1.TabIndex = 45;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuOpciones.BackColor = System.Drawing.Color.Transparent;
+            this.menuOpciones.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuOpciones.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem});
+            this.menuOpciones.Location = new System.Drawing.Point(0, 0);
+            this.menuOpciones.Name = "menuOpciones";
+            this.menuOpciones.Size = new System.Drawing.Size(1093, 26);
+            this.menuOpciones.TabIndex = 45;
+            this.menuOpciones.Text = "menuStrip1";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.BackColor = System.Drawing.Color.Peru;
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.strip1_Ranking});
+            this.optionsToolStripMenuItem.Font = new System.Drawing.Font("ROG Fonts", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // strip1_Ranking
+            // 
+            this.strip1_Ranking.Name = "strip1_Ranking";
+            this.strip1_Ranking.Size = new System.Drawing.Size(224, 26);
+            this.strip1_Ranking.Text = "Rankings";
+            this.strip1_Ranking.Click += new System.EventHandler(this.strip1_Ranking_Click);
             // 
             // opcionesToolStripMenuItem1
             // 
@@ -550,14 +574,12 @@
             this.receiveInviteEXPToolStripMenuItem1.Name = "receiveInviteEXPToolStripMenuItem1";
             this.receiveInviteEXPToolStripMenuItem1.Size = new System.Drawing.Size(230, 26);
             this.receiveInviteEXPToolStripMenuItem1.Text = "Receive Invite (EXP)";
-            this.receiveInviteEXPToolStripMenuItem1.Click += new System.EventHandler(this.receiveInviteEXPToolStripMenuItem_Click);
             // 
             // openRankingsEXPToolStripMenuItem
             // 
             this.openRankingsEXPToolStripMenuItem.Name = "openRankingsEXPToolStripMenuItem";
             this.openRankingsEXPToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
             this.openRankingsEXPToolStripMenuItem.Text = "Open Rankings (EXP)";
-            this.openRankingsEXPToolStripMenuItem.Click += new System.EventHandler(this.openRankingsEXPToolStripMenuItem_Click);
             // 
             // menuPartida
             // 
@@ -581,7 +603,7 @@
             this.Controls.Add(this.button_LogOut);
             this.Controls.Add(this.button_partidanueva);
             this.Controls.Add(this.dgrid_listaInvitar);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.menuOpciones);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.Name = "menuPartida";
@@ -601,6 +623,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_miPartida1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif0)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notif1)).EndInit();
+            this.menuOpciones.ResumeLayout(false);
+            this.menuOpciones.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -634,9 +658,11 @@
         private System.Windows.Forms.DataGridView dgrid_miPartida1;
         private System.Windows.Forms.PictureBox pBox_notif0;
         private System.Windows.Forms.PictureBox pBox_notif1;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuOpciones;
         private System.Windows.Forms.ToolStripMenuItem opcionesToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem receiveInviteEXPToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem openRankingsEXPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem strip1_Ranking;
     }
 }

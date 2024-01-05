@@ -284,16 +284,15 @@ int PonConectado(ListaConectados* lista, char nombre[], int socketUsuario)
 	}
 }
 
-int CrearPartida(ListaPartidas* listaP, char nombre[], int socketUsuario)
+int CrearPartida(ListaConectados* listaC, ListaPartidas* listaP, char nombre[], int socketUsuario)
 {
 	if (listaP->num == 100)
 		return -1;
 	else
 	{
-		strcpy(listaP->partidas[listaP->num].jugadores[0].userName, nombre);
-		listaP->partidas[listaP->num].jugadores[0].status = 1;
-		listaP->partidas[listaP->num].jugadores[0].socket = socketUsuario;	
-		listaP->partidas[listaP->num].numJugadores++;
+		int conectado = BuscarConectado(listaC,nombre);
+		listaP->partidas[listaP->num].jugadores[0] = listaC->conectados[conectado];
+		listaP->partidas[listaP->num].numJugadores = 1;
 		listaP->num++;
 		return 0;
 	}
@@ -678,33 +677,56 @@ int consultaInfoPartida(MYSQL* conn, char idPartida[], char infoRanking[])
 	MYSQL_ROW row;
 	
 	char consulta[800];
-	strcpy(consulta, "SELECT Jugador.userName AS Username, PartidasJugadores.posicion AS Posicion, PartidasJugadores.puntuacion AS Puntuacion "
-		   "FROM Jugador, Partida, PartidasJugadores "
+	strcpy(consulta, "SELECT Jugador.userName "
+		   "FROM Jugador, PartidasJugadores, Partida "
 		   "WHERE Jugador.ID = PartidasJugadores.ID_Jugador "
 		   "AND Partida.ID = PartidasJugadores.ID_Partida "
 		   "AND Partida.ID = '");
 	strcat(consulta, idPartida);
-	strcat(consulta, "' ORDER BY Posicion ASC; ");
+	strcat(consulta, "';");
 	if (mysql_query(conn, consulta) != 0) {
 		fprintf(stderr, "Error ejecutando el query: %s\n", mysql_error(conn));
 		return -1;
 	}
-	
 	resultado = mysql_store_result(conn);
 	row = mysql_fetch_row(resultado);
 	
-	if (row == NULL)
-	{
+	if (row == NULL) {
 		printf("Ha habido un error en la consulta de datos \n");
 		strcpy(infoRanking, "13/NULL");
 		return -1;
 	}
-	
 	while (row != NULL) {
-		sprintf (infoRanking, "%s%s.%s.%s.", infoRanking, row[0], row[1], row[2]);
-		printf("IDPartida: %s, Posicion: %s, Puntuacion: %s\n", row[0], row[1], row[2]);
+		sprintf (infoRanking, "%s%s.", infoRanking, row[0]);
+		printf("Jugador: %s  \n", row[0]);
 		row = mysql_fetch_row(resultado);
 	}
+	mysql_free_result(resultado);
+	
+	sprintf (infoRanking, "%s%s.", infoRanking, "0");
+	
+	strcpy(consulta, "SELECT ganador,duracion, diaInicio "
+		   "FROM Partida "
+		   "WHERE ID = '");
+	strcat(consulta, idPartida);
+	strcat(consulta, "';");
+	if (mysql_query(conn, consulta) != 0) {
+		fprintf(stderr, "Error ejecutando el query: %s\n", mysql_error(conn));
+		return -1;
+	}
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	if (row == NULL){
+		printf("Ha habido un error en la consulta de datos \n");
+		strcpy(infoRanking, "13/NULL");
+		return -1;
+	}
+	while (row != NULL) {
+		sprintf (infoRanking, "%s%s.%s.%s", infoRanking, row[0], row[1], row[2]);
+		printf("Ganador: %s  Duracion: %s  HoraFin: %s  \n", row[0], row[1], row[2]);
+		row = mysql_fetch_row(resultado);
+	}
+	mysql_free_result(resultado);
 	return 0;
 }
 
@@ -974,7 +996,7 @@ void AtenderCliente(void* socket)
 			char coloresJugadoresPartida[20];
 			p = strtok(NULL, "/");
 			strcpy(host, p);
-			int err = CrearPartida(&lista_Partidas, host, sock_conn);
+			int err = CrearPartida(&lista_Conectados, &lista_Partidas, host, sock_conn);
 			int color = AsignaColorJugador(&lista_Partidas, host);
 			ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
 			printf("Color asignado: %d \n",color);
@@ -1466,10 +1488,38 @@ void AtenderCliente(void* socket)
 			while (p != NULL)
 			{
 				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn){
-					write(socketUsuario, mensajesolucionsolve, strlen(mensajesolucionsolve));
-					printf("Sent message change solve cards: %s \n",mensajesolucionsolve);
-				}
+				write(socketUsuario, mensajesolucionsolve, strlen(mensajesolucionsolve));
+				printf("Sent message change solve cards: %s \n",mensajesolucionsolve);
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, "");
+		}
+		else if (codigo == 52)
+		{
+			char winner[20];
+			char durationSecs[20];
+			char puntuation[20];
+			char mensajeEndGame[200];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(durationSecs, p);
+			p = strtok(NULL, "/");
+			strcpy(winner, p);
+			p = strtok(NULL, "/");
+			strcpy(puntuation, p);
+			
+			sprintf(mensajeEndGame, "52/%s", host);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			EliminarPartida(&lista_Partidas, host);
+			
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
 				p = strtok(NULL, "/");
 			}
 			strcpy(respuesta, "");

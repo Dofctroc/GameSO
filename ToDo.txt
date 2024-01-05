@@ -33,10 +33,10 @@ CONTROL ERRORES JOC
 
 	----------CONTROL DE ERRORES----------
 When SERVER fails -> control error in client *(Difficult to implement -> optional)
-Only invite other players if hosting a game
+-/ Only invite other players if hosting a game
 -/ Only invite players not already in the game
 Cannot invite a player if already in two games					|ASIER|
-Increase max length of some C variables
+-/ Increase max length of some C variables
 
  _______________
 | MY TODO LIST: |
@@ -52,15 +52,22 @@ Rename all forms
 
 Cards:
 1. When clicked, shows dorso of card
-2. Put card torso on center of the board
+-/ 2. Put card torso on center of the board
 	( Easier logic to go to center ) -> Implement new grid of positions to use when center tile is hovered
 
 Toda la logica de Solve, incluyendo el panel central que se mostrara (simular o igual a guess)
+	Logica cuando todos responden de manera incorrecta
 Toda la logica de acabar una partida
 Player se va de partida voluntariamente (no le echan)
 	Control de player se va de partida
 Chat in game (igual a menu partida), incluir algunos sucesos de la partida
-Dibuixar nom de cada room al Paint
+Logica ACABAR:
+	Si fallas: continuas jugando solo para resolver, te llevas 0 puntos
+		El siguiente en ganar se lleva 160 puntos
+	Si aciertas: has ganado, te llevas 200 puntos, partida termina
+
+-/ Dibuixar nom de cada room al Paint
+-/ Falla crear partida, luego hacer log out y luego volver a crear
 
 
 -/ Error: data grid falla

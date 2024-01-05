@@ -51,16 +51,22 @@ namespace ClienteC__Juego
             dGrid_totScore.ColumnHeadersHeight = dGrid_totGames.ColumnHeadersHeight = 30;
 
             // Datagrids individuales
-            dGrid_user.ColumnCount = dGrid_game.ColumnCount = 3;
+            dGrid_user.ColumnCount = 3;
+            dGrid_game.ColumnCount = 2;
             dGrid_user.ColumnHeadersDefaultCellStyle.Font = dGrid_game.ColumnHeadersDefaultCellStyle.Font = new Font(dGrid_user.Font, FontStyle.Bold);
             dGrid_user.ColumnHeadersHeight = dGrid_game.ColumnHeadersHeight = 30;
 
-            dGrid_user.Columns[0].Name = "col_ID"; dGrid_game.Columns[0].Name = "col_user";
-            dGrid_user.Columns[0].HeaderText = "Game ID"; dGrid_game.Columns[0].HeaderText = "Username";
-            dGrid_user.Columns[1].Name = dGrid_game.Columns[1].Name = "col_Pos";
-            dGrid_user.Columns[1].HeaderText = dGrid_game.Columns[1].HeaderText = "Pos";
-            dGrid_user.Columns[2].Name = dGrid_game.Columns[2].Name = "col_Score";
-            dGrid_user.Columns[2].HeaderText = dGrid_game.Columns[2].HeaderText = "Score";
+            dGrid_user.Columns[0].Name = "col_ID"; 
+            dGrid_user.Columns[0].HeaderText = "Game ID"; 
+            dGrid_user.Columns[1].Name = "col_Pos";
+            dGrid_user.Columns[1].HeaderText = "Pos";
+            dGrid_user.Columns[2].Name = "col_Score";
+            dGrid_user.Columns[2].HeaderText = "Score";
+
+            dGrid_game.Columns[0].Name = "col_Title";
+            dGrid_game.Columns[0].HeaderText = "Title";
+            dGrid_game.Columns[1].Name = "col_Info";
+            dGrid_game.Columns[1].HeaderText = "Information";
 
             dGrid_user.Size = dGrid_game.Size = new Size(200, 250);
             dGrid_user.Location = new Point(10, 60);
@@ -69,9 +75,11 @@ namespace ClienteC__Juego
             dGrid_game.Location = new Point(10 + dGrid_user.Width + 10, 60);
             lbl_gamesR.Location = new Point(dGrid_game.Location.X, 20);
             tBox_gameID.Location = new Point(dGrid_game.Location.X, 35);
-            dGrid_user.Columns[0].Width = dGrid_game.Columns[0].Width = 106;
-            dGrid_user.Columns[1].Width = dGrid_game.Columns[1].Width = 40;
-            dGrid_user.Columns[2].Width = dGrid_game.Columns[2].Width = 51;
+            dGrid_user.Columns[0].Width = 106;
+            dGrid_user.Columns[1].Width = 40;
+            dGrid_user.Columns[2].Width = 51;
+            dGrid_game.Columns[0].Width = 66;
+            dGrid_game.Columns[1].Width = 197 - dGrid_game.Columns[0].Width;
             dGrid_user.Rows.Clear(); dGrid_game.Rows.Clear();
 
             dGrid_user.RowHeadersVisible = dGrid_game.RowHeadersVisible = false;
@@ -153,9 +161,11 @@ namespace ClienteC__Juego
                 {
                     case 16:
                         dGrid_user.Rows.Clear();
+                        dGrid_user.Height = 250;
                         break;
                     case 17:
                         dGrid_game.Rows.Clear();
+                        dGrid_game.Height = 250;
                         break;
                 }
             }
@@ -193,10 +203,41 @@ namespace ClienteC__Juego
                     n++;
                 }
             }
-            else
+            else if (dataGrid == dGrid_user)
             {
                 for (int i = 0; i < vectorInfo.Length - 2; i += 3)
                     dataGrid.Rows.Add(vectorInfo[i], vectorInfo[i + 1], vectorInfo[i + 2]);
+
+                int totalRowHeight = dGrid_user.Rows.GetRowsHeight(DataGridViewElementStates.Visible);
+                int headerHeight = dGrid_user.ColumnHeadersVisible ? dGrid_user.ColumnHeadersHeight : 0;
+                if (totalRowHeight + headerHeight <= 250)
+                    dGrid_user.Height = totalRowHeight + headerHeight + 3;
+            }
+            else
+            {
+                int i = 0;
+                while (vectorInfo[i] != "0")
+                {
+                    dataGrid.Rows.Add("Player " + (i+1).ToString(), vectorInfo[i]);
+                    i++;
+                }
+                int totalSeconds = Convert.ToInt32(vectorInfo[i + 2]);
+                int minutes = totalSeconds / 60;
+                int seconds = totalSeconds % 60;
+                string[] vectorDay = vectorInfo[i + 3].Split(',');
+                int day = int.Parse(vectorDay[0]);
+                int month = int.Parse(vectorDay[1]);
+                int year = int.Parse(vectorDay[2]);
+                DateTime parsedDate = new DateTime(2000 + year, month, day);
+
+                dataGrid.Rows.Add("Winner ", vectorInfo[i+1]);
+                dataGrid.Rows.Add("Duration ", minutes + " mins, " + seconds + " secs");
+                dataGrid.Rows.Add("Day Played ", day + " of " + parsedDate.ToString("MMMM") + " " + parsedDate.Year);
+
+                int totalRowHeight = dGrid_game.Rows.GetRowsHeight(DataGridViewElementStates.Visible);
+                int headerHeight = dGrid_game.ColumnHeadersVisible ? dGrid_game.ColumnHeadersHeight : 0;
+
+                dGrid_game.Height = totalRowHeight + headerHeight;
             }
 
             dataGrid.ClearSelection();
