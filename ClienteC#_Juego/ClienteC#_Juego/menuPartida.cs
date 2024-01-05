@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Net.Sockets;
 using System.Drawing;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ClienteC__Juego
 {
@@ -29,6 +30,7 @@ namespace ClienteC__Juego
         List<DataGridView> partidasDataGrids;                   // Vector of the two datagridViews displaying the players of each game
         List<RichTextBox> partidasChats;                        // Vector of the two chatTextBox of each game
         List<PictureBox> partidasNotifPanels;
+        List<System.Windows.Forms.Button> partidasKickButtons;
 
         List<Panel> invitacionesPaneles;
         List<System.Windows.Forms.Timer> invitacionesTimers;
@@ -40,6 +42,8 @@ namespace ClienteC__Juego
         gameBoard tablero0;
         gameBoard tablero1;
         List<gameBoard> tableros;
+
+        private Color[] coloresCharacters = { Color.Yellow, Color.Cyan, Color.Black, Color.Brown, Color.DarkBlue, Color.Crimson };
 
         public menuPartida(menuUsuario menuUsuario, Socket server, string username)
         {
@@ -58,6 +62,7 @@ namespace ClienteC__Juego
             pendingInvitation = new List<string> ();
             partidasDataGrids = new List<DataGridView> { dgrid_miPartida0, dgrid_miPartida1 };
             partidasButtons = new List<System.Windows.Forms.Button> { btt_partida0, btt_partida1};
+            partidasKickButtons = new List<System.Windows.Forms.Button> { btt_kickPlayer0, btt_kickPlayer1 };
             partidasGroups = new List<GroupBox> { gBox_partida0, gBox_partida1};
             partidasChats = new List<RichTextBox> { tbox_read0, tbox_read1 };
             partidasNotifPanels = new List<PictureBox> { pBox_notif0, pBox_notif1 };
@@ -87,16 +92,19 @@ namespace ClienteC__Juego
             // Data grid de mi Partida0 & Partida1
             dgrid_miPartida0.Visible = dgrid_miPartida1.Visible = true;
 
-            dgrid_miPartida0.ColumnCount = dgrid_miPartida1.ColumnCount = 2;
+            dgrid_miPartida0.ColumnCount = dgrid_miPartida1.ColumnCount = 3;
             dgrid_miPartida0.ColumnHeadersDefaultCellStyle.Font = dgrid_miPartida1.ColumnHeadersDefaultCellStyle.Font = new Font(dgrid_miPartida0.Font, FontStyle.Bold);
 
             dgrid_miPartida0.Columns[0].Name = dgrid_miPartida1.Columns[0].Name = "column_ID";
             dgrid_miPartida0.Columns[0].HeaderText = dgrid_miPartida1.Columns[0].HeaderText = "ID";
             dgrid_miPartida0.Columns[1].Name = dgrid_miPartida1.Columns[1].Name = "column_Jugador";
             dgrid_miPartida0.Columns[1].HeaderText = dgrid_miPartida1.Columns[1].HeaderText = "Jugador";
+            dgrid_miPartida0.Columns[2].Name = dgrid_miPartida1.Columns[2].Name = "column_Color";
+            dgrid_miPartida0.Columns[2].HeaderText = dgrid_miPartida1.Columns[2].HeaderText = "Color";
 
-            dgrid_miPartida0.Columns[1].Width = dgrid_miPartida1.Columns[1].Width = 50;
-            dgrid_miPartida0.Columns[1].Width = dgrid_miPartida1.Columns[1].Width = dgrid_miPartida0.Width - dgrid_miPartida0.Columns[0].Width - 2;
+            dgrid_miPartida0.Columns[0].Width = dgrid_miPartida1.Columns[0].Width = 40;
+            dgrid_miPartida0.Columns[2].Width = dgrid_miPartida1.Columns[2].Width = 60;
+            dgrid_miPartida0.Columns[1].Width = dgrid_miPartida1.Columns[1].Width = dgrid_miPartida0.Width - dgrid_miPartida0.Columns[0].Width - dgrid_miPartida0.Columns[2].Width - 2;
             dgrid_miPartida0.Rows.Clear();
             dgrid_miPartida1.Rows.Clear();
 
@@ -342,6 +350,7 @@ namespace ClienteC__Juego
                     status = "InMenu";
                 else
                     status = "InGame";
+
                 dgrid_listaUsuarios.Rows.Add(mensajeCodificado[i], status);
             }
             dgrid_listaUsuarios.ClearSelection();
@@ -352,15 +361,18 @@ namespace ClienteC__Juego
         /// </summary>
         /// <param name="p"> Number representing the game of which the incoming information is from. Can be 0 or 1. </param>
         /// <param name="jugadores"> String including all players separated by a '.' . </param>
-        public void listaMiPartida(int p, string jugadores)
+        public void listaMiPartida(int p, string jugadores, string colores)
         {
             string[] vectorJugadores = jugadores.Split('.');
+            string[] vectorColores = colores.Split('.');
             partidasDataGrids[p].Rows.Clear();
 
             partidasDataGrids[p].Rows.Add("Host", vectorJugadores[0]);
+            partidasDataGrids[p].Rows[0].Cells[2].Style.BackColor = coloresCharacters[Convert.ToInt32(vectorColores[0])];
             for (int i = 1; i < vectorJugadores.Length - 1; i++)
             {
-                partidasDataGrids[p].Rows.Add(i, vectorJugadores[i]);
+                partidasDataGrids[p].Rows.Add(i, vectorJugadores[i], "");
+                partidasDataGrids[p].Rows[i].Cells[2].Style.BackColor = coloresCharacters[Convert.ToInt32(vectorColores[i])];
             }
             partidasDataGrids[p].ClearSelection();
         }
@@ -371,22 +383,31 @@ namespace ClienteC__Juego
         /// <param name="p"> Number representing the game of which the incoming information is from. Can be 0 or 1. </param>
         /// <param name="jugador"> Name of the player. </param>
         /// <param name="afegir"> Determines if said player will be added or deleted. TRUE: added. FALSE: deleted. </param>
-        public void listaMiPartida(int p, string jugador, bool afegir) 
+        public void listaMiPartida(int p, string jugador, bool afegir, string colores) 
         {
             if (afegir)
             {
-                if (partidasDataGrids[p].RowCount == 0)
-                    partidasDataGrids[p].Rows.Add("Host", jugador);
+                if (partidas[p].Count == 1)
+                {
+                    string[] vectorColores = colores.Split('.');
+                    partidasDataGrids[p].Rows.Add("Host", jugador, "");
+
+                    int colorID = Convert.ToInt32(vectorColores[partidas[p].IndexOf(jugador)]);
+                    partidasDataGrids[p].Rows[0].Cells[2].Style.BackColor = coloresCharacters[colorID];
+                }
                 else
-                    partidasDataGrids[p].Rows.Add(partidasDataGrids[p].RowCount, jugador);
+                {
+                    string[] vectorColores = colores.Split('.');
+                    partidasDataGrids[p].Rows.Add(partidasDataGrids[p].RowCount, jugador, "");
+
+                    int colorID = Convert.ToInt32(vectorColores[partidas[p].IndexOf(jugador)]);
+                    partidasDataGrids[p].Rows[partidas[p].IndexOf(jugador)].Cells[2].Style.BackColor = coloresCharacters[colorID];
+                }
             }
             else
             {
-                for (int i = 1; i < partidasDataGrids[p].RowCount; i++)
-                {
-                    if (partidasDataGrids[p].Rows[i].Cells[1].Value.ToString() == jugador)
-                        partidasDataGrids[p].Rows.RemoveAt(i);
-                }
+                int n = partidas[p].IndexOf(jugador);
+                partidasDataGrids[p].Rows.RemoveAt(n);
             }
             partidasDataGrids[p].ClearSelection();
         }
@@ -440,8 +461,6 @@ namespace ClienteC__Juego
                         dgrid_listaInvitar.Rows.Add(playerName);
                 }
             }
-            dgrid_listaUsuarios.ClearSelection();
-            dgrid_listaInvitar.ClearSelection();
         }
 
         private void dgrid_listaInvitar_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -451,19 +470,58 @@ namespace ClienteC__Juego
                 if (e.RowIndex < dgrid_listaInvitar.Rows[e.RowIndex].Height / 2)
                     dgrid_listaInvitar.Rows.RemoveAt(e.RowIndex);
             }
-            dgrid_listaInvitar.ClearSelection();
         }
 
         private void dgrid_miPartida_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && (partida1[0] == username || partida2[0] == username))
+            DataGridView dataGridView = (DataGridView)sender;
+
+            if (e.RowIndex > 0 && e.ColumnIndex < 2 && ((partida1.Count > 0 && partida1[0] == username) || (partida2.Count > 0 && partida2[0] == username)))
             {
-                dgrid_miPartida0.ClearSelection();
-                btt_kickPlayer0.Visible = true;
-                selectedPlayerToKick = dgrid_miPartida0.Rows[e.RowIndex].Cells[1].Value.ToString();
+                partidasKickButtons[displayedGame].Visible = true;
+                selectedPlayerToKick = partidasDataGrids[displayedGame].Rows[e.RowIndex].Cells[1].Value.ToString();
             }
             else
                 btt_kickPlayer0.Visible = false;
+
+            if (e.ColumnIndex == 2 && e.RowIndex == partidas[displayedGame].IndexOf(username))
+            {
+                Color colorActual = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor;
+                int indiceColor = Array.IndexOf(coloresCharacters, colorActual);
+                int indiceNuevoColor = (indiceColor + 1) % coloresCharacters.Length;
+
+                bool freeColor = true;
+                int color = indiceNuevoColor;
+
+                for (color = indiceNuevoColor; color < coloresCharacters.Length; color = (color + 1) % coloresCharacters.Length)
+                {
+                    freeColor = true;
+
+                    for (int i = 0; i < partidas[displayedGame].Count; i++)
+                    {
+                        if (i != partidas[displayedGame].IndexOf(username))
+                        {
+                            if (partidasDataGrids[displayedGame].Rows[i].Cells[2].Style.BackColor == coloresCharacters[color])
+                            {
+                                freeColor = false;
+                                break; // Salir del bucle interior si se encuentra un color ocupado
+                            }
+                        }
+                    }
+
+                    if (freeColor)
+                    {
+                        break; // Salir del bucle exterior si se encuentra un color libre
+                    }
+                }
+
+                Color nuevoColor = coloresCharacters[color];
+                partidasDataGrids[displayedGame].Rows[e.RowIndex].Cells[2].Style.BackColor = nuevoColor;
+
+                string mensaje = "28/" + partidas[displayedGame][0] + "/" + username + "/" + color;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+            }
         }
 
         // -------------------- CHAT AND CONNECTED INFO RELATED FUNCTIONS ----------------------------------------------------
@@ -608,7 +666,7 @@ namespace ClienteC__Juego
                                 break;
                             }
                         }
-                        listaMiPartida(gameIndex, username, true);
+                        listaMiPartida(gameIndex, username, true, mensaje[3]);
                         Console.WriteLine("Game index is: " + gameIndex.ToString());
 
                         displayedGame = gameIndex;
@@ -639,56 +697,28 @@ namespace ClienteC__Juego
                     this.Invoke(new Action(() => { CreateInvitationPanel(nameHost); }));
                     break;
                 case 23: // Respuesta cuando un jugador ha aceptado o no una invitación
-                    // Mensaje que le llega a todos los jugadores en partida
-                    if (mensaje.Length == 4)
+                         // Mensaje que le llega a todos los jugadores en partida
+                    invitado = mensaje[2];
+                    string decision = mensaje[3];
+                    if (decision == "Yes")
                     {
-                        invitado = mensaje[2];
-                        string decision = mensaje[3];
-                        if (decision == "Yes")
-                        {
-                            partidas[gameIndex].Add(invitado);
-                            listaMiPartida(gameIndex, invitado, true);
+                        partidas[gameIndex].Add(invitado);
+                        listaMiPartida(gameIndex, invitado, true, mensaje[4]);
 
-                            chatMSG = "El usuario " + invitado + " se ha unido a la partida";
-                            WriteInChatTITLE(gameIndex, chatMSG, Color.ForestGreen);
+                        chatMSG = "El usuario " + invitado + " se ha unido a la partida";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.ForestGreen);
 
-                            if (displayedGame != gameIndex)
-                                partidasNotifPanels[gameIndex].Visible = true;
-                        }
-                        else
-                        {
-                            DialogResult showInvite = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
-                                "Incoming Message", MessageBoxButtons.OK);
-                        }
-                        pendingInvitation.Remove(invitado);
+                        if (displayedGame != gameIndex)
+                            partidasNotifPanels[gameIndex].Visible = true;
                     }
+                    else
+                    {
+                        DialogResult showInvite = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
+                            "Incoming Message", MessageBoxButtons.OK);
+                    }
+                    pendingInvitation.Remove(invitado);
                     // Mensaje que le llega solo al quien ha aceptado la invitacion, informando de todos los datos de la partida
                     // Sera diferente de cero si ha aceptado la invitacion
-                    else if (mensaje[2] != "0")
-                    {
-                        List<string> jugadores = new List<string>(mensaje[2].Split('.'));
-                        foreach (List<string> partida in partidas)
-                        {
-                            if (partida.Count == 0)
-                            {
-                                for (int i = 0; i < jugadores.Count - 1; i++)
-                                    partida.Add(jugadores[i]);
-                                gameIndex = partidas.IndexOf(partida);
-                                break;
-                            }
-                        }
-                        listaMiPartida(gameIndex, mensaje[2]);
-
-                        displayedGame = gameIndex;
-                        for (int i = 0; i < partidasGroups.Count; i++)
-                            if (i == gameIndex)
-                                partidasGroups[i].Visible = true;
-                            else
-                                partidasGroups[i].Visible = false;
-
-                        chatMSG = "Te has unido a la partida de " + nameHost;
-                        WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
-                    }
                     break;
                 case 24: // El host de la partida te ha expulsado
                     string expulsado = mensaje[2];
@@ -710,7 +740,7 @@ namespace ClienteC__Juego
                     else
                     {
                         partidas[gameIndex].Remove(expulsado);
-                        listaMiPartida(gameIndex, expulsado, false);
+                        listaMiPartida(gameIndex, expulsado, "nada");
 
                         chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
@@ -738,7 +768,7 @@ namespace ClienteC__Juego
                                 break;
                             }
                         }
-                        dgrid_miPartida0.Rows.Clear();
+                        partidasDataGrids[gameIndex].Rows.Clear();
 
                         chatMSG = "El host " + nameHost + " ha eliminado la partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
@@ -752,6 +782,39 @@ namespace ClienteC__Juego
                     if (displayedGame != gameIndex)
                         partidasNotifPanels[gameIndex].Visible = true;
 
+                    break;
+                case 28:
+                    string player = mensaje[2];
+                    int colorID = Convert.ToInt32(mensaje[3]);
+
+                    partidasDataGrids[gameIndex].Rows[partidas[gameIndex].IndexOf(player)].Cells[2].Style.BackColor = coloresCharacters[colorID];
+                    break;
+                case 30:
+                    if (mensaje[2] != "0")
+                    {
+                        List<string> jugadores = new List<string>(mensaje[2].Split('.'));
+                        foreach (List<string> partida in partidas)
+                        {
+                            if (partida.Count == 0)
+                            {
+                                for (int i = 0; i < jugadores.Count - 1; i++)
+                                    partida.Add(jugadores[i]);
+                                gameIndex = partidas.IndexOf(partida);
+                                break;
+                            }
+                        }
+                        listaMiPartida(gameIndex, mensaje[2], mensaje[3]);
+
+                        displayedGame = gameIndex;
+                        for (int i = 0; i < partidasGroups.Count; i++)
+                            if (i == gameIndex)
+                                partidasGroups[i].Visible = true;
+                            else
+                                partidasGroups[i].Visible = false;
+
+                        chatMSG = "Te has unido a la partida de " + nameHost;
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
+                    }
                     break;
                 case 40:
                     this.Invoke(new Action(() => { StartNewGame(nameHost, gameIndex, username, displayedGame); }));
@@ -783,6 +846,9 @@ namespace ClienteC__Juego
                 case 49:
                     tableros[gameIndex].AtenderPartida(mensaje);
                     break;
+                case 50:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
             }
             if (codigo != 27 && codigo < 40)
                 updateStatusPartidas();
@@ -790,6 +856,9 @@ namespace ClienteC__Juego
 
         private void StartNewGame(string gameHost, int gameNum, string username, int dispGame)
         {
+            string chatMSG = "El host ha empezado la partida!";
+            WriteInChatTITLE(gameNum, chatMSG, Color.Indigo);
+
             tableros[gameNum] = new gameBoard(server, partidas[displayedGame], gameNum, gameHost, username);
             tableros[gameNum].Show();
         }
@@ -938,6 +1007,12 @@ namespace ClienteC__Juego
         {
             PictureBox hoveredPBox = (PictureBox)sender;
             hoveredPBox.BackgroundImage = null;
+        }
+
+        private void dgrid_dataGrid_SelectionChanged(object sender, EventArgs e)
+        {
+            DataGridView dgrid = (DataGridView)sender;
+            dgrid.ClearSelection();
         }
 
         private void openRankingsEXPToolStripMenuItem_Click(object sender, EventArgs e)

@@ -49,6 +49,7 @@ namespace ClienteC__Juego
         BoardDistribution boardGrids;   // Initalizes variables from custom class <BoardDistribution>
         Image[] dicesImg;       // Vector including all images a dice can have, ordered from 0 to 6 (0 being empty throw)
         Image[] playerTileImg;
+        int myCharacter;        // Corresponde a la picturebox que usas debido al color seleccionado
         int myIndex;
 
         List<PictureBox> myCardsPBox;
@@ -104,6 +105,8 @@ namespace ClienteC__Juego
                     panel_Board.Controls.Add(grid[row, col]);
                 }
             }
+            pBox_Sol.Location = new Point(cornerBoardMargin + 12*tileWidth - tileWidth/2, cornerBoardMargin + 12*tileHeight - tileHeight / 2);
+            pBox_Sol.Size = new Size(3*tileWidth + tileWidth , 5*tileHeight + tileHeight);
 
             // All buttons arrangement in the form
             panel_Board.Size = new Size(tileWidth*columns + 2*(tileWidth + cornerBoardMargin), tileHeight*rows + 2*(tileHeight + cornerBoardMargin));
@@ -238,6 +241,7 @@ namespace ClienteC__Juego
             cardsSolution = new List<Card>(3);
             myCards = new List<Card>();
             CreateCards();
+            DrawCharacters();
 
             if (gameHost == userName)
             {
@@ -267,9 +271,9 @@ namespace ClienteC__Juego
                 if (card.type == "room")
                     guessRoom.Add(card);
             }
-            panel_guess1.BackgroundImage = guessSuspect[0].image;
-            panel_guess2.BackgroundImage = guessWeapon[0].image;
-            panel_guess3.BackgroundImage = guessRoom[0].image;
+            panel_guess1.BackgroundImage = panel_Solve1.BackgroundImage = guessSuspect[0].image;
+            panel_guess2.BackgroundImage = panel_Solve2.BackgroundImage = guessWeapon[0].image;
+            panel_guess3.BackgroundImage = panel_Solve3.BackgroundImage = guessRoom[0].image;
             guessCards = new List<Card> { guessSuspect[0], guessWeapon[0], guessRoom[0] };
 
             tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}, Weapon: {1}, Room: {2}", guessSuspect[0].ID.ToString(), guessWeapon[0].ID.ToString(), guessRoom[0].ID.ToString()) + Environment.NewLine);
@@ -309,7 +313,7 @@ namespace ClienteC__Juego
             Position hoveredPos = new Position(0, 0);
             PictureBox hoveredPBox = (PictureBox)sender;
 
-            if ((myPosTemp.X != -1) && (hoveredPBox.Tag.ToString() == "hway" || hoveredPBox.Tag.ToString().Split('/')[0] == "door"))
+            if ((myPosTemp.X != -1) && (hoveredPBox.Tag.ToString() == "hway" || hoveredPBox.Tag.ToString().Split('/')[0] == "door" || hoveredPBox.Tag.ToString().Split('/')[0] == "center"))
             {
                 PictureBox myPBox = grid[myPosTemp.X, myPosTemp.Y];
                 bool found = false;
@@ -328,8 +332,11 @@ namespace ClienteC__Juego
                     if (found) break;
                 }
 
+                string tagMyPBox = myPBox.Tag.ToString().Split('/')[0];
+                string tagHovPBox = hoveredPBox.Tag.ToString().Split('/')[0];
+
                 // Si estas dentro de una habitacion primero te situa en la puerta mas cercana a tu destino
-                if (myPBox.Tag.ToString().Split('/')[0] == "room")
+                if (tagMyPBox == "room")
                 {
                     int doorNum = Convert.ToInt32(myPBox.Tag.ToString().Split('/')[1]);
                     myPosTemp = boardGrids.closestDoorToNextPos(hoveredPos, doorNum);
@@ -338,17 +345,25 @@ namespace ClienteC__Juego
 
                 // Pathfinding desde mi posicion hasta posicion hovereada
                 List<Position> positionsPath = null;
-                if (hoveredPBox.Tag.ToString().Split('/')[0] == "door")
+                if (tagHovPBox == "hway")
+                {
+                    Position startPos = boardGrids.positionsNoDoorsBoard[myPosTemp.X, myPosTemp.Y];
+                    Position endPos = boardGrids.positionsNoDoorsBoard[hoveredPos.X, hoveredPos.Y];
+                    positionsPath = myPosTemp.FindPath(startPos, endPos, boardGrids.positionsNoDoorsBoard);
+                }
+                else if (tagHovPBox == "door")
                 {
                     Position startPos = boardGrids.positionsBoard[myPosTemp.X, myPosTemp.Y];
                     Position endPos = boardGrids.positionsBoard[hoveredPos.X, hoveredPos.Y];
                     positionsPath = myPosTemp.FindPath(startPos, endPos, boardGrids.positionsBoard);
                 }
-                else
+                else if(tagHovPBox == "center")
                 {
-                    Position startPos = boardGrids.positionsNoDoorsBoard[myPosTemp.X, myPosTemp.Y];
-                    Position endPos = boardGrids.positionsNoDoorsBoard[hoveredPos.X, hoveredPos.Y];
-                    positionsPath = myPosTemp.FindPath(startPos, endPos, boardGrids.positionsNoDoorsBoard);
+                    hoveredPos = boardGrids.closestCenterToMyPos(myPosTemp);
+
+                    Position startPos = boardGrids.positionsPlusCenterBoard[myPosTemp.X, myPosTemp.Y];
+                    Position endPos = boardGrids.positionsPlusCenterBoard[hoveredPos.X, hoveredPos.Y];
+                    positionsPath = myPosTemp.FindPath(startPos, endPos, boardGrids.positionsPlusCenterBoard);
                 }
 
                 // Display visual del camino
@@ -416,12 +431,14 @@ namespace ClienteC__Juego
                 if (myPos.X != -1)
                 {
                     PictureBox myPBox = grid[myPos.X, myPos.Y];
+                    string tagMyPBox = myPBox.Tag.ToString().Split('/')[0];
+                    string tagClickPBox = clickedPBox.Tag.ToString().Split('/')[0];
 
-                    if (myPBox.Tag.ToString().Split('/')[0] == "room")
+                    if (tagMyPBox == "room")
                     {
                         int roomNum = Convert.ToInt32(myPBox.Tag.ToString().Split('/')[1]);
 
-                        if (clickedPBox.Tag.ToString().Split('/')[0] == "Teleport")
+                        if (tagClickPBox == "Teleport")
                         {
                             int tpNum = Convert.ToInt32(clickedPBox.Tag.ToString().Split('/')[1]);
                             teleportPlayer(roomNum);
@@ -434,9 +451,22 @@ namespace ClienteC__Juego
                     }
 
                     // Pathfinding desde mi posicion hasta posicion clicada
-                    Position startPos = boardGrids.positionsBoard[myPos.X, myPos.Y];
-                    Position endPos = boardGrids.positionsBoard[clickedPos.X, clickedPos.Y];
-                    List<Position> positionsPath = myPos.FindPath(startPos, endPos, boardGrids.positionsBoard);
+                    List<Position> positionsPath;
+                    Position startPos, endPos;
+                    if (tagClickPBox != "center")
+                    {
+                        startPos = boardGrids.positionsBoard[myPos.X, myPos.Y];
+                        endPos = boardGrids.positionsBoard[clickedPos.X, clickedPos.Y];
+                        positionsPath = myPos.FindPath(startPos, endPos, boardGrids.positionsBoard);
+                    }
+                    else
+                    {
+                        clickedPos = boardGrids.closestCenterToMyPos(myPos);
+
+                        startPos = boardGrids.positionsPlusCenterBoard[myPos.X, myPos.Y];
+                        endPos = boardGrids.positionsPlusCenterBoard[clickedPos.X, clickedPos.Y];
+                        positionsPath = myPos.FindPath(startPos, endPos, boardGrids.positionsPlusCenterBoard);
+                    }
 
                     if (positionsPath != null)
                     {
@@ -462,16 +492,16 @@ namespace ClienteC__Juego
                             displayPathToNextPos(positionsPath,myPBox,remainingMoves);
                         }
                     }
+
                     if (grid[myPos.X, myPos.Y].Tag.ToString().Split('/')[0] == "room" || grid[myPos.X, myPos.Y].Tag.ToString().Split('/')[0] == "center")
                         remainingMoves = 0;
+
                     int n1, n2;
-                    if (remainingMoves >= 6)
-                    {
+                    if (remainingMoves >= 6) {
                         n1 = 6;
                         n2 = remainingMoves - 6;
                     }
-                    else
-                    {
+                    else {
                         n1 = remainingMoves;
                         n2 = 0;
                     }
@@ -523,6 +553,12 @@ namespace ClienteC__Juego
                 int doorNum = Convert.ToInt32(nextPBox.Tag.ToString().Split('/')[1]);
                 grid[prePos.X, prePos.Y].BackgroundImage = null;
                 myPos = boardGrids.moveToRoom(doorNum, grid);
+                grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myIndex];
+            }
+            else if (nextPBox.Tag.ToString().Split('/')[0] == "center")
+            {
+                grid[prePos.X, prePos.Y].BackgroundImage = null;
+                myPos = clickedPos;
                 grid[myPos.X, myPos.Y].BackgroundImage = playerTileImg[myIndex];
             }
 
@@ -864,6 +900,13 @@ namespace ClienteC__Juego
             switch (codigo)
             {
                 case 41:
+                    if (mensaje.Length == 3)
+                    {
+                        string[] vectColores = mensaje[2].Split('.');
+                        int myColor = Convert.ToInt32(vectColores[partida.IndexOf(userName)]);
+                        ComprovarCasillaSalida(myColor);
+                    }
+
                     myturn = true;
                     ComprovarTurno(myturn);
                     break;
@@ -883,17 +926,16 @@ namespace ClienteC__Juego
 
                     // Split players and players cards to search mine
                     string[] players = mensaje[3].Split('.');
-                    string[] playersCards = mensaje[4].Split('.');
+                    string[] vectColors = mensaje[4].Split('.');
+                    int miColor = Convert.ToInt32(vectColors[partida.IndexOf(userName)]);
+                    ComprovarCasillaSalida(miColor);
 
-                    for (int i = 0; i < players.Length; i++)
-                    {
-                        if (players[i] == userName)
-                        {
-                            string[] myCardsID = playersCards[i].Split(',');
-                            for (int j = 0; j < myCardsID.Length; j++)
-                                myCards.Add(cardsList[Convert.ToInt32(myCardsID[j])]);
-                        }
-                    }
+                    string[] playersCards = mensaje[5].Split('.');
+
+                    string[] myCardsID = playersCards[partida.IndexOf(userName)].Split(',');
+                    for (int j = 0; j < myCardsID.Length; j++)
+                        myCards.Add(cardsList[Convert.ToInt32(myCardsID[j])]);
+
                     PrintCardsDeck(myCards);
                     DisplayMyCards(myCards);
                     break;
@@ -1004,12 +1046,11 @@ namespace ClienteC__Juego
                     panel_Solve.Visible = true;
                     break;
                 case 50:
-                    int idsuspect = Convert.ToInt32(mensaje[3]);
-                    panel_Solve1.BackgroundImage = cardsList[idsuspect].image;
-                    int idweapon = Convert.ToInt32(mensaje[3]);
-                    panel_Solve2.BackgroundImage = cardsList[idweapon].image;
-                    int idroom = Convert.ToInt32(mensaje[3]);
-                    panel_Solve3.BackgroundImage = cardsList[idroom].image;
+                    string[] cardsSolve = mensaje[3].Split('.');
+
+                    panel_Solve1.BackgroundImage = cardsList[Convert.ToInt32(cardsSolve[0])].image;
+                    panel_Solve2.BackgroundImage = cardsList[Convert.ToInt32(cardsSolve[1])].image;
+                    panel_Solve3.BackgroundImage = cardsList[Convert.ToInt32(cardsSolve[2])].image;
                     break;
             }
         }
@@ -1123,6 +1164,7 @@ namespace ClienteC__Juego
         {
             panel_Solve.Visible = true;
             panel_Solve.Enabled = true;
+            playerSolve = userName;
             string mensaje = "49/" + gameHost + "/" + userName;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
@@ -1137,7 +1179,7 @@ namespace ClienteC__Juego
 
             tbox_info.AppendText(String.Format("CartasSolve: Suspect: {0}", guessSuspect[countsolve1].ID.ToString() + Environment.NewLine));
 
-            string mensaje = "50/" + gameHost + "/" + playerSolve + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
+            string mensaje = "50/" + gameHost + "/" + userName + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1147,11 +1189,11 @@ namespace ClienteC__Juego
             countsolve2++;
             if (countsolve2 > 5)
                 countsolve2 = 0;
-            panel_guess2.BackgroundImage = guessWeapon[countsolve2].image;
+            panel_Solve2.BackgroundImage = guessWeapon[countsolve2].image;
 
             tbox_info.AppendText(String.Format("CartasSolve: Weapon: {0}", guessWeapon[countsolve2].ID.ToString() + Environment.NewLine));
 
-            string mensaje = "50/" + gameHost + "/" + playerSolve + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
+            string mensaje = "50/" + gameHost + "/" + userName + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1161,11 +1203,11 @@ namespace ClienteC__Juego
             countsolve3++;
             if (countsolve3 > 8)
                 countsolve3 = 0;
-            panel_guess2.BackgroundImage = guessRoom[countsolve3].image;
+            panel_Solve3.BackgroundImage = guessRoom[countsolve3].image;
 
             tbox_info.AppendText(String.Format("CartasSolve: Room: {0}", guessRoom[countsolve3].ID.ToString() + Environment.NewLine));
 
-            string mensaje = "50/" + gameHost + "/" + playerSolve + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
+            string mensaje = "50/" + gameHost + "/" + userName + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1199,6 +1241,42 @@ namespace ClienteC__Juego
                 panel_Board.Enabled = false;
                 btt_endturn.Enabled =false;
             }
+        }
+
+        private void ComprovarCasillaSalida (int color)
+        {
+            myCharacter = color;
+            switch (color)
+            {
+                case 0:
+                    myPos = new Position(0, 9);
+                    break;
+                case 1:
+                    myPos = new Position(0, 14);
+                    break;
+                case 2:
+                    myPos = new Position(6, 23);
+                    break;
+                case 3:
+                    myPos = new Position(19, 23);
+                    break;
+                case 4:
+                    myPos = new Position(24, 7);
+                    break;
+                case 5:
+                    myPos = new Position(17, 0);
+                    break;
+            }
+        }
+
+        private void DrawCharacters()
+        {
+            grid[0, 9].BackgroundImage = playerTileImg[0];
+            grid[0, 14].BackgroundImage = playerTileImg[1];
+            grid[6, 23].BackgroundImage = playerTileImg[2];
+            grid[19, 23].BackgroundImage = playerTileImg[3];
+            grid[24, 7].BackgroundImage = playerTileImg[4];
+            grid[17, 0].BackgroundImage = playerTileImg[5];
         }
     }
 }

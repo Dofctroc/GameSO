@@ -296,5 +296,8 @@
   <ItemGroup>
     <None Include="Resources\NotePadIcons\Accept.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\coveredBack.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

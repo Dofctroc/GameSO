@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ClienteC__Juego
 {
@@ -14,6 +15,7 @@ namespace ClienteC__Juego
         public string[,] stringsBoard;
         public Position[,] positionsBoard;
         public Position[,] positionsNoDoorsBoard;
+        public Position[,] positionsPlusCenterBoard;
 
         public int gridSizeX = 25;
         public int gridSizeY = 24;
@@ -33,11 +35,11 @@ namespace ClienteC__Juego
                 {"__", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "r5", "r5", "r5", "r5", "r5", "r5"} ,
                 {"r4", "r4", "r4", "r4", "r4", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "d5", "r5", "r5", "r5", "r5", "r5"} ,
                 {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "r4", "hw", "hw", "ct", "ct", "ct", "ct", "ct", "hw", "hw", "hw", "r5", "r5", "r5", "r5", "r5", "r5"} ,
-                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "r4", "hw", "hw", "ct", "ct", "ct", "ct", "ct", "hw", "hw", "hw", "r5", "r5", "r5", "r5", "r5", "r5"} ,
-                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "d4", "hw", "hw", "ct", "ct", "ct", "ct", "ct", "hw", "hw", "hw", "r5", "r5", "r5", "r5", "d5", "r5"} ,
-                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "r4", "hw", "hw", "ct", "ct", "ct", "ct", "ct", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "__"} ,
-                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "r4", "hw", "hw", "ct", "ct", "ct", "ct", "ct", "hw", "hw", "hw", "r6", "r6", "d6", "r6", "r6", "__"} ,
-                {"r4", "r4", "r4", "r4", "r4", "r4", "d4", "r4", "hw", "hw", "ct", "ct", "ct", "ct", "ct", "hw", "hw", "r6", "r6", "r6", "r6", "r6", "r6", "r6"} ,
+                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "r4", "hw", "hw", "ct", "Ct", "Ct", "Ct", "ct", "hw", "hw", "hw", "r5", "r5", "r5", "r5", "r5", "r5"} ,
+                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "d4", "hw", "hw", "ct", "Ct", "Ct", "Ct", "ct", "hw", "hw", "hw", "r5", "r5", "r5", "r5", "d5", "r5"} ,
+                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "r4", "hw", "hw", "ct", "Ct", "Ct", "Ct", "ct", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "__"} ,
+                {"r4", "r4", "r4", "r4", "r4", "r4", "r4", "r4", "hw", "hw", "ct", "Ct", "Ct", "Ct", "ct", "hw", "hw", "hw", "r6", "r6", "d6", "r6", "r6", "__"} ,
+                {"r4", "r4", "r4", "r4", "r4", "r4", "d4", "r4", "hw", "hw", "ct", "Ct", "Ct", "Ct", "ct", "hw", "hw", "r6", "r6", "r6", "r6", "r6", "r6", "r6"} ,
                 {"__", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "ct", "ct", "ct", "ct", "ct", "hw", "hw", "d6", "r6", "r6", "r6", "r6", "r6", "r6"} ,
                 {"O6", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "r6", "r6", "r6", "r6", "r6", "r6", "r6"} ,
                 {"__", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "hw", "r8", "r8", "d8", "d8", "r8", "r8", "hw", "hw", "hw", "r6", "r6", "r6", "r6", "r6", "__"} ,
@@ -51,6 +53,7 @@ namespace ClienteC__Juego
 
             positionsBoard = new Position[25,24];
             positionsNoDoorsBoard = new Position[25, 24];
+            positionsPlusCenterBoard = new Position[25, 24];
 
             for (int x = 0; x < gridSizeX; x++) {
                 for (int y = 0; y < gridSizeY;  y++)
@@ -71,6 +74,17 @@ namespace ClienteC__Juego
                         positionsNoDoorsBoard[x, y] = new Position(x, y, false);
                 }
             }
+
+            for (int x = 0; x < gridSizeX; x++)
+            {
+                for (int y = 0; y < gridSizeY; y++)
+                {
+                    if (stringsBoard[x, y] == "hw" || stringsBoard[x, y] == "ct" || stringsBoard[x, y][0] == 'd')
+                        positionsPlusCenterBoard[x, y] = new Position(x, y, true);
+                    else
+                        positionsPlusCenterBoard[x, y] = new Position(x, y, false);
+                }
+            }
         }
 
         public string setTileTag(int row, int col)
@@ -79,6 +93,8 @@ namespace ClienteC__Juego
                 return "hway";
             else if (stringsBoard[row, col] == "ct")
                 return "center";
+            else if (stringsBoard[row, col] == "Ct")
+                return "deep";
             else if (stringsBoard[row, col][0] == 'O')
                 return "Origin" + "/" + stringsBoard[row, col][1];
             else if (stringsBoard[row, col][0] == 'd')
@@ -112,26 +128,78 @@ namespace ClienteC__Juego
 
         public Position closestDoorToNextPos(Position nextPos, int doorNum)
         {
-            string tag = "d" + doorNum;
-            int lowestDist = 50;
-            Position finalPos = positionsBoard[nextPos.X, nextPos.Y];
-            Position doorPos = new Position(0, 0);
-            for (int i = 0; i < gridSizeX; i++) {
-                for (int j = 0; j < gridSizeY; j++)
+            Position doorPos;
+            if (stringsBoard[nextPos.X,nextPos.Y] == "ct")
+            {
+                string tag = "d" + doorNum;
+                int lowestDist = 50;
+                Position finalPos = positionsPlusCenterBoard[nextPos.X, nextPos.Y];
+                doorPos = new Position(0, 0);
+                for (int i = 0; i < gridSizeX; i++)
                 {
-                    if (stringsBoard[i, j] == tag)
+                    for (int j = 0; j < gridSizeY; j++)
                     {
-                        Position pos = positionsBoard[i,j];
-                        List<Position> positions = nextPos.FindPath(pos, finalPos, positionsBoard);
-                        if (positions.Count < lowestDist)
+                        if (stringsBoard[i, j] == tag)
                         {
-                            doorPos = new Position(i, j);
-                            lowestDist = positions.Count;
+                            Position pos = positionsPlusCenterBoard[i, j];
+                            List<Position> positions = nextPos.FindPath(pos, finalPos, positionsPlusCenterBoard);
+                            if (positions.Count < lowestDist)
+                            {
+                                doorPos = new Position(i, j);
+                                lowestDist = positions.Count;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                string tag = "d" + doorNum;
+                int lowestDist = 50;
+                Position finalPos = positionsBoard[nextPos.X, nextPos.Y];
+                doorPos = new Position(0, 0);
+                for (int i = 0; i < gridSizeX; i++)
+                {
+                    for (int j = 0; j < gridSizeY; j++)
+                    {
+                        if (stringsBoard[i, j] == tag)
+                        {
+                            Position pos = positionsBoard[i, j];
+                            List<Position> positions = nextPos.FindPath(pos, finalPos, positionsBoard);
+                            if (positions.Count < lowestDist)
+                            {
+                                doorPos = new Position(i, j);
+                                lowestDist = positions.Count;
+                            }
                         }
                     }
                 }
             }
             return doorPos;
+        }
+
+        public Position closestCenterToMyPos(Position myPos)
+        {
+            Position closestPos = new Position(0, 0);
+            int lowestDist = 50;
+            int length;
+
+            for (int i = 0; i < gridSizeX; i++) {
+                for (int j = 0; j < gridSizeY; j++)
+                {
+                    if (stringsBoard[i, j] == "ct")
+                    {
+                        Position pos = positionsBoard[i, j];
+                        length = myPos.calculateMovesLength(pos);
+                        if (length < lowestDist)
+                        {
+                            closestPos = new Position(i, j);
+                            lowestDist = length;
+                        }
+                    }
+                }
+            }
+            return closestPos;
         }
     }
 }

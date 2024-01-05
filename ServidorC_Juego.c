@@ -29,6 +29,7 @@ typedef struct {
 
 typedef struct {
 	Usuario jugadores[6];
+	int colores[6];
 	int numJugadores;
 	int status;	//1 for in game, 0 for in lobby
 } Partida;
@@ -111,6 +112,23 @@ int JugadoresEnPartida(ListaPartidas* listaP, char sockets_receptores[], char ho
 	}
 	printf("Jugadores: %s \n", infoJugadoresPartida);
 	printf("Sockets: %s \n", sockets_receptores);
+	return 0;
+}
+
+int ColoresJugadoresEnPartida(ListaPartidas* listaP, char host[], char coloresJugadoresPartida[])
+{
+	strcpy(coloresJugadoresPartida, "");
+	
+	for (int i = 0; i < listaP->num; i++) {
+		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0) 
+		{
+			for (int n = 0; n < listaP->partidas[i].numJugadores; n++) {
+				sprintf(coloresJugadoresPartida, "%s%d.", coloresJugadoresPartida, listaP->partidas[i].colores[n]);
+			}
+			break;
+		}
+	}
+	printf("Colores: %s \n", coloresJugadoresPartida);
 	return 0;
 }
 
@@ -289,7 +307,6 @@ int PonJugadorPartida(ListaConectados* listaC, ListaPartidas* listaP, char nombr
 	for (int i = 0; i < listaP->num; i++) {
 		if (strcmp(listaP->partidas[i].jugadores[0].userName, host) == 0){
 			strcpy(listaP->partidas[i].jugadores[listaP->partidas[i].numJugadores].userName, nombre);
-			listaP->partidas[i].jugadores[listaP->partidas[i].numJugadores].status = 1;
 			for (int i = 0; i < listaC->num; i++) {
 				if (strcmp(listaC->conectados[i].userName, nombre) == 0) {
 					socketUsuario = listaC->conectados[i].socket;
@@ -304,6 +321,34 @@ int PonJugadorPartida(ListaConectados* listaC, ListaPartidas* listaP, char nombr
 	return 0;
 }
 
+// Asigna color al ultimo jugador de la partida, color no asignado (va del 1 al 6)
+int AsignaColorJugador(ListaPartidas* listaP, char host[])
+{
+	int partidaIndex = BuscarPartidaHost(listaP,host);
+	int color = 0;
+	int freeColor = 1;
+	
+	for (color = 0; color < 6; color++)  // Cambiado a 6 para representar colores del 0 al 5
+	{
+		freeColor = 1;
+		for (int i = 0; i < listaP->partidas[partidaIndex].numJugadores; i++)
+		{
+			if (listaP->partidas[partidaIndex].colores[i] == color)
+			{
+				freeColor = 0;
+				break;  // Salir del bucle interno si el color está ocupado
+			}
+		}
+		
+		if (freeColor == 1)
+		{
+			listaP->partidas[partidaIndex].colores[listaP->partidas[partidaIndex].numJugadores] = color;
+			return color;  // Devolver el primer color disponible
+		}
+	}
+	return -1;
+}
+
 // ------------------------ ACTUALIZACIONES --------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------
 int actualizarEstadoUsuario(ListaConectados* listaC, char nombre[], int status)
@@ -314,6 +359,21 @@ int actualizarEstadoUsuario(ListaConectados* listaC, char nombre[], int status)
 		listaC->conectados[usuario].status = status;
 	}
 	return 0;
+}
+
+int actualizarEstadoPartida(ListaConectados* listaC, ListaPartidas* listaP, int partida, int status)
+{
+	if (partida != -1)
+	{
+		listaP->partidas[partida].status = status;
+		for (int i = 0; i < listaP->partidas[partida].numJugadores; i++)
+		{
+			actualizarEstadoUsuario(listaC, listaP->partidas[partida].jugadores[i].userName, status);
+			listaP->partidas[partida].jugadores[i].status = status;
+		}
+		return 0;		
+	}
+	return -1;
 }
 
 // --------------------------- CONSULTAS -----------------------------------------------------------------------------
@@ -911,10 +971,14 @@ void AtenderCliente(void* socket)
 		}
 		else if (codigo == 20)
 		{
+			char coloresJugadoresPartida[20];
 			p = strtok(NULL, "/");
 			strcpy(host, p);
-			int err = CrearPartida(&lista_Partidas, userName, sock_conn);
-			sprintf(respuesta, "20/%s/%d", host, err);
+			int err = CrearPartida(&lista_Partidas, host, sock_conn);
+			int color = AsignaColorJugador(&lista_Partidas, host);
+			ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+			printf("Color asignado: %d \n",color);
+			sprintf(respuesta, "20/%s/%d/%s", host, err, coloresJugadoresPartida);
 		}
 		else if (codigo == 21)		// 3/Host/Asier/Julia/Gu... tots els invitados (fins a 8)
 		{
@@ -944,6 +1008,7 @@ void AtenderCliente(void* socket)
 			char invitado[20];
 			char decision[20];
 			char actualizacion[20];
+			char coloresJugadoresPartida[20];
 			int socketHost;
 			strcpy (sockets_receptores,"");
 			strcpy (actualizacion,"");
@@ -958,12 +1023,17 @@ void AtenderCliente(void* socket)
 				strcpy(invitado, p);
 				p = strtok(NULL, "/");
 				strcpy(decision, p);
-				sprintf(actualizacion, "23/%s/%s/%s", host, invitado, decision);
 				
 				if (strcmp(decision,"Yes") == 0)
+				{
 					PonJugadorPartida(&lista_Conectados, &lista_Partidas, invitado, host);
+					AsignaColorJugador(&lista_Partidas, host);
+				}
 				
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+				
+				sprintf(actualizacion, "23/%s/%s/%s/%s", host, invitado, decision, coloresJugadoresPartida);
 				
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
@@ -975,9 +1045,9 @@ void AtenderCliente(void* socket)
 				}
 				
 				if (strcmp(decision,"Yes") == 0)
-					sprintf(respuesta, "23/%s/%s", host, infoJugadoresPartida);
+					sprintf(respuesta, "30/%s/%s/%s", host, infoJugadoresPartida, coloresJugadoresPartida);
 				else 
-					sprintf(respuesta, "23/%s/0", host);
+					sprintf(respuesta, "30/%s/0", host);
 			}
 		}
 		else if (codigo == 24)
@@ -1062,14 +1132,50 @@ void AtenderCliente(void* socket)
 			}
 			strcpy(respuesta, mensajechat);
 		}
+		else if (codigo == 28)
+		{
+			char coloresJugadoresPartida[50];
+			char player[20];
+			int IDcolor;
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(player, p);
+			p = strtok(NULL, "/");
+			IDcolor = atoi(p);
+			
+			int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
+			int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas, player, partidaIndex);
+			lista_Partidas.partidas[partidaIndex].colores[jugadorIndex] = IDcolor;
+			ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+			// Send solution cards info to all players
+			char mensajeColor[50];
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			p = strtok(sockets_receptores, "/");
+			sprintf(mensajeColor, "28/%s/%s/%d", host, player, IDcolor);
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn)
+					write(socketUsuario, mensajeColor, strlen(mensajeColor));
+				p = strtok(NULL, "/");
+			}
+			
+			// Once all cards info is sent, send message to start turn to the host
+			sprintf(respuesta, "");
+		}
 		else if (codigo == 40)
 		{
 			char mensajeiniciopartida[50];
 			p = strtok(NULL, "/");
 			strcpy(host, p);
 			
+			int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
+			actualizarEstadoPartida(&lista_Conectados, &lista_Partidas, partidaIndex, 1);
+			
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
 			p = strtok(sockets_receptores, "/");
 			sprintf(mensajeiniciopartida, "40/%s", host);
 			while (p != NULL)
@@ -1105,6 +1211,7 @@ void AtenderCliente(void* socket)
 		}
 		else if (codigo == 43)
 		{
+			char coloresJugadoresPartida[20];
 			char cardsSol[20];
 			char cardsPlayers[100];
 			
@@ -1119,8 +1226,9 @@ void AtenderCliente(void* socket)
 			char mensajeCardsSol[50];
 			
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
 			p = strtok(sockets_receptores, "/");
-			sprintf(mensajeCardsSol, "44/%s/%s/%s/%s", host, cardsSol, infoJugadoresPartida, cardsPlayers);
+			sprintf(mensajeCardsSol, "44/%s/%s/%s/%s/%s", host, cardsSol, infoJugadoresPartida, coloresJugadoresPartida, cardsPlayers);
 			while (p != NULL)
 			{
 				socketUsuario = atoi(p);
@@ -1130,7 +1238,7 @@ void AtenderCliente(void* socket)
 			}
 			
 			// Once all cards info is sent, send message to start turn to the host
-			sprintf(respuesta, "41/%s", host);
+			sprintf(respuesta, "41/%s/%s", host, coloresJugadoresPartida);
 		}
 		else if (codigo == 45)
 		{
@@ -1314,19 +1422,16 @@ void AtenderCliente(void* socket)
 		{
 			char playerSolve[20];
 			char mensajeSolve[200];
-			int suspect, weapon, room;
+			char cardsSolve[20];
 			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
 			p = strtok(NULL, "/");
 			strcpy(playerSolve, p);
 			p = strtok(NULL, "/");
-			suspect = atoi(p);
-			p = strtok(NULL, "/");
-			weapon = atoi(p);
-			p = strtok(NULL, "/");
-			room = atoi(p);
-			sprintf(mensajeSolve, "50/%s/%s", host, playerSolve, suspect, weapon, room);
+			strcpy(cardsSolve, p);
+			
+			sprintf(mensajeSolve, "50/%s/%s/%s", host, playerSolve, cardsSolve);
 			
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 			p = strtok(sockets_receptores, "/");
@@ -1341,7 +1446,7 @@ void AtenderCliente(void* socket)
 			}
 			strcpy(respuesta, "");
 		}
-		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47))
+		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47) && (codigo != 48) && (codigo != 49) && (codigo != 50))
 		{
 			printf("Respuesta: %s\n", respuesta);
 			// Enviamos respuesta
@@ -1360,6 +1465,16 @@ void AtenderCliente(void* socket)
 						write(sockets[j], notificacion, strlen(notificacion));
 			}
 		}
+		/* else if (codigo == 40)
+		{
+			consultaConectados(&lista_Conectados, conectados);
+			sprintf(notificacion, "10/%s",conectados);
+			
+			int j;
+			for (j = 0; j < 100; j++)
+				if (sockets[j] != -1)
+					write(sockets[j], notificacion, strlen(notificacion));
+		} */
 	}
 	// Se acabo el servicio para este cliente
 	// Liberar la posicion de su socket del vector de sockets (cambiando el valor a -1)
@@ -1386,7 +1501,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9076; 		//Linux
+	int puerto = 9075; 		//Linux
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
 
