@@ -237,20 +237,52 @@ int EliminarUsuario(MYSQL* conn, char nombre[], char password[], char mensajeSig
 		if (atoi(row[0]) == 1)
 		{
 			strcpy(mensajeSignOut, "3/0");
-			strcpy(consulta, "SET FOREIGN_KEY_CHECKS=0;");
-			if (mysql_query(conn, consulta) != 0) {
-				fprintf(stderr, "Error: %s\n", mysql_error(conn));
+			
+			if (mysql_query(conn, "START TRANSACTION;") != 0) {
+				fprintf(stderr, "START TRANSACTION failed\n");
+				mysql_close(conn);
+				exit(1);
 			}
-			strcpy(consulta, "DELETE FROM Jugador WHERE Jugador.userName = '");
-			strcat(consulta, nombre);
-			strcat(consulta, "';");
-			if (mysql_query(conn, consulta) != 0) {
-				fprintf(stderr, "Error: %s\n", mysql_error(conn));
+			if (mysql_query(conn, "SET FOREIGN_KEY_CHECKS = 0;") != 0) {
+				fprintf(stderr, "SET FOREIGN_KEY_CHECKS = 0 failed\n");
+				mysql_close(conn);
+				exit(1);
 			}
-			strcpy(consulta, "SET FOREIGN_KEY_CHECKS=1;");
+			sprintf(consulta, "SET @deletedPlayerID = (SELECT ID FROM Jugador WHERE userName = '%s');", nombre);
 			if (mysql_query(conn, consulta) != 0) {
-				fprintf(stderr, "Error: %s\n", mysql_error(conn));
+				fprintf(stderr, "Failed to set @deletedPlayerID\n");
+				mysql_close(conn);
+				exit(1);
 			}
+			sprintf(consulta, "UPDATE PartidasJugadores SET ID_Jugador = 0 WHERE ID_Jugador = @deletedPlayerID;");
+			if (mysql_query(conn, consulta) != 0) {
+				fprintf(stderr, "UPDATE PartidasJugadores failed\n");
+				mysql_close(conn);
+				exit(1);
+			}
+			sprintf(consulta, "UPDATE Partida SET ganador = 'NotAvailable' WHERE ganador = '%s';", nombre);
+			if (mysql_query(conn, consulta) != 0) {
+				fprintf(stderr, "UPDATE Partida failed\n");
+				mysql_close(conn);
+				exit(1);
+			}
+			sprintf(consulta, "DELETE FROM Jugador WHERE ID = @deletedPlayerID;");
+			if (mysql_query(conn, consulta) != 0) {
+				fprintf(stderr, "DELETE FROM Jugador failed\n");
+				mysql_close(conn);
+				exit(1);
+			}
+			if (mysql_query(conn, "SET FOREIGN_KEY_CHECKS = 1;") != 0) {
+				fprintf(stderr, "SET FOREIGN_KEY_CHECKS = 1 failed\n");
+				mysql_close(conn);
+				exit(1);
+			}
+			if (mysql_query(conn, "COMMIT;") != 0) {
+				fprintf(stderr, "COMMIT failed\n");
+				mysql_close(conn);
+				exit(1);
+			}
+			
 			i = 0;
 		}
 		else {
@@ -346,6 +378,52 @@ int AsignaColorJugador(ListaPartidas* listaP, char host[])
 		}
 	}
 	return -1;
+}
+
+int InsertarPartidaSQL(MYSQL* conn, ListaPartidas* listaP, char host[], int duration, char winner[], int score, char day[])
+{
+	char consulta[200];
+	MYSQL_RES* resultado;
+	MYSQL_ROW row;
+	int err, ID, userID;
+	
+	// INSERT INTO Partida VALUES (3,'26,01,23',24,'Jan');
+	// INSERT INTO PartidasJugadores VALUES(1,1,1,120);
+	
+	mysql_query(conn, "SELECT MAX(ID) FROM Partida;");
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	ID = atoi(row[0]) + 1;
+	
+	sprintf(consulta,"INSERT INTO Partida VALUES (%d,'%s',%d,'%s');", ID,day,score,winner);
+	mysql_query(conn,consulta);
+	
+	int pos = 2;
+	int partidaIndex = BuscarPartidaHost(listaP, host);
+	for (int i = 0; i < listaP->partidas[partidaIndex].numJugadores; i++)
+	{
+		char user[50];
+		strcpy(user, listaP->partidas[partidaIndex].jugadores[i].userName);
+		
+		sprintf(consulta,"SELECT ID FROM Jugador WHERE Jugador.userName = '%s';", user);
+		mysql_query(conn, consulta);
+		resultado = mysql_store_result(conn);
+		row = mysql_fetch_row(resultado);
+		userID = atoi(row[0]);
+		
+		if (strcmp(listaP->partidas[partidaIndex].jugadores[i].userName, winner) == 0)
+		{
+			sprintf(consulta,"INSERT INTO PartidasJugadores VALUES(%d,%d,%d,%d);", userID,ID,1,score);
+			mysql_query(conn,consulta);
+		}
+		else
+		{
+			sprintf(consulta,"INSERT INTO PartidasJugadores VALUES(%d,%d,%d,%d);", userID,ID,pos,0);
+			mysql_query(conn,consulta);
+			pos++;
+		}
+	}
+	return 0;
 }
 
 // ------------------------ ACTUALIZACIONES --------------------------------------------------------------------------
@@ -670,18 +748,16 @@ int consultaInfoJugador(MYSQL* conn, char nombreJugador[], char infoRanking[])
 int consultaInfoPartida(MYSQL* conn, char idPartida[], char infoRanking[])
 {
 	strcpy(infoRanking, "");
-	// Ranking puntuacion total de cada jugador
-	// Formato: Jug1.Punt1.Jug2.Punt2... (Preferiblemente en ordenn)
 	int err;
 	MYSQL_RES* resultado;
 	MYSQL_ROW row;
 	
 	char consulta[800];
 	strcpy(consulta, "SELECT Jugador.userName "
-		   "FROM Jugador, PartidasJugadores, Partida "
-		   "WHERE Jugador.ID = PartidasJugadores.ID_Jugador "
-		   "AND Partida.ID = PartidasJugadores.ID_Partida "
-		   "AND Partida.ID = '");
+		   "FROM PartidasJugadores "
+		   "LEFT JOIN Jugador "
+		   "ON PartidasJugadores.ID_Jugador = Jugador.ID "
+		   "WHERE PartidasJugadores.ID_Partida = '");
 	strcat(consulta, idPartida);
 	strcat(consulta, "';");
 	if (mysql_query(conn, consulta) != 0) {
@@ -697,7 +773,11 @@ int consultaInfoPartida(MYSQL* conn, char idPartida[], char infoRanking[])
 		return -1;
 	}
 	while (row != NULL) {
-		sprintf (infoRanking, "%s%s.", infoRanking, row[0]);
+		if (row[0] != NULL) {
+			sprintf (infoRanking, "%s%s.", infoRanking, row[0]);
+		} else {
+			sprintf (infoRanking, "%s%s.", infoRanking, "NotAvailable");
+		}
 		printf("Jugador: %s  \n", row[0]);
 		row = mysql_fetch_row(resultado);
 	}
@@ -705,7 +785,7 @@ int consultaInfoPartida(MYSQL* conn, char idPartida[], char infoRanking[])
 	
 	sprintf (infoRanking, "%s%s.", infoRanking, "0");
 	
-	strcpy(consulta, "SELECT ganador,duracion, diaInicio "
+	strcpy(consulta, "SELECT ganador,duracion, dia "
 		   "FROM Partida "
 		   "WHERE ID = '");
 	strcat(consulta, idPartida);
@@ -723,7 +803,7 @@ int consultaInfoPartida(MYSQL* conn, char idPartida[], char infoRanking[])
 	}
 	while (row != NULL) {
 		sprintf (infoRanking, "%s%s.%s.%s", infoRanking, row[0], row[1], row[2]);
-		printf("Ganador: %s  Duracion: %s  HoraFin: %s  \n", row[0], row[1], row[2]);
+		printf("Ganador: %s  Duracion: %s  Dia: %s  \n", row[0], row[1], row[2]);
 		row = mysql_fetch_row(resultado);
 	}
 	mysql_free_result(resultado);
@@ -760,57 +840,6 @@ int EnviarInvitacion(ListaConectados* listaC, ListaPartidas* listaP, char infoIn
 	return 0;
 }
 
-/*int ConsultarJugadoresPartidas (MYSQL* conn, char userName[], char listajugadores[])
-{
-	strcpy(listajugadores, "");
-	char partidasconjugador[200];
-	// Ranking puntuacion total de cada jugador
-	// Formato: Jug1.Punt1.Jug2.Punt2... (Preferiblemente en ordenn)
-	int err;
-	MYSQL_RES* resultado;
-	MYSQL_ROW row;
-	char consulta[800];
-	strcpy(consulta, "SELECT ID_Partida FROM PartidasJugadores, Jugador, Partida WHERE Jugador.userName = '");
-	strcat(consulta, userName);
-	strcat(consulta, "' AND PartidasJugadores.ID_Jugador = Jugador.ID AND PartidasJugadores.ID_Partida = Partida.ID;");
-	if (mysql_query(conn, consulta) != 0) {
-		fprintf(stderr, "Error ejecutando el query: %s\n", mysql_error(conn));
-		return -1;
-	}
-	resultado = mysql_store_result(conn);
-	row = mysql_fetch_row(resultado);
-	
-	if (row == NULL) {
-		printf("Ha habido un error en la consulta de datos \n");
-		return -1;
-	}
-	while (row != NULL) {
-		sprintf (partidasconjugador, "%s,%s", partidasconjugador, row[0]);
-		row = mysql_fetch_row(resultado);
-		printf("Jugador: %s  \n", row[0]);
-	}
-	mysql_free_result(resultado);
-	strcpy(consulta,  "SELECT ID_Jugador FROM PartidasJugadores, Jugador, Partida WHERE PartidasJugadores.ID_Partida IN (");
-	strcat(consulta, partidasconjugador);
-	strcat(consulta, ") AND PartidasJugadores.ID_Jugador = Jugador.ID AND PartidasJugadores.ID_Partida = Partida.ID;");
-	if (mysql_query(conn, consulta) != 0) {
-		fprintf(stderr, "Error ejecutando el query: %s\n", mysql_error(conn));
-		return -1;
-	}
-	resultado = mysql_store_result(conn);
-	row = mysql_fetch_row(resultado);
-	if (row == NULL){
-		printf("Ha habido un error en la consulta de datos \n");
-		return -1;
-	}
-	while (row != NULL) {
-		sprintf (listajugadores, "%s/%s", listajugadores, row[0]);
-		row = mysql_fetch_row(resultado);
-	}
-	mysql_free_result(resultado);
-	return 0;
-}*/
-
 void ListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
 	MYSQL_RES* resultado;
 	MYSQL_ROW row;
@@ -827,7 +856,8 @@ void ListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
 	resultado = mysql_store_result(conn);
 	printf("List of players %s has played with:\n", userName);
 	
-	while ((row = mysql_fetch_row(resultado)) != NULL) {
+	row = mysql_fetch_row(resultado);
+	while (row != NULL) {
 		printf("%s\n", row[0]);
 		sprintf(listajugadores, "%s%s.", listajugadores, row[0]);
 	}
@@ -841,27 +871,23 @@ int consultaPartidaPeriodoTiempo(MYSQL* conn, char lowBound[], char upBound[], c
 	int err;
 	MYSQL_RES* resultado;
 	MYSQL_ROW row;
-
-	strcat(consulta, "SELECT Partida.ID, Partida.ganador FROM Partida WHERE STR_TO_DATE(dia, '%%d,%%m,%%y') BETWEEN '");
-	strcat(consulta, lowBound);
-	strcat(consulta, "' AND '");
-	strcat(consulta, upBound);
-	strcat(consulta, "';");
-	printf(consulta);
+	
+	sprintf(consulta, "SELECT Partida.ID, Partida.ganador FROM Partida WHERE STR_TO_DATE(dia, '%%d,%%m,%%y') BETWEEN '%s' AND '%s';", lowBound, upBound);
+	printf("Consulta: %s \n", consulta);
 	if (mysql_query(conn, consulta) != 0) {
 		fprintf(stderr, "Failed to execute query. Error: %s\n", mysql_error(conn));
 		mysql_close(conn);
 		return -1;
 	}
 	resultado = mysql_store_result(conn);
+	
+	row = mysql_fetch_row(resultado);
 	while (row != NULL) {
 		sprintf (infoConsulta, "%s%s.%s.", infoConsulta, row[0], row[1]);
 		printf("ID: %s, Ganador: %s\n", row[0], row[1]);
 		row = mysql_fetch_row(resultado);
 	}
-	mysql_free_result(resultado);
-	mysql_close(conn);
-	
+	mysql_free_result(resultado);	
 	return 0;
 }
 // -------------------- MAIN: ATENDER CLIENTE ------------------------------------------------------------------------
@@ -1041,6 +1067,42 @@ void AtenderCliente(void* socket)
 			sprintf(respuesta, "9/%s", infoConsulta);
 		}
 		// Residual code from when you could actively ask connected users
+		else if (codigo == 7)
+		{
+			char respuestaInfo[500];
+			p = strtok(NULL, "/");
+			strcpy(partida, p);
+			err = consultaInfoPartida(conn, partida ,respuestaInfo);
+			
+			if (err == 0)
+				sprintf(respuesta, "17/%s", respuestaInfo);
+			else
+				sprintf(respuesta, "17/0");
+		}
+		else if (codigo == 8)
+		{
+			char respuestaInfo[500];
+			p = strtok(NULL, "/");
+			strcpy(partida, p);
+			err = consultaInfoPartida(conn, partida ,respuestaInfo);
+			
+			if (err == 0)
+				sprintf(respuesta, "17/%s", respuestaInfo);
+			else
+				sprintf(respuesta, "17/0");
+		}
+		else if (codigo == 9)
+		{
+			char respuestaInfo[500];
+			p = strtok(NULL, "/");
+			strcpy(partida, p);
+			err = consultaInfoPartida(conn, partida ,respuestaInfo);
+			
+			if (err == 0)
+				sprintf(respuesta, "17/%s", respuestaInfo);
+			else
+				sprintf(respuesta, "17/0");
+		}
 		else if (codigo == 10)
 		{
 			p = strtok(NULL, "/");
@@ -1315,7 +1377,7 @@ void AtenderCliente(void* socket)
 			}
 			
 			// Once all cards info is sent, send message to start turn to the host
-			sprintf(respuesta, "");
+			strcpy(respuesta, "");
 		}
 		else if (codigo == 40)
 		{
@@ -1626,22 +1688,27 @@ void AtenderCliente(void* socket)
 		else if (codigo == 52)
 		{
 			char winner[20];
-			char durationSecs[20];
-			char puntuation[20];
+			int durationSecs;
+			int score;
+			char day[20];
 			char mensajeEndGame[200];
 			
 			p = strtok(NULL, "/");
 			strcpy(host, p);
 			p = strtok(NULL, "/");
-			strcpy(durationSecs, p);
+			durationSecs = atoi(p);
 			p = strtok(NULL, "/");
 			strcpy(winner, p);
 			p = strtok(NULL, "/");
-			strcpy(puntuation, p);
+			score = atoi(p);
+			p = strtok(NULL,"/");
+			strcpy(day,"/");
 			
 			sprintf(mensajeEndGame, "52/%s", host);
 			
 			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			InsertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
+			
 			EliminarPartida(&lista_Partidas, host);
 			
 			p = strtok(sockets_receptores, "/");
@@ -1651,6 +1718,35 @@ void AtenderCliente(void* socket)
 				write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
 				p = strtok(NULL, "/");
 			}
+			strcpy(respuesta, "");
+		}
+		else if (codigo == 99)
+		{
+			char infoConsulta[200];
+			consultaPartidaPeriodoTiempo(conn,"2023-01-01","2023-12-31",infoConsulta);
+			strcpy(respuesta,"");
+		}
+		else if (codigo == 100)		// 100/host/dur/win/score/day
+		{
+			char winner[20];
+			int durationSecs;
+			int score;
+			char day[20];
+			char mensajeEndGame[200];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			durationSecs = atoi(p);
+			p = strtok(NULL, "/");
+			strcpy(winner, p);
+			p = strtok(NULL, "/");
+			score = atoi(p);
+			p = strtok(NULL,"/");
+			strcpy(day,p);
+			
+			insertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
+			
 			strcpy(respuesta, "");
 		}
 		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47) && (codigo != 48) && (codigo != 49) && (codigo != 50))

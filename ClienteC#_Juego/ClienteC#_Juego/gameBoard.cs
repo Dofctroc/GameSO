@@ -746,15 +746,16 @@ namespace ClienteC__Juego
 
         private void btt_endGame_Click(object sender, EventArgs e)
         {
-            int puntuationSolve = 200;
-            string mensaje = "52/" + gameHost + "/" + gameDurationSecs + "/" + playerSolve + "/" + puntuationSolve;
+            int puntuationSolve = 200; 
+            DateTime fechaActual = DateTime.Now;
+            string dia = fechaActual.ToString("dd,MM,yy");
+            string mensaje = "52/" + gameHost + "/" + gameDurationSecs + "/" + playerSolve + "/" + puntuationSolve + "/" + dia;
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
 
         private void tBox_write_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter)
             {
                 string text = tBox_write.Text;

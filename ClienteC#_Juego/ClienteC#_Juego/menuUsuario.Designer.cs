@@ -44,6 +44,8 @@
             this.controlPanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.richBox_Control = new System.Windows.Forms.RichTextBox();
             this.button_signOut = new System.Windows.Forms.Button();
+            this.añadirPartidaEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.consultaTiempoEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -135,7 +137,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(981, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(981, 28);
             this.menuStrip1.TabIndex = 24;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -146,6 +148,8 @@
             this.tableroToolStripMenuItem,
             this.notePadEXPERIMENTALToolStripMenuItem,
             this.rankingsEXPERIMENTALToolStripMenuItem,
+            this.añadirPartidaEXPToolStripMenuItem,
+            this.consultaTiempoEXPToolStripMenuItem,
             this.consultasToolStripMenuItem,
             this.controlPanelToolStripMenuItem});
             this.opcionesToolStripMenuItem.Name = "opcionesToolStripMenuItem";
@@ -214,6 +218,20 @@
             this.button_signOut.UseVisualStyleBackColor = false;
             this.button_signOut.Click += new System.EventHandler(this.button_signOut_Click);
             // 
+            // añadirPartidaEXPToolStripMenuItem
+            // 
+            this.añadirPartidaEXPToolStripMenuItem.Name = "añadirPartidaEXPToolStripMenuItem";
+            this.añadirPartidaEXPToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
+            this.añadirPartidaEXPToolStripMenuItem.Text = "Añadir Partida (EXP)";
+            this.añadirPartidaEXPToolStripMenuItem.Click += new System.EventHandler(this.añadirPartidaEXPToolStripMenuItem_Click);
+            // 
+            // consultaTiempoEXPToolStripMenuItem
+            // 
+            this.consultaTiempoEXPToolStripMenuItem.Name = "consultaTiempoEXPToolStripMenuItem";
+            this.consultaTiempoEXPToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
+            this.consultaTiempoEXPToolStripMenuItem.Text = "ConsultaTiempo (EXP)";
+            this.consultaTiempoEXPToolStripMenuItem.Click += new System.EventHandler(this.consultaTiempoEXPToolStripMenuItem_Click);
+            // 
             // menuUsuario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -261,5 +279,7 @@
         private System.Windows.Forms.RichTextBox richBox_Control;
         private System.Windows.Forms.Button button_signOut;
         private System.Windows.Forms.ToolStripMenuItem rankingsEXPERIMENTALToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem añadirPartidaEXPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem consultaTiempoEXPToolStripMenuItem;
     }
 }

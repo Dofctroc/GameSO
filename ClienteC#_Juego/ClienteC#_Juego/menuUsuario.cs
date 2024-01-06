@@ -169,7 +169,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.101"; int puerto = 9076;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9076;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -472,6 +472,20 @@ namespace ClienteC__Juego
         {
             menuRankings rankings = new menuRankings(server, username);
             rankings.Show();
+        }
+
+        private void añadirPartidaEXPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string mensaje = "100/" + "Asier" + "/" + 480 + "/" + "Julia" + "/" + 200 + "/" + "01,02,24";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+        }
+
+        private void consultaTiempoEXPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string mensaje = "99/";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
         }
     }
 }
