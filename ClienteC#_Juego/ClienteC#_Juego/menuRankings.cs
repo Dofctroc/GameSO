@@ -10,20 +10,24 @@ namespace ClienteC__Juego
     {
         Socket server;
         int activeBox;
+        string userName;
+        string[] otrosusuarios;
 
-        public menuRankings(Socket server)
+        public menuRankings(Socket server, string userName)
         {
             InitializeComponent();
             this.server = server;
+            this.userName = userName;
         }
 
         private void menuRankings_Load(object sender, EventArgs e)
         {
-            gBox_Ind.Location = gBox_Rank.Location = new Point(btt_IndInfo.Width + 20, 10);
-            gBox_Ind.Visible = false;
+            gBox_Ind.Location = gBox_Rank.Location = gBox_OtherInfo.Location = new Point(btt_IndInfo.Width + 20, 10);
+            gBox_Ind.Visible = gBox_OtherInfo.Visible = false;
             activeBox = 0;
 
             gBox_Rank.Size = gBox_Ind.Size = new Size(200*2 + 30, 280 + 50);
+            gBox_OtherInfo.Size = new Size(700, 280 + 50);
 
             // Datagrids rankings
             dGrid_totScore.ColumnCount = dGrid_totGames.ColumnCount = 3;
@@ -70,10 +74,10 @@ namespace ClienteC__Juego
 
             dGrid_user.Size = dGrid_game.Size = new Size(200, 250);
             dGrid_user.Location = new Point(10, 60);
-            lbl_scoreR.Location = new Point(dGrid_user.Location.X, 20);
+            lbl_userName.Location = new Point(dGrid_user.Location.X, 20);
             tBox_username.Location = new Point(dGrid_user.Location.X, 35);
             dGrid_game.Location = new Point(10 + dGrid_user.Width + 10, 60);
-            lbl_gamesR.Location = new Point(dGrid_game.Location.X, 20);
+            lbl_gameID.Location = new Point(dGrid_game.Location.X, 20);
             tBox_gameID.Location = new Point(dGrid_game.Location.X, 35);
             dGrid_user.Columns[0].Width = 106;
             dGrid_user.Columns[1].Width = 40;
@@ -84,6 +88,43 @@ namespace ClienteC__Juego
 
             dGrid_user.RowHeadersVisible = dGrid_game.RowHeadersVisible = false;
             dGrid_user.ColumnHeadersHeight = dGrid_game.ColumnHeadersHeight = 30;
+
+            //Datagrids others
+
+            dGrid_othertime.ColumnCount = 2;
+            dGrid_otherplayer.ColumnCount = dGrid_otherusers.ColumnCount = 1;
+            dGrid_otherusers.ColumnHeadersDefaultCellStyle.Font = dGrid_othertime.ColumnHeadersDefaultCellStyle.Font = dGrid_otherplayer.ColumnHeadersDefaultCellStyle.Font =new Font(dGrid_totScore.Font, FontStyle.Bold);
+            dGrid_otherusers.ColumnHeadersHeight = dGrid_othertime.ColumnHeadersHeight = dGrid_otherplayer.ColumnHeadersHeight = 30;
+
+            dGrid_otherusers.Columns[0].Name = "col_username";
+            dGrid_otherusers.Columns[0].HeaderText = "Username";
+
+            dGrid_otherplayer.Columns[0].Name = dGrid_othertime.Columns[0].Name = "col_Game";
+            dGrid_otherplayer.Columns[0].HeaderText = dGrid_othertime.Columns[0].HeaderText = "Game";
+            dGrid_othertime.Columns[1].Name = "col_date";
+            dGrid_othertime.Columns[1].HeaderText = "Date";
+
+            dGrid_otherplayer.Size = dGrid_otherusers.Size = dGrid_othertime.Size = new Size(200, 250);
+            dGrid_otherusers.Location = new Point(10, 60);
+            lbl_otherusers.Location = new Point(dGrid_otherusers.Location.X, 20);
+            tBox_otherusers.Location = new Point(dGrid_otherusers.Location.X, 35);
+
+            dGrid_otherplayer.Location = new Point(10 + dGrid_otherusers.Width + 10, 60);
+            lbl_otherplayer.Location = new Point(dGrid_otherplayer.Location.X, 20);
+            tBox_otherplayer.Location = new Point(dGrid_otherplayer.Location.X, 35);
+
+            dGrid_othertime.Location = new Point(10 + dGrid_otherplayer.Location.X + dGrid_otherplayer.Location.X, 60);
+            lbl_othertime.Location = new Point(dGrid_othertime.Location.X, 20);
+            tBox_othertime.Location = new Point(dGrid_othertime.Location.X, 35);
+
+            dGrid_otherusers.Columns[0].Width = 50;
+            dGrid_otherplayer.Columns[0].Width = 100;
+            dGrid_othertime.Columns[0].Width = 100;
+            dGrid_othertime.Columns[1].Width = 300;
+            dGrid_otherusers.Rows.Clear(); dGrid_otherplayer.Rows.Clear(); dGrid_othertime.Rows.Clear();
+
+            dGrid_otherusers.RowHeadersVisible = dGrid_otherplayer.RowHeadersVisible = dGrid_othertime.RowHeadersVisible = false;
+            dGrid_otherusers.ColumnHeadersHeight = dGrid_otherplayer.ColumnHeadersHeight = dGrid_othertime.ColumnHeadersHeight = 30;
 
             // Extra
             btt_Refresh.Size = new Size(70, 30);
@@ -104,6 +145,7 @@ namespace ClienteC__Juego
         {
             gBox_Ind.Visible = true;
             gBox_Rank.Visible = false;
+            gBox_OtherInfo.Visible = false;
             activeBox = 1;
         }
 
@@ -111,7 +153,15 @@ namespace ClienteC__Juego
         {
             gBox_Rank.Visible = true;
             gBox_Ind.Visible = false;
+            gBox_OtherInfo.Visible = false;
             activeBox = 0;
+        }
+        private void btt_otherinfo_Click(object sender, EventArgs e)
+        {
+            gBox_Rank.Visible = false;
+            gBox_Ind.Visible = false;
+            gBox_OtherInfo.Visible = true;
+            activeBox = 2;
         }
 
         private void btt_Refresh_Click(object sender, EventArgs e)
@@ -129,7 +179,7 @@ namespace ClienteC__Juego
                 server.Send(msg2);
             }
 
-            else
+            else if (activeBox == 1)
             {
                 if (tBox_username.Text != "")
                 {
@@ -145,6 +195,30 @@ namespace ClienteC__Juego
                     // Enviamos al servidor el nombre tecleado
                     byte[] msg2 = System.Text.Encoding.ASCII.GetBytes(mensaje2);
                     server.Send(msg2);
+                }
+            }
+            else
+            {
+                if (tBox_otherusers.Text != "")
+                {
+                    string mensaje = "7/" + tBox_otherusers.Text;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                }
+                else if (tBox_otherplayer.Text != "")
+                {
+                    string mensaje = "8/" + userName + "/" + tBox_otherplayer.Text;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+                }
+                else if (tBox_othertime.Text != "")
+                {
+                    //string[] fechas = tBox_othertime.Text.Split('.');
+                    //string inicio = fechas[0];
+                    //string final = fechas[1];
+                    string mensaje = "9/" + tBox_othertime.Text;   //Teniendo en cuenta que el formato del mensaje es: yy-mm-dd/yy-mm-dd (inicio/final periodo)
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
                 }
             }
         }
@@ -185,6 +259,12 @@ namespace ClienteC__Juego
                     case 17:
                         listaMiPartida(dGrid_game, mensaje[1]);
                         break;
+                    case 7:
+                        listaMiPartida(dGrid_otherusers, mensaje[1]);
+                        break;
+                    case 9:
+                        listaMiPartida(dGrid_othertime, mensaje[1]);
+                        break;
                 }
             }
         }
@@ -213,7 +293,7 @@ namespace ClienteC__Juego
                 if (totalRowHeight + headerHeight <= 250)
                     dGrid_user.Height = totalRowHeight + headerHeight + 3;
             }
-            else
+            else if (dataGrid == dGrid_game)
             {
                 int i = 0;
                 while (vectorInfo[i] != "0")
@@ -239,8 +319,19 @@ namespace ClienteC__Juego
 
                 dGrid_game.Height = totalRowHeight + headerHeight;
             }
+            else if (dataGrid == dGrid_otherusers || dataGrid == dGrid_othertime)
+            {
+                int n = 1;
+                for (int i = 0; i < vectorInfo.Length - 1; i ++)
+                {
+                    dataGrid.Rows.Add(vectorInfo[i]);
+                    n++;
+                }
+            }
 
             dataGrid.ClearSelection();
         }
+
+
     }
 }

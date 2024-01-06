@@ -169,7 +169,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
+            string IP = "192.168.56.101"; int puerto = 9076;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -345,7 +345,13 @@ namespace ClienteC__Juego
                         if (mensaje[1] == "0")
                             serverShutdown();
                         break;
-                        // Connected information
+                    case 7:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    case 9:
+                        menuPartida.onResponse(mensaje);
+                        break;
+                    // Connected information
                     case 10:
                         menuPartida.listaConectados(mensaje[1]);
                         richBox_Control.Invoke(delegado, new object[] { mensaje });
@@ -464,7 +470,7 @@ namespace ClienteC__Juego
 
         private void rankingsEXPERIMENTALToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            menuRankings rankings = new menuRankings(server);
+            menuRankings rankings = new menuRankings(server, username);
             rankings.Show();
         }
     }

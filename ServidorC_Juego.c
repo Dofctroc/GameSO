@@ -760,6 +760,110 @@ int EnviarInvitacion(ListaConectados* listaC, ListaPartidas* listaP, char infoIn
 	return 0;
 }
 
+/*int ConsultarJugadoresPartidas (MYSQL* conn, char userName[], char listajugadores[])
+{
+	strcpy(listajugadores, "");
+	char partidasconjugador[200];
+	// Ranking puntuacion total de cada jugador
+	// Formato: Jug1.Punt1.Jug2.Punt2... (Preferiblemente en ordenn)
+	int err;
+	MYSQL_RES* resultado;
+	MYSQL_ROW row;
+	char consulta[800];
+	strcpy(consulta, "SELECT ID_Partida FROM PartidasJugadores, Jugador, Partida WHERE Jugador.userName = '");
+	strcat(consulta, userName);
+	strcat(consulta, "' AND PartidasJugadores.ID_Jugador = Jugador.ID AND PartidasJugadores.ID_Partida = Partida.ID;");
+	if (mysql_query(conn, consulta) != 0) {
+		fprintf(stderr, "Error ejecutando el query: %s\n", mysql_error(conn));
+		return -1;
+	}
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	
+	if (row == NULL) {
+		printf("Ha habido un error en la consulta de datos \n");
+		return -1;
+	}
+	while (row != NULL) {
+		sprintf (partidasconjugador, "%s,%s", partidasconjugador, row[0]);
+		row = mysql_fetch_row(resultado);
+		printf("Jugador: %s  \n", row[0]);
+	}
+	mysql_free_result(resultado);
+	strcpy(consulta,  "SELECT ID_Jugador FROM PartidasJugadores, Jugador, Partida WHERE PartidasJugadores.ID_Partida IN (");
+	strcat(consulta, partidasconjugador);
+	strcat(consulta, ") AND PartidasJugadores.ID_Jugador = Jugador.ID AND PartidasJugadores.ID_Partida = Partida.ID;");
+	if (mysql_query(conn, consulta) != 0) {
+		fprintf(stderr, "Error ejecutando el query: %s\n", mysql_error(conn));
+		return -1;
+	}
+	resultado = mysql_store_result(conn);
+	row = mysql_fetch_row(resultado);
+	if (row == NULL){
+		printf("Ha habido un error en la consulta de datos \n");
+		return -1;
+	}
+	while (row != NULL) {
+		sprintf (listajugadores, "%s/%s", listajugadores, row[0]);
+		row = mysql_fetch_row(resultado);
+	}
+	mysql_free_result(resultado);
+	return 0;
+}*/
+
+void ListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
+	MYSQL_RES* resultado;
+	MYSQL_ROW row;
+	strcpy(listajugadores, "");
+	char consulta[800];
+	sprintf(consulta, "SELECT DISTINCT J2.userName FROM Jugador J1 JOIN PartidasJugadores \
+			PJ1 ON J1.ID = PJ1.ID_Jugador JOIN Partida P1 ON PJ1.ID_Partida = P1.ID JOIN \
+			PartidasJugadores PJ2 ON P1.ID = PJ2.ID_Partida JOIN Jugador J2 ON PJ2.ID_Jugador = J2.ID WHERE J1.userName = '%s' AND J2.userName != '%s';",
+			userName, userName);
+	if (mysql_query(conn, consulta) != 0) {
+		fprintf(stderr, "Error executing the query: %s\n", mysql_error(conn));
+		return;
+	}
+	resultado = mysql_store_result(conn);
+	printf("List of players %s has played with:\n", userName);
+	
+	while ((row = mysql_fetch_row(resultado)) != NULL) {
+		printf("%s\n", row[0]);
+		sprintf(listajugadores, "%s%s.", listajugadores, row[0]);
+	}
+	mysql_free_result(resultado);
+}
+
+int consultaPartidaPeriodoTiempo(MYSQL* conn, char lowBound[], char upBound[], char infoConsulta[])
+{
+	strcpy(infoConsulta, "");
+	char consulta[200];
+	int err;
+	MYSQL_RES* resultado;
+	MYSQL_ROW row;
+
+	strcat(consulta, "SELECT Partida.ID, Partida.ganador FROM Partida WHERE STR_TO_DATE(dia, '%%d,%%m,%%y') BETWEEN '");
+	strcat(consulta, lowBound);
+	strcat(consulta, "' AND '");
+	strcat(consulta, upBound);
+	strcat(consulta, "';");
+	printf(consulta);
+	if (mysql_query(conn, consulta) != 0) {
+		fprintf(stderr, "Failed to execute query. Error: %s\n", mysql_error(conn));
+		mysql_close(conn);
+		return -1;
+	}
+	resultado = mysql_store_result(conn);
+	while (row != NULL) {
+		sprintf (infoConsulta, "%s%s.%s.", infoConsulta, row[0], row[1]);
+		printf("ID: %s, Ganador: %s\n", row[0], row[1]);
+		row = mysql_fetch_row(resultado);
+	}
+	mysql_free_result(resultado);
+	mysql_close(conn);
+	
+	return 0;
+}
 // -------------------- MAIN: ATENDER CLIENTE ------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------
 void AtenderCliente(void* socket)
@@ -910,6 +1014,31 @@ void AtenderCliente(void* socket)
 			EliminarUsuario(conn, userName, password, mensajeSignOut);
 			EliminarConectado(&lista_Conectados, userName);
 			strcpy(respuesta, mensajeSignOut);
+		}
+		else if (codigo == 7)
+		{
+			char mensajeotrainfousuarios[200];
+			strcpy(mensajeotrainfousuarios, "");
+			char listajugadores[200];
+			strcpy(listajugadores, "");
+			
+			p = strtok(NULL, "/");
+			strcpy(userName, p);
+			ListPlayersWithGames(conn, userName, listajugadores);
+			sprintf(mensajeotrainfousuarios, "7/%s", listajugadores);
+			strcpy(respuesta, mensajeotrainfousuarios);
+		}
+		else if (codigo == 9)
+		{
+			char lowbound[20];
+			char upbound[20];
+			char infoConsulta[200];
+			p = strtok(NULL, "/");
+			strcpy(lowbound, p);
+			p = strtok(NULL, "/");
+			strcpy(upbound, p);
+			consultaPartidaPeriodoTiempo(conn, lowbound, upbound, infoConsulta);
+			sprintf(respuesta, "9/%s", infoConsulta);
 		}
 		// Residual code from when you could actively ask connected users
 		else if (codigo == 10)
@@ -1579,7 +1708,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9075; 		//Linux
+	int puerto = 9076; 		//Linux
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
 

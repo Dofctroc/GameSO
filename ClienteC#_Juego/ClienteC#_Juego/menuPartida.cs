@@ -645,6 +645,12 @@ namespace ClienteC__Juego
 
             switch (codigo)
             {
+                case 7:
+                    menu_rankings.onReceive_DisplayInfo(mensaje);
+                    break;
+                case 9:
+                    menu_rankings.onReceive_DisplayInfo(mensaje);
+                    break;
                 case 14:
                     menu_rankings.onReceive_DisplayInfo(mensaje);
                     break;
@@ -1014,7 +1020,7 @@ namespace ClienteC__Juego
 
         private void strip1_Ranking_Click(object sender, EventArgs e)
         {
-            menu_rankings = new menuRankings(server);
+            menu_rankings = new menuRankings(server, username);
             menu_rankings.Show();
         }
 
