@@ -90,9 +90,9 @@ namespace ClienteC__Juego
             dGrid_user.ColumnHeadersHeight = dGrid_game.ColumnHeadersHeight = 30;
 
             //Datagrids others
-
+            dGrid_otherusers.ColumnCount = 1;
+            dGrid_otherplayer.ColumnCount = 4;
             dGrid_othertime.ColumnCount = 2;
-            dGrid_otherplayer.ColumnCount = dGrid_otherusers.ColumnCount = 1;
             dGrid_otherusers.ColumnHeadersDefaultCellStyle.Font = dGrid_othertime.ColumnHeadersDefaultCellStyle.Font = dGrid_otherplayer.ColumnHeadersDefaultCellStyle.Font =new Font(dGrid_totScore.Font, FontStyle.Bold);
             dGrid_otherusers.ColumnHeadersHeight = dGrid_othertime.ColumnHeadersHeight = dGrid_otherplayer.ColumnHeadersHeight = 30;
 
@@ -101,26 +101,36 @@ namespace ClienteC__Juego
 
             dGrid_otherplayer.Columns[0].Name = dGrid_othertime.Columns[0].Name = "col_Game";
             dGrid_otherplayer.Columns[0].HeaderText = dGrid_othertime.Columns[0].HeaderText = "Game";
-            dGrid_othertime.Columns[1].Name = "col_date";
-            dGrid_othertime.Columns[1].HeaderText = "Date";
+            dGrid_otherplayer.Columns[1].Name = "col_dayplayed";
+            dGrid_otherplayer.Columns[1].HeaderText = "Day played";
+            dGrid_otherplayer.Columns[2].Name = "col_duration";
+            dGrid_otherplayer.Columns[2].HeaderText = "Duration";
+            dGrid_othertime.Columns[1].Name = dGrid_otherplayer.Columns[3].Name = "col_winner";
+            dGrid_othertime.Columns[1].HeaderText = dGrid_otherplayer.Columns[3].HeaderText = "Winner";
 
-            dGrid_otherplayer.Size = dGrid_otherusers.Size = dGrid_othertime.Size = new Size(200, 250);
+            dGrid_otherusers.Size = new Size(100, 250);
+            dGrid_othertime.Size = new Size(200, 250);
+            dGrid_otherplayer.Size = new Size(300, 250);
             dGrid_otherusers.Location = new Point(10, 60);
             lbl_otherusers.Location = new Point(dGrid_otherusers.Location.X, 20);
             tBox_otherusers.Location = new Point(dGrid_otherusers.Location.X, 35);
 
-            dGrid_otherplayer.Location = new Point(10 + dGrid_otherusers.Width + 10, 60);
+            dGrid_otherplayer.Location = new Point(10 + dGrid_otherusers.Width + dGrid_otherusers.Location.X + 10, 60);
             lbl_otherplayer.Location = new Point(dGrid_otherplayer.Location.X, 20);
             tBox_otherplayer.Location = new Point(dGrid_otherplayer.Location.X, 35);
 
-            dGrid_othertime.Location = new Point(10 + dGrid_otherplayer.Location.X + dGrid_otherplayer.Location.X, 60);
+            dGrid_othertime.Location = new Point(10 + dGrid_otherplayer.Location.X + dGrid_otherplayer.Width, 60);
             lbl_othertime.Location = new Point(dGrid_othertime.Location.X, 20);
             tBox_othertime.Location = new Point(dGrid_othertime.Location.X, 35);
 
-            dGrid_otherusers.Columns[0].Width = 50;
+            dGrid_otherusers.Columns[0].Width = 100;
             dGrid_otherplayer.Columns[0].Width = 100;
             dGrid_othertime.Columns[0].Width = 100;
             dGrid_othertime.Columns[1].Width = 300;
+            dGrid_otherplayer.Columns[0].Width = 40;
+            dGrid_otherplayer.Columns[1].Width = 100;
+            dGrid_otherplayer.Columns[2].Width = 100;
+            dGrid_otherplayer.Columns[3].Width = dGrid_otherplayer.Width - dGrid_otherplayer.Columns[2].Width - dGrid_otherplayer.Columns[1].Width - dGrid_otherplayer.Columns[0].Width;
             dGrid_otherusers.Rows.Clear(); dGrid_otherplayer.Rows.Clear(); dGrid_othertime.Rows.Clear();
 
             dGrid_otherusers.RowHeadersVisible = dGrid_otherplayer.RowHeadersVisible = dGrid_othertime.RowHeadersVisible = false;
@@ -262,6 +272,9 @@ namespace ClienteC__Juego
                     case 7:
                         listaMiPartida(dGrid_otherusers, mensaje[1]);
                         break;
+                    case 8:
+                        listaMiPartida(dGrid_otherplayer, mensaje[1]);
+                        break;
                     case 9:
                         listaMiPartida(dGrid_othertime, mensaje[1]);
                         break;
@@ -319,13 +332,27 @@ namespace ClienteC__Juego
 
                 dGrid_game.Height = totalRowHeight + headerHeight;
             }
-            else if (dataGrid == dGrid_otherusers || dataGrid == dGrid_othertime)
+            else if (dataGrid == dGrid_otherusers)
             {
                 int n = 1;
                 for (int i = 0; i < vectorInfo.Length - 1; i ++)
                 {
                     dataGrid.Rows.Add(vectorInfo[i]);
                     n++;
+                }
+            }
+            else if (dataGrid == dGrid_othertime)
+            {
+                for (int i = 0; i < vectorInfo.Length - 1; i += 2)
+                {
+                    dataGrid.Rows.Add(vectorInfo[i], vectorInfo[i + 1]);
+                }
+            }
+            else if (dataGrid == dGrid_otherplayer)
+            {
+                for (int i = 0; i < vectorInfo.Length - 1; i += 4)
+                {
+                    dataGrid.Rows.Add(vectorInfo[i], vectorInfo[i + 1], vectorInfo[i + 2], vectorInfo[i + 3]);
                 }
             }
 

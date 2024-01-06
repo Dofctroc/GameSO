@@ -860,10 +860,34 @@ void ListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
 	while (row != NULL) {
 		printf("%s\n", row[0]);
 		sprintf(listajugadores, "%s%s.", listajugadores, row[0]);
+		row = mysql_fetch_row(resultado);
 	}
 	mysql_free_result(resultado);
 }
 
+void PartidaconJugador(MYSQL* conn, char userName[], char jugador[], char infoPartidas[]) 
+{
+	MYSQL_RES* resultado;
+	MYSQL_ROW row;
+	char consulta[800];
+	strcpy(infoPartidas, "");
+	sprintf(consulta, "SELECT Partida.* FROM Partida JOIN PartidasJugadores AS PJ1 ON Partida.ID = PJ1.ID_Partida JOIN PartidasJugadores AS PJ2 ON Partida.ID = PJ2.ID_Partida JOIN Jugador AS Jugador1 ON PJ1.ID_Jugador = Jugador1.ID JOIN Jugador AS Jugador2 ON PJ2.ID_Jugador = Jugador2.ID WHERE Jugador1.userName = '%s' AND Jugador2.userName = '%s';", userName, jugador);
+	if (mysql_query(conn, consulta) != 0) {
+		fprintf(stderr, "Error executing the query: %s\n", mysql_error(conn));
+		return;
+	}
+	resultado =mysql_store_result(conn);
+	printf (consulta);
+	printf("Results of games played by %s with %s:\n", userName, jugador);
+	printf("ID | horaInicio | duracion | ganador\n");
+	row = mysql_fetch_row(resultado);
+	while (row != NULL) {
+		printf("%s | %s | %s | %s\n", row[0], row[1], row[2], row[3]);
+		sprintf(infoPartidas, "%s%s.%s.%s.%s.", infoPartidas, row[0], row[1], row[2], row[3]);
+		row = mysql_fetch_row(resultado);
+	}
+	mysql_free_result(resultado);
+}
 int consultaPartidaPeriodoTiempo(MYSQL* conn, char lowBound[], char upBound[], char infoConsulta[])
 {
 	strcpy(infoConsulta, "");
@@ -994,7 +1018,6 @@ void AtenderCliente(void* socket)
 				
 				consultaConectados(&lista_Conectados, conectados);
 				sprintf(notificacion, "10/%s",conectados);
-				
 				int j;
 				for (j = 0; j < 100; j++)
 					if (sockets[j] != -1)
@@ -1053,6 +1076,22 @@ void AtenderCliente(void* socket)
 			ListPlayersWithGames(conn, userName, listajugadores);
 			sprintf(mensajeotrainfousuarios, "7/%s", listajugadores);
 			strcpy(respuesta, mensajeotrainfousuarios);
+		}
+		else if (codigo == 8)
+		{
+			char mensajepartidaconjugador[200];
+			strcpy(mensajepartidaconjugador, "");
+			char partidaslist[200];
+			strcpy(partidaslist, "");
+			char jugador[20];
+			
+			p = strtok(NULL, "/");
+			strcpy(userName, p);
+			p = strtok(NULL, "/");
+			strcpy(jugador, p);
+			PartidaconJugador(conn, userName, jugador, partidaslist);
+			sprintf(mensajepartidaconjugador, "8/%s", partidaslist);
+			strcpy(respuesta, mensajepartidaconjugador);
 		}
 		else if (codigo == 9)
 		{
@@ -1745,7 +1784,7 @@ void AtenderCliente(void* socket)
 			p = strtok(NULL,"/");
 			strcpy(day,p);
 			
-			insertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
+			InsertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
 			
 			strcpy(respuesta, "");
 		}

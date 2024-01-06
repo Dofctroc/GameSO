@@ -648,6 +648,9 @@ namespace ClienteC__Juego
                 case 7:
                     menu_rankings.onReceive_DisplayInfo(mensaje);
                     break;
+                case 8:
+                    menu_rankings.onReceive_DisplayInfo(mensaje);
+                    break;
                 case 9:
                     menu_rankings.onReceive_DisplayInfo(mensaje);
                     break;
