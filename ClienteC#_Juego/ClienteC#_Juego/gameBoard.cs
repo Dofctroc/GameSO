@@ -769,14 +769,13 @@ namespace ClienteC__Juego
         {
             if (e.KeyCode == Keys.Enter)
             {
-                string text = tBox_write.Text;
-                if (text != "")
+                if (tBox_write.Text != "")
                 {
                     e.SuppressKeyPress = true;
-                    richBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Regular);
-                    richBox_read.SelectionColor = Color.Black;
-                    richBox_read.AppendText(text);
-                    richBox_read.AppendText(Environment.NewLine);
+                    string men = tBox_write.Text;
+                    string mensaje = "54/" + gameHost + "/" + userName + "/" + men;
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
                     tBox_write.Clear();
                 }
                 else
@@ -785,6 +784,16 @@ namespace ClienteC__Juego
                     tBox_write.Clear();
                 }
             }
+        }
+        private void WriteInChatMESSAGE(string name, string chatMSG, Color color)
+        {
+            richBox_read.SelectionFont = new Font("Arial", 10, FontStyle.Regular);
+            richBox_read.SelectionColor = Color.DarkBlue;
+            richBox_read.AppendText(name + ": ");
+            richBox_read.SelectionFont = new Font("Calibri", 10, FontStyle.Regular);
+            richBox_read.SelectionColor = color;
+            richBox_read.AppendText(chatMSG);
+            richBox_read.AppendText(Environment.NewLine);
         }
 
         private void pBox_notePad_Click(object sender, EventArgs e)
@@ -1127,6 +1136,9 @@ namespace ClienteC__Juego
                 case 52:
                     gameEnded = true;
                     this.Close();
+                    break;
+                case 54:
+                    WriteInChatMESSAGE(mensaje[2], mensaje[3], Color.Black);
                     break;
             }
         }

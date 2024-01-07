@@ -1827,6 +1827,32 @@ void AtenderCliente(void* socket)
 			}
 			strcpy(respuesta, "");
 		}
+		else if (codigo == 54)
+		{
+			char expulsion[20];
+			char mensajechat[200];
+			char chat[200];
+			char jugador[20];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(jugador, p);
+			p = strtok(NULL, "/");
+			strcpy(chat, p);
+			sprintf(mensajechat, "54/%s/%s/%s", host, jugador, chat);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn)
+					write(socketUsuario, mensajechat, strlen(mensajechat));
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, mensajechat);
+		}
 		else if (codigo == 99)
 		{
 			char infoConsulta[200];

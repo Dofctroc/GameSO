@@ -931,6 +931,9 @@ namespace ClienteC__Juego
                     chatMSG = "You returned to the lobby because " + playerLeftGame + " left the game!";
                     WriteInChatTITLE(gameIndex, chatMSG, Color.Red);
                     break;
+                case 54:
+                    tableros[gameIndex].AtenderPartida(mensaje);
+                    break;
             }
             if (codigo == 52 || codigo != 27 && codigo < 40)
                 updateStatusPartidas();
