@@ -49,22 +49,28 @@ LobbyPartida != ActivePartida;
 	add int variable to Partida (0=Lobby, 1=Active)
 Rename all forms
 	-/ Game form named after host
+Chat in game (igual a menu partida), incluir algunos sucesos de la partida !!!!!!!!!!!!!!!!!!!!!!!
+Error se juntan los mensajes de refresh de tablas
+
 
 Cards:
 1. When clicked, shows dorso of card
 -/ 2. Put card torso on center of the board
 	( Easier logic to go to center ) -> Implement new grid of positions to use when center tile is hovered
 
-Toda la logica de Solve, incluyendo el panel central que se mostrara (simular o igual a guess)
+-/ Toda la logica de Solve, incluyendo el panel central que se mostrara (simular o igual a guess)
 	Logica cuando todos responden de manera incorrecta
-Toda la logica de acabar una partida
-Player se va de partida voluntariamente (no le echan)
+-/ Toda la logica de acabar una partida
+-/ Player se va de partida voluntariamente (no le echan)
 	Control de player se va de partida
-Chat in game (igual a menu partida), incluir algunos sucesos de la partida
-Logica ACABAR:
+
+-/ Logica ACABAR:
 	Si fallas: continuas jugando solo para resolver, te llevas 0 puntos
 		El siguiente en ganar se lleva 160 puntos
 	Si aciertas: has ganado, te llevas 200 puntos, partida termina
+
+-/ Al eliminar jugador, color seleccionado no cambia
+-/ Al asignar color, el numero uno no lo tiene en cuenta, lo asigna aunk este asignado
 
 -/ Dibuixar nom de cada room al Paint
 -/ Falla crear partida, luego hacer log out y luego volver a crear

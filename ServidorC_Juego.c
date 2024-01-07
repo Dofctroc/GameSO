@@ -183,8 +183,13 @@ int EliminarJugadorPartida(ListaPartidas* listaP, char nombre[], char host[])
 		for (int j = 0; j < listaP->partidas[partida].numJugadores; j++)
 		{
 			if (strcmp(listaP->partidas[partida].jugadores[j].userName, nombre) == 0)
+			{
 				for (int k = j; k < listaP->partidas[partida].numJugadores - 1; k++)
+				{
 					listaP->partidas[partida].jugadores[k] = listaP->partidas[partida].jugadores[k + 1];
+					listaP->partidas[partida].colores[k] = listaP->partidas[partida].colores[k + 1];
+				}
+			}
 		}
 		listaP->partidas[partida].numJugadores--;
 	}
@@ -395,7 +400,7 @@ int InsertarPartidaSQL(MYSQL* conn, ListaPartidas* listaP, char host[], int dura
 	row = mysql_fetch_row(resultado);
 	ID = atoi(row[0]) + 1;
 	
-	sprintf(consulta,"INSERT INTO Partida VALUES (%d,'%s',%d,'%s');", ID,day,score,winner);
+	sprintf(consulta,"INSERT INTO Partida VALUES (%d,'%s',%d,'%s');", ID,day,duration,winner);
 	mysql_query(conn,consulta);
 	
 	int pos = 2;
@@ -877,7 +882,7 @@ void PartidaconJugador(MYSQL* conn, char userName[], char jugador[], char infoPa
 		return;
 	}
 	resultado =mysql_store_result(conn);
-	printf (consulta);
+	printf ("Consulta: %s \n",consulta);
 	printf("Results of games played by %s with %s:\n", userName, jugador);
 	printf("ID | horaInicio | duracion | ganador\n");
 	row = mysql_fetch_row(resultado);
@@ -1262,6 +1267,7 @@ void AtenderCliente(void* socket)
 			char actualizacion[20];
 			char coloresJugadoresPartida[20];
 			int socketHost;
+			int canInvite;
 			strcpy (sockets_receptores,"");
 			strcpy (actualizacion,"");
 			
@@ -1278,28 +1284,37 @@ void AtenderCliente(void* socket)
 				
 				if (strcmp(decision,"Yes") == 0)
 				{
-					PonJugadorPartida(&lista_Conectados, &lista_Partidas, invitado, host);
-					AsignaColorJugador(&lista_Partidas, host);
+					int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
+					if (lista_Partidas.partidas[partidaIndex].numJugadores < 6)
+					{
+						canInvite = 0;
+						PonJugadorPartida(&lista_Conectados, &lista_Partidas, invitado, host);
+						AsignaColorJugador(&lista_Partidas, host);
+					}
+					else
+						canInvite = -1;
 				}
 				
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
-				
-				sprintf(actualizacion, "23/%s/%s/%s/%s", host, invitado, decision, coloresJugadoresPartida);
-				
-				p = strtok(sockets_receptores, "/");
-				while (p != NULL)
+				if (canInvite == 0)
 				{
-					socketUsuario = atoi(p);
-					if (socketUsuario != sock_conn)
-						write(socketUsuario, actualizacion, strlen(actualizacion));
-					p = strtok(NULL, "/");
+					sprintf(actualizacion, "23/%s/%s/%s/%s", host, invitado, decision, coloresJugadoresPartida);
+					
+					p = strtok(sockets_receptores, "/");
+					while (p != NULL)
+					{
+						socketUsuario = atoi(p);
+						if (socketUsuario != sock_conn)
+							write(socketUsuario, actualizacion, strlen(actualizacion));
+						p = strtok(NULL, "/");
+					}
 				}
 				
 				if (strcmp(decision,"Yes") == 0)
-					sprintf(respuesta, "30/%s/%s/%s", host, infoJugadoresPartida, coloresJugadoresPartida);
+					sprintf(respuesta, "30/%s/%d/%s/%s", host, canInvite, infoJugadoresPartida, coloresJugadoresPartida);
 				else 
-					sprintf(respuesta, "30/%s/0", host);
+					sprintf(respuesta, "30/%s/1", host);
 			}
 		}
 		else if (codigo == 24)
@@ -1330,18 +1345,46 @@ void AtenderCliente(void* socket)
 		}
 		else if (codigo == 25)
 		{
+			char playerQuit[20];
+			char mensajeQuit[20];
+			int socketInvitado;
 			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(playerQuit, p);
+			sprintf(mensajeQuit, "25/%s/%s", host, playerQuit);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			if (strcmp(playerQuit, host) == 0) {
+				EliminarPartida(&lista_Partidas, host);
+			}
+			else {
+				EliminarJugadorPartida(&lista_Partidas, playerQuit, host);
+			}
+			
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn)
+					write(socketUsuario, mensajeQuit, strlen(mensajeQuit));
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, mensajeQuit);
 		}
 		else if (codigo == 26)
 		{
 			p = strtok(NULL, "/");
 			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(userName, p);
 			
-			sprintf(mensaje, "26/%s", host);
+			sprintf(mensaje, "25/%s/%s", host, userName);
 			
 			pthread_mutex_lock(&mutex);
-			int partida = BuscarPartidaHost(&lista_Partidas,host);
-			if (partida != -1)
+			int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
+			if (partidaIndex != -1)
 			{
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 				EliminarPartida(&lista_Partidas,host);
@@ -1741,7 +1784,7 @@ void AtenderCliente(void* socket)
 			p = strtok(NULL, "/");
 			score = atoi(p);
 			p = strtok(NULL,"/");
-			strcpy(day,"/");
+			strcpy(day,p);
 			
 			sprintf(mensajeEndGame, "52/%s", host);
 			
@@ -1755,6 +1798,31 @@ void AtenderCliente(void* socket)
 			{
 				socketUsuario = atoi(p);
 				write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
+				p = strtok(NULL, "/");
+			}
+			strcpy(respuesta, "");
+		}
+		else if (codigo == 53)
+		{
+			char mensajeEndGame[200];
+			char playerLeft[50];
+			
+			p = strtok(NULL, "/");
+			strcpy(host, p);
+			p = strtok(NULL, "/");
+			strcpy(playerLeft, p);
+			
+			sprintf(mensajeEndGame, "53/%s/%s", host, playerLeft);
+			
+			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+			
+			p = strtok(sockets_receptores, "/");
+			while (p != NULL)
+			{
+				socketUsuario = atoi(p);
+				if (socketUsuario != sock_conn){
+					write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
+				}
 				p = strtok(NULL, "/");
 			}
 			strcpy(respuesta, "");
@@ -1843,7 +1911,7 @@ int main(int argc, char* argv[])
 	// Fem el bind al port
 
 	//int puerto = 50075;  //50075-50090 for Shiva
-	int puerto = 9076; 		//Linux
+	int puerto = 9075; 		//Linux
 	memset(&serv_adr, 0, sizeof(serv_adr));// inicialitza a zero serv_addr
 	serv_adr.sin_family = AF_INET;
 

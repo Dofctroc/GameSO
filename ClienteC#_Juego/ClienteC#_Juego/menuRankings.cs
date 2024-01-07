@@ -11,7 +11,6 @@ namespace ClienteC__Juego
         Socket server;
         int activeBox;
         string userName;
-        string[] otrosusuarios;
 
         public menuRankings(Socket server, string userName)
         {
@@ -215,13 +214,13 @@ namespace ClienteC__Juego
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
-                else if (tBox_otherplayer.Text != "")
+                if (tBox_otherplayer.Text != "")
                 {
                     string mensaje = "8/" + userName + "/" + tBox_otherplayer.Text;
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
-                else if (tBox_othertime.Text != "")
+                if (tBox_othertime.Text != "")
                 {
                     //string[] fechas = tBox_othertime.Text.Split('.');
                     //string inicio = fechas[0];

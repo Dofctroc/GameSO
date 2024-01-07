@@ -20,6 +20,7 @@ namespace ClienteC__Juego
     public partial class gameBoard : Form
     {
         Socket server;
+        menuPartida menuPartida;
         string gameHost, userName, playerGuess, playerSolve;
         List<string> partida;
         string[] playersColors;
@@ -28,7 +29,7 @@ namespace ClienteC__Juego
         System.Windows.Forms.Timer timer;
         int gameDurationSecs;
 
-        public gameBoard(Socket server, List<string> partida, int gameNum, string gameHost, string userName)
+        public gameBoard(Socket server, menuPartida menuPartida, List<string> partida, int gameNum, string gameHost, string userName)
         {
             InitializeComponent();
             this.server = server;
@@ -36,12 +37,13 @@ namespace ClienteC__Juego
             this.gameNum = gameNum;
             this.userName = userName;
             this.partida = partida;
+            this.menuPartida = menuPartida;
         }
 
         int rows; int columns; int cornerBoardMargin;
         int tileWidth; int tileHeight;
         int diceRoll, diceRoll1, diceRoll2;
-        bool myturn, hasfallado;
+        bool myturn, hasfallado, gameEnded;
 
         int countSuspect = 0;
         int countWeapon = 0;
@@ -317,6 +319,15 @@ namespace ClienteC__Juego
         {
             if (timer != null)
                 timer.Stop();
+            if (!gameEnded)
+            {
+                string mensaje = "53/" + gameHost + "/" + userName;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+
+                string chatMSG = "Everyone returned to lobby because you left the game!";
+                menuPartida.WriteInChatTITLE(gameNum, chatMSG, Color.Red);
+            }
         }
 
         private void displayDiceNum(int num1, int num2)
@@ -1094,6 +1105,7 @@ namespace ClienteC__Juego
                     if (respuesta == 0) //Aqui la partida se acaba y te echa de la partida
                     {
                         text = playerSolve + "'s accusation is RIGHT! Thus, game has ended.";
+                        gameEnded = false;
                         if (userName == gameHost) {
                             this.Invoke(new Action(() => { CreateEndGameButton(); }));
                         }
@@ -1113,6 +1125,7 @@ namespace ClienteC__Juego
                     richBox_read.AppendText(text + Environment.NewLine);
                     break;
                 case 52:
+                    gameEnded = true;
                     this.Close();
                     break;
             }
@@ -1274,6 +1287,8 @@ namespace ClienteC__Juego
 
         private void btt_solve_Click(object sender, EventArgs e)
         {
+            btt_solve.Enabled = false;
+            panel_Board.Enabled = false;
             panel_Solve.Visible = true;
             panel_Solve.Enabled = true;
             playerSolve = userName;

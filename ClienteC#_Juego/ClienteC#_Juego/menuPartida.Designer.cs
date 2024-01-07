@@ -70,6 +70,7 @@
             this.opcionesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.receiveInviteEXPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openRankingsEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btt_Quit = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_listaInvitar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_miPartida0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgrid_listaUsuarios)).BeginInit();
@@ -136,7 +137,7 @@
             this.button_LogOut.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.button_LogOut.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_LogOut.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_LogOut.Location = new System.Drawing.Point(87, 388);
+            this.button_LogOut.Location = new System.Drawing.Point(87, 345);
             this.button_LogOut.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_LogOut.Name = "button_LogOut";
             this.button_LogOut.Size = new System.Drawing.Size(123, 42);
@@ -189,7 +190,7 @@
             this.button_Jugar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.button_Jugar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_Jugar.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_Jugar.Location = new System.Drawing.Point(87, 341);
+            this.button_Jugar.Location = new System.Drawing.Point(87, 298);
             this.button_Jugar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_Jugar.Name = "button_Jugar";
             this.button_Jugar.Size = new System.Drawing.Size(116, 42);
@@ -538,7 +539,7 @@
             this.optionsToolStripMenuItem});
             this.menuOpciones.Location = new System.Drawing.Point(0, 0);
             this.menuOpciones.Name = "menuOpciones";
-            this.menuOpciones.Size = new System.Drawing.Size(1093, 26);
+            this.menuOpciones.Size = new System.Drawing.Size(1093, 30);
             this.menuOpciones.TabIndex = 45;
             this.menuOpciones.Text = "menuStrip1";
             // 
@@ -549,13 +550,13 @@
             this.strip1_Ranking});
             this.optionsToolStripMenuItem.Font = new System.Drawing.Font("ROG Fonts", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(106, 26);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // strip1_Ranking
             // 
             this.strip1_Ranking.Name = "strip1_Ranking";
-            this.strip1_Ranking.Size = new System.Drawing.Size(224, 26);
+            this.strip1_Ranking.Size = new System.Drawing.Size(187, 26);
             this.strip1_Ranking.Text = "Rankings";
             this.strip1_Ranking.Click += new System.EventHandler(this.strip1_Ranking_Click);
             // 
@@ -581,6 +582,21 @@
             this.openRankingsEXPToolStripMenuItem.Size = new System.Drawing.Size(230, 26);
             this.openRankingsEXPToolStripMenuItem.Text = "Open Rankings (EXP)";
             // 
+            // btt_Quit
+            // 
+            this.btt_Quit.AutoSize = true;
+            this.btt_Quit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btt_Quit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btt_Quit.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btt_Quit.Location = new System.Drawing.Point(87, 395);
+            this.btt_Quit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btt_Quit.Name = "btt_Quit";
+            this.btt_Quit.Size = new System.Drawing.Size(123, 42);
+            this.btt_Quit.TabIndex = 46;
+            this.btt_Quit.Text = "Quit";
+            this.btt_Quit.UseVisualStyleBackColor = false;
+            this.btt_Quit.Click += new System.EventHandler(this.btt_Quit_Click);
+            // 
             // menuPartida
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -589,6 +605,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackgroundImage = global::ClienteC__Juego.Properties.Resources.fondoDetectiveTile;
             this.ClientSize = new System.Drawing.Size(1093, 487);
+            this.Controls.Add(this.btt_Quit);
             this.Controls.Add(this.pBox_notif1);
             this.Controls.Add(this.pBox_notif0);
             this.Controls.Add(this.btt_partida0);
@@ -664,5 +681,6 @@
         private System.Windows.Forms.ToolStripMenuItem openRankingsEXPToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem strip1_Ranking;
+        private System.Windows.Forms.Button btt_Quit;
     }
 }

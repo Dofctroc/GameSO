@@ -46,6 +46,7 @@ Shiva ports: 75-79
 50 - Cambio en el solve			50/Host/JugX/Suspect.Weapon.Tool
 51 - Solución del solve 		51/Host/JugX/0 --> Good Solution	51/Host/JugX/-1 --> Solution not correct
 52 - Juego termina			52/Host/Duration/Winner/Puntuation
+53 - Juego termina de manera forzada	53/Host
 
  _____________________________________________________________________________________________
 |											      |
@@ -83,7 +84,9 @@ Shiva ports: 75-79
 26 - Host ha eliminado la partida	26/Host				(SentTo: Players in game lobby, not host)
 27 - Reenvia mensaje jugador chat	27/Host/JugX/Mensaje		(SentTo: All players in game lobby)
 /28 - Reenvia nuevo color de JugX	28/Host/JugX/ColorID
-30 - Envia toda la info de partida a la que te unes 	30/Host/Host.Jug1.Jug2.Jug3/Color0.Color1.Color2.Color3
+30 - Envia toda la info de partida a la que te unes 	30/Host/0/Host.Jug1.Jug2.Jug3/Color0.Color1.Color2.Color3
+							30/Host/1 	If player denied
+							30/Host/-1	If cant join despite accepting
 								(SentTo: Invited player if accepts)
 
 40 - Notificación inicio game 		40/Host

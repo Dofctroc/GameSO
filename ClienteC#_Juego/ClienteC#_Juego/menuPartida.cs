@@ -57,6 +57,8 @@ namespace ClienteC__Juego
 
         private void principal_Load(object sender, EventArgs e)
         {
+            // this.MinimumSize = new Size(670,395);
+
             // Variables declaration
             partida1 = new List<string>();
             partida2 = new List<string>();
@@ -112,6 +114,7 @@ namespace ClienteC__Juego
             dgrid_miPartida1.Rows.Clear();
 
             // Data grid de personas a Invitar
+            button_Invitar.Visible = true;
             dgrid_listaInvitar.Visible = true;
 
             dgrid_listaInvitar.ColumnCount = 2;
@@ -154,6 +157,7 @@ namespace ClienteC__Juego
         {
             // The logic behind when disconnecting, sending messages of disconnection to other users is on the server
             menuUsuario.serverShutdown();
+            menuUsuario.Show();
         }
 
         /// <summary>
@@ -194,7 +198,7 @@ namespace ClienteC__Juego
 
         private void button_Invitar_Click(object sender, EventArgs e)
         {
-            if (dgrid_listaInvitar.RowCount > 0)
+            if (dgrid_listaInvitar.RowCount > 0 && pendingInvitation.Count + partidas[displayedGame].Count < 6)
             {
                 string jugador;
                 string jugadoresInvitar = "";
@@ -213,8 +217,8 @@ namespace ClienteC__Juego
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
-            else
-                MessageBox.Show("No hay nadie seleccionado a invitar");
+            else { }
+                // Logica de: no hay nadie seleccionado o ya sois seis jugadores...
         }
 
         private void btt_kickPlayer_Click(object sender, EventArgs e)
@@ -225,7 +229,7 @@ namespace ClienteC__Juego
                 string mensaje = "24/" + username + "/" + selectedPlayerToKick[displayedGame];
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
-                selectedPlayerToKick = null;
+                selectedPlayerToKick[displayedGame] = null;
                 btt_kickPlayer0.Visible = false;
             }
         }
@@ -292,6 +296,20 @@ namespace ClienteC__Juego
                 dgrid_listaUsuarios.Visible = false;
                 arrowConn.BackgroundImage = Properties.Resources.bottonConn1;
             }
+        }
+
+        private void btt_Quit_Click(object sender, EventArgs e)
+        {
+            if (partidas[displayedGame].Count > 0)
+            {
+                string host = partidas[displayedGame][0];
+                string mensaje = "25/" + host + "/" + username;
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                server.Send(msg);
+
+            }
+            else { }
+                // MessageBox.Show("No estas dins de la partida");
         }
 
         /// <summary>
@@ -596,7 +614,7 @@ namespace ClienteC__Juego
         /// <param name="c"> Number representing the game of which the incoming information is from. Can be 0 or 1. </param>
         /// <param name="chatMSG"> String representing the message to be written. </param>
         /// <param name="color"> Color of the written message. </param>
-        private void WriteInChatTITLE(int c, string chatMSG, Color color)
+        public void WriteInChatTITLE(int c, string chatMSG, Color color)
         {
             partidasChats[c].SelectionFont = new Font("Arial", 10, FontStyle.Regular);
             partidasChats[c].SelectionColor = color;
@@ -725,8 +743,8 @@ namespace ClienteC__Juego
                     }
                     else
                     {
-                        DialogResult showInvite = MessageBox.Show("El usuario " + invitado + " ha rechazado tu invitacion",
-                            "Incoming Message", MessageBoxButtons.OK);
+                        chatMSG = "El usuario " + invitado + " ha rechazado la invitación";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
                     }
                     pendingInvitation.Remove(invitado);
                     break;
@@ -762,7 +780,39 @@ namespace ClienteC__Juego
                     }
                     break;
                 case 25: // Jugador abandona partida voluntariamente
+                    string playerQuit = mensaje[2];
+                    if (nameHost == playerQuit)
+                    {
+                        partidas[gameIndex].Clear();
+                        partidasDataGrids[gameIndex].Rows.Clear();
 
+                        chatMSG = "El host " + nameHost + " ha eliminado la partida";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+                    }
+                    else if (username == playerQuit)
+                    {
+                        partidas[gameIndex].Clear();
+                        partidasDataGrids[gameIndex].Rows.Clear();
+
+                        // partidasGroups[gameIndex].Visible = false;
+
+                        chatMSG = "You have exited the game";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+
+                        if (displayedGame != gameIndex)
+                            partidasNotifPanels[gameIndex].Visible = true;
+                    }
+                    else
+                    {
+                        listaMiPartida(gameIndex, playerQuit, false, "nada");
+                        partidas[gameIndex].Remove(playerQuit);
+
+                        chatMSG = "The user " + playerQuit + " has quit the game";
+                        WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
+
+                        if (displayedGame != gameIndex)
+                            partidasNotifPanels[gameIndex].Visible = true;
+                    }
                     break;
                 case 26: // La partida ha sido eliminada por el host
                     if (nameHost == username)
@@ -795,9 +845,9 @@ namespace ClienteC__Juego
                     partidasDataGrids[gameIndex].Rows[partidas[gameIndex].IndexOf(player)].Cells[2].Style.BackColor = coloresCharacters[colorID];
                     break;
                 case 30:
-                    if (mensaje[2] != "0")
+                    if (mensaje[2] == "0")
                     {
-                        List<string> jugadores = new List<string>(mensaje[2].Split('.'));
+                        List<string> jugadores = new List<string>(mensaje[3].Split('.'));
                         foreach (List<string> partida in partidas)
                         {
                             if (partida.Count == 0)
@@ -808,7 +858,7 @@ namespace ClienteC__Juego
                                 break;
                             }
                         }
-                        listaMiPartida(gameIndex, mensaje[2], mensaje[3]);
+                        listaMiPartida(gameIndex, mensaje[3], mensaje[4]);
 
                         displayedGame = gameIndex;
                         for (int i = 0; i < partidasGroups.Count; i++)
@@ -820,6 +870,14 @@ namespace ClienteC__Juego
                         partidasChats[gameIndex].Text = "";
                         chatMSG = "Te has unido a la partida de " + nameHost;
                         WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
+                    }
+                    else if (mensaje[2] == "-1")
+                    {
+                        // If needed, logic saying: "You could not enter "host"'s game, game is full"
+                    }
+                    else
+                    {
+                        // If needed, logic saying you denied game
                     }
                     break;
                 case 40:
@@ -867,6 +925,12 @@ namespace ClienteC__Juego
                     chatMSG = "The game has ended!";
                     WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
                     break;
+                case 53:
+                    string playerLeftGame = mensaje[2];
+
+                    chatMSG = "You returned to the lobby because " + playerLeftGame + " left the game!";
+                    WriteInChatTITLE(gameIndex, chatMSG, Color.Red);
+                    break;
             }
             if (codigo == 52 || codigo != 27 && codigo < 40)
                 updateStatusPartidas();
@@ -877,7 +941,7 @@ namespace ClienteC__Juego
             string chatMSG = "Host has started the game!";
             WriteInChatTITLE(gameNum, chatMSG, Color.Indigo);
 
-            tableros[gameNum] = new gameBoard(server, partidas[displayedGame], gameNum, gameHost, username);
+            tableros[gameNum] = new gameBoard(server, this, partidas[displayedGame], gameNum, gameHost, username);
             tableros[gameNum].Show();
         }
 
