@@ -85,7 +85,7 @@ namespace ClienteC__Juego
 
                 if (err == 0)
                 {
-                    string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text + "_N_";
+                    string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
@@ -101,7 +101,7 @@ namespace ClienteC__Juego
             {
                 if (err == 0)
                 {
-                    string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text + "_N_";
+                    string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
@@ -126,7 +126,7 @@ namespace ClienteC__Juego
             {
                 if (err == 0)
                 {
-                    string mensaje = "3/" + textbox_username.Text + "/" + textbox_password.Text + "_N_";
+                    string mensaje = "3/" + textbox_username.Text + "/" + textbox_password.Text + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
@@ -167,7 +167,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
+            string IP = "192.168.56.101"; int puerto = 9075;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -203,7 +203,7 @@ namespace ClienteC__Juego
                     conectado_conServer = false;
 
                     //Mensaje de desconexión
-                    string mensaje = "0/" + username + "_N_";
+                    string mensaje = "0/" + username + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
 
@@ -220,7 +220,7 @@ namespace ClienteC__Juego
                     conectado_conServer = false;
 
                     //Mensaje de desconexión
-                    string mensaje = "-1/" + username + "_N_";
+                    string mensaje = "-1/" + username + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
 
@@ -242,7 +242,7 @@ namespace ClienteC__Juego
                 conectado_conServer = false;
 
                 //Mensaje de desconexión
-                string mensaje = "0/" + userName + "_N_";
+                string mensaje = "0/" + userName + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
@@ -342,7 +342,7 @@ namespace ClienteC__Juego
                 string msje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 Console.WriteLine(msje);
 
-                string[] mensajes = msje.ToString().Split(new[] { "_N_" }, StringSplitOptions.None);
+                string[] mensajes = msje.ToString().Split(new[] { "*" }, StringSplitOptions.None);
                 foreach (string mensajesMsg in mensajes) {
                     if (mensajesMsg != "")
                     {
@@ -508,14 +508,14 @@ namespace ClienteC__Juego
 
         private void añadirPartidaEXPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string mensaje = "100/" + "Asier" + "/" + 480 + "/" + "Julia" + "/" + 200 + "/" + "01,02,24" + "_N_";
+            string mensaje = "100/" + "Asier" + "/" + 480 + "/" + "Julia" + "/" + 200 + "/" + "01,02,24" + "*";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
 
         private void consultaTiempoEXPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string mensaje = "99/" + "_N_";
+            string mensaje = "99/" + "*";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }

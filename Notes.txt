@@ -103,7 +103,7 @@ Shiva ports: 75-79
 50 - Cambio de carta de solve 		50/Host/JugX/Suspect.Weapon.Room
 51 - Solución del solve 		51/Host/JugX/0 --> Good Solution	51/Host/JugX/-1 --> Solution not correct
 52 - Juego Termina			52/Host
-53 - 
+53 - Juego termina de manera forzada	53/Host/JugX
 54 - Mensaje por chat partida		54/Host/JugX/Mensaje
 
 

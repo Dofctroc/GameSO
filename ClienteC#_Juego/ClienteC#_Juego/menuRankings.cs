@@ -140,11 +140,11 @@ namespace ClienteC__Juego
             btt_Refresh.Size = new Size(70, 30);
             btt_Refresh.Location = new Point((gBox_Rank.Location.X - btt_Refresh.Width) / 2, this.ClientSize.Height - btt_Refresh.Height - 10);
 
-            string mensaje = "14/" + "_N_" + "15/" + "_N_"; 
+            string mensaje = "14/" + "*" + "15/" + "*"; 
             byte[] msg = Encoding.UTF8.GetBytes(mensaje);
             server.Send(msg);
 
-            // string mensaje2 = "15/" + "_N_";
+            // string mensaje2 = "15/" + "*";
             // byte[] msg2 = System.Text.Encoding.ASCII.GetBytes(mensaje2);
             // server.Send(msg2);
         }
@@ -176,11 +176,11 @@ namespace ClienteC__Juego
         {
             if (activeBox == 0)
             {
-                string mensaje = "14/" + "_N_" + "15/" + "_N_";
+                string mensaje = "14/" + "*" + "15/" + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
-                // string mensaje2 = "15/" + "_N_";
+                // string mensaje2 = "15/" + "*";
                 // byte[] msg2 = System.Text.Encoding.ASCII.GetBytes(mensaje2);
                 // server.Send(msg2);
             }
@@ -189,7 +189,7 @@ namespace ClienteC__Juego
             {
                 if (tBox_username.Text != "")
                 {
-                    string mensaje = "16/" + tBox_username.Text + "_N_";
+                    string mensaje = "16/" + tBox_username.Text + "*";
                     // Enviamos al servidor el nombre tecleado
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
@@ -197,7 +197,7 @@ namespace ClienteC__Juego
 
                 if (tBox_gameID.Text != "")
                 {
-                    string mensaje2 = "17/" + tBox_gameID.Text + "_N_";
+                    string mensaje2 = "17/" + tBox_gameID.Text + "*";
                     // Enviamos al servidor el nombre tecleado
                     byte[] msg2 = System.Text.Encoding.ASCII.GetBytes(mensaje2);
                     server.Send(msg2);
@@ -207,13 +207,13 @@ namespace ClienteC__Juego
             {
                 if (tBox_otherusers.Text != "")
                 {
-                    string mensaje = "7/" + tBox_otherusers.Text + "_N_";
+                    string mensaje = "7/" + tBox_otherusers.Text + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
                 if (tBox_otherplayer.Text != "")
                 {
-                    string mensaje = "8/" + userName + "/" + tBox_otherplayer.Text + "_N_";
+                    string mensaje = "8/" + userName + "/" + tBox_otherplayer.Text + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
@@ -222,7 +222,7 @@ namespace ClienteC__Juego
                     //string[] fechas = tBox_othertime.Text.Split('.');
                     //string inicio = fechas[0];
                     //string final = fechas[1];
-                    string mensaje = "9/" + tBox_othertime.Text + "_N_";   //Teniendo en cuenta que el formato del mensaje es: yy-mm-dd/yy-mm-dd (inicio/final periodo)
+                    string mensaje = "9/" + tBox_othertime.Text + "*";   //Teniendo en cuenta que el formato del mensaje es: yy-mm-dd/yy-mm-dd (inicio/final periodo)
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }

@@ -190,7 +190,7 @@ namespace ClienteC__Juego
         {
             if ((partida1.Count == 0 || partida2.Count == 0) && !hostingGame)
             {
-                string mensaje = "20/" + username + "_N_";
+                string mensaje = "20/" + username + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
@@ -213,7 +213,7 @@ namespace ClienteC__Juego
                     }
                 }
 
-                string mensaje = "21/" + username + jugadoresInvitar + "_N_";
+                string mensaje = "21/" + username + jugadoresInvitar + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
@@ -226,7 +226,7 @@ namespace ClienteC__Juego
             // Solo se podra dar click a eliminar si eres el host (condicional presente en cell click de miPartida)
             if (selectedPlayerToKick[displayedGame] != null)
             {
-                string mensaje = "24/" + username + "/" + selectedPlayerToKick[displayedGame] + "_N_";
+                string mensaje = "24/" + username + "/" + selectedPlayerToKick[displayedGame] + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
                 selectedPlayerToKick[displayedGame] = null;
@@ -238,7 +238,7 @@ namespace ClienteC__Juego
         {
             if (partidas[displayedGame].Count >= 2 && partidas[displayedGame][0] == username)
             {
-                string mensaje = "40/" + username + "_N_";
+                string mensaje = "40/" + username + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
@@ -276,7 +276,7 @@ namespace ClienteC__Juego
             {
                 Console.WriteLine(textBox_write0.Text);
                 string men = textBox_write0.Text;
-                string mensaje = "27/" + partidas[displayedGame][0] + "/" + username + "/" + men + "_N_";
+                string mensaje = "27/" + partidas[displayedGame][0] + "/" + username + "/" + men + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
@@ -303,7 +303,7 @@ namespace ClienteC__Juego
             if (partidas[displayedGame].Count > 0)
             {
                 string host = partidas[displayedGame][0];
-                string mensaje = "25/" + host + "/" + username + "_N_";
+                string mensaje = "25/" + host + "/" + username + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
@@ -539,7 +539,7 @@ namespace ClienteC__Juego
                 Color nuevoColor = coloresCharacters[color];
                 partidasDataGrids[displayedGame].Rows[e.RowIndex].Cells[2].Style.BackColor = nuevoColor;
 
-                string mensaje = "28/" + partidas[displayedGame][0] + "/" + username + "/" + color + "_N_";
+                string mensaje = "28/" + partidas[displayedGame][0] + "/" + username + "/" + color + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
@@ -580,7 +580,7 @@ namespace ClienteC__Juego
                 {
                     e.SuppressKeyPress = true;
                     string men = textBox_write0.Text;
-                    string mensaje = "27/" + partidas[displayedGame][0] + "/" + username + "/" + men + "_N_";
+                    string mensaje = "27/" + partidas[displayedGame][0] + "/" + username + "/" + men + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                     textBox_write0.Clear();
@@ -595,7 +595,7 @@ namespace ClienteC__Juego
                 {
                     e.SuppressKeyPress = true;
                     string men = textBox_write1.Text;
-                    string mensaje = "27/" + partidas[displayedGame][0] + "/" + username + "/" + men + "_N_";
+                    string mensaje = "27/" + partidas[displayedGame][0] + "/" + username + "/" + men + "*";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                     textBox_write1.Clear();
@@ -930,6 +930,7 @@ namespace ClienteC__Juego
 
                     chatMSG = "You returned to the lobby because " + playerLeftGame + " left the game!";
                     WriteInChatTITLE(gameIndex, chatMSG, Color.Red);
+                    tableros[gameIndex].AtenderPartida(mensaje);
                     break;
                 case 54:
                     tableros[gameIndex].AtenderPartida(mensaje);
@@ -953,7 +954,7 @@ namespace ClienteC__Juego
             System.Windows.Forms.Timer timer = (System.Windows.Forms.Timer)sender;
 
             object hostName = timer.Tag;
-            string mensaje2 = "23/" + hostName + "/" + username + "/No" + "_N_";
+            string mensaje2 = "23/" + hostName + "/" + username + "/No" + "*";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
             server.Send(msg);
 
@@ -1043,13 +1044,13 @@ namespace ClienteC__Juego
 
             if (clickedPBox.BackColor == Color.Green)
             {
-                string mensaje2 = "23/" + hostName + "/" + username + "/Yes" + "_N_";
+                string mensaje2 = "23/" + hostName + "/" + username + "/Yes" + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
                 server.Send(msg);
             }
             else
             {
-                string mensaje2 = "23/" + hostName + "/" + username + "/No" + "_N_";
+                string mensaje2 = "23/" + hostName + "/" + username + "/No" + "*";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
                 server.Send(msg);
             }

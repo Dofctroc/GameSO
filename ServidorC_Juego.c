@@ -574,6 +574,7 @@ int consulta1(MYSQL* conn, char nombre[])
 	}
 
 	int puntosTotales = atoi(row[0]);
+
 	return puntosTotales;
 }
 
@@ -975,12 +976,12 @@ void AtenderCliente(void* socket)
 		char *mensajeTokens[10];
 		int mensajeCount = 0;
 		
-		char *trozoMensaje = strtok(peticion, "_N_");
+		char *trozoMensaje = strtok(peticion, "*");
 		while (trozoMensaje != NULL && mensajeCount < 10) {
 			mensajeTokens[mensajeCount] = trozoMensaje;
 			mensajeCount++;
 			
-			trozoMensaje = strtok(NULL, "_N_");
+			trozoMensaje = strtok(NULL, "*");
 		}
 		
 		// Procesar y responder los mensajes almacenados en el vector
@@ -996,7 +997,8 @@ void AtenderCliente(void* socket)
 			if (codigo == -1)
 			{
 				terminar = 1;
-			}
+			}     
+
 			else if (codigo == 0) //peticion de desconexion
 			{
 				p = strtok(NULL, "/");
@@ -1058,8 +1060,11 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(password, p);
 				char mensajeSignUp[80];
+				pthread_mutex_lock(&mutex);
 				consultaSignUp(conn, userName, password, mensajeSignUp);
+				pthread_mutex_unlock(&mutex);
 				strcpy(respuesta, mensajeSignUp);
+			
 			}
 			else if (codigo == 2) //check logIn
 			{
@@ -1068,6 +1073,7 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(password, p);
 				
+				pthread_mutex_lock(&mutex);
 				if (BuscarConectado(&lista_Conectados,userName) != -1) {
 					strcpy(respuesta, "2/Este usuario ya esta conectado");
 				}
@@ -1078,6 +1084,7 @@ void AtenderCliente(void* socket)
 						PonConectado(&lista_Conectados, userName, sock_conn);
 					strcpy(respuesta, mensajeLogIn);
 				}
+				pthread_mutex_unlock(&mutex);
 			}
 			else if (codigo == 3)
 			{
@@ -1086,9 +1093,12 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(password, p);
 				char mensajeSignOut[800];
+				
+				pthread_mutex_lock(&mutex);
 				EliminarUsuario(conn, userName, password, mensajeSignOut);
 				EliminarConectado(&lista_Conectados, userName);
 				strcpy(respuesta, mensajeSignOut);
+				pthread_mutex_unlock(&mutex);
 			}
 			else if (codigo == 7)
 			{
@@ -1097,11 +1107,13 @@ void AtenderCliente(void* socket)
 				char listajugadores[200];
 				strcpy(listajugadores, "");
 				
+				pthread_mutex_lock(&mutex);
 				p = strtok(NULL, "/");
 				strcpy(userName, p);
 				ListPlayersWithGames(conn, userName, listajugadores);
 				sprintf(mensajeotrainfousuarios, "7/%s", listajugadores);
 				strcpy(respuesta, mensajeotrainfousuarios);
+				pthread_mutex_unlock(&mutex);
 			}
 			else if (codigo == 8)
 			{
@@ -1111,6 +1123,7 @@ void AtenderCliente(void* socket)
 				strcpy(partidaslist, "");
 				char jugador[20];
 				
+				pthread_mutex_lock(&mutex);
 				p = strtok(NULL, "/");
 				strcpy(userName, p);
 				p = strtok(NULL, "/");
@@ -1118,6 +1131,7 @@ void AtenderCliente(void* socket)
 				PartidaconJugador(conn, userName, jugador, partidaslist);
 				sprintf(mensajepartidaconjugador, "8/%s", partidaslist);
 				strcpy(respuesta, mensajepartidaconjugador);
+				pthread_mutex_unlock(&mutex);
 			}
 			else if (codigo == 9)
 			{
@@ -1128,8 +1142,11 @@ void AtenderCliente(void* socket)
 				strcpy(lowbound, p);
 				p = strtok(NULL, "/");
 				strcpy(upbound, p);
+				
+				pthread_mutex_lock(&mutex);
 				consultaPartidaPeriodoTiempo(conn, lowbound, upbound, infoConsulta);
 				sprintf(respuesta, "9/%s", infoConsulta);
+				pthread_mutex_unlock(&mutex);
 			}
 			// Residual code from when you could actively ask connected users
 			else if (codigo == 7)
@@ -1137,8 +1154,10 @@ void AtenderCliente(void* socket)
 				char respuestaInfo[500];
 				p = strtok(NULL, "/");
 				strcpy(partida, p);
-				err = consultaInfoPartida(conn, partida ,respuestaInfo);
 				
+				pthread_mutex_lock(&mutex);
+				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				pthread_mutex_unlock(&mutex);
 				if (err == 0)
 					sprintf(respuesta, "17/%s", respuestaInfo);
 				else
@@ -1149,8 +1168,9 @@ void AtenderCliente(void* socket)
 				char respuestaInfo[500];
 				p = strtok(NULL, "/");
 				strcpy(partida, p);
+				pthread_mutex_lock(&mutex);
 				err = consultaInfoPartida(conn, partida ,respuestaInfo);
-				
+				pthread_mutex_unlock(&mutex);
 				if (err == 0)
 					sprintf(respuesta, "17/%s", respuestaInfo);
 				else
@@ -1161,7 +1181,9 @@ void AtenderCliente(void* socket)
 				char respuestaInfo[500];
 				p = strtok(NULL, "/");
 				strcpy(partida, p);
+				pthread_mutex_lock(&mutex);
 				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				pthread_mutex_unlock(&mutex);
 				
 				if (err == 0)
 					sprintf(respuesta, "17/%s", respuestaInfo);
@@ -1173,15 +1195,19 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(userName, p);
 				
+				pthread_mutex_lock(&mutex);
 				consultaConectados(&lista_Conectados, conectados);
+				pthread_mutex_unlock(&mutex);
 				sprintf(respuesta, "10/%s", conectados);
 			}
 			else if (codigo == 11)
 			{
 				p = strtok(NULL, "/");
 				strcpy(userName, p);
+				pthread_mutex_lock(&mutex);
 				
 				int puntosTotales = consulta1(conn, userName);
+				pthread_mutex_unlock(&mutex);
 				sprintf(respuesta, "11/%d", puntosTotales);
 			}
 			else if (codigo == 12)
@@ -1190,7 +1216,9 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(partida, p);
 				
+				pthread_mutex_lock(&mutex);
 				consulta2(conn, partida, puntuaciones);
+				pthread_mutex_unlock(&mutex);
 				strcpy(respuesta, puntuaciones);
 			}
 			else if (codigo == 13)
@@ -1200,14 +1228,17 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(partidaID, p);
 				
+				pthread_mutex_lock(&mutex);
 				consulta3(conn, partidaID, ganador);
+				pthread_mutex_unlock(&mutex);
 				strcpy(respuesta, ganador);
 			}
 			else if (codigo == 14)
 			{
 				char respuestaRanking[1000];
+				pthread_mutex_lock(&mutex);
 				err = consultaRanking1(conn,respuestaRanking);
-				
+				pthread_mutex_unlock(&mutex);
 				if (err == 0)
 					sprintf(respuesta, "14/%s", respuestaRanking);
 				else
@@ -1216,7 +1247,9 @@ void AtenderCliente(void* socket)
 			else if (codigo == 15)
 			{
 				char respuestaRanking[1000];
+				pthread_mutex_lock(&mutex);
 				err = consultaRanking2(conn,respuestaRanking);
+				pthread_mutex_unlock(&mutex);
 				
 				if (err == 0)
 					sprintf(respuesta, "15/%s", respuestaRanking);
@@ -1227,9 +1260,10 @@ void AtenderCliente(void* socket)
 			{
 				char respuestaInfo[1000];
 				p = strtok(NULL, "/");
+				pthread_mutex_lock(&mutex);
 				strcpy(userName, p);
 				err = consultaInfoJugador(conn, userName ,respuestaInfo);
-				
+				pthread_mutex_unlock(&mutex);
 				if (err == 0)
 					sprintf(respuesta, "16/%s", respuestaInfo);
 				else
@@ -1240,7 +1274,9 @@ void AtenderCliente(void* socket)
 				char respuestaInfo[1000];
 				p = strtok(NULL, "/");
 				strcpy(partida, p);
+				pthread_mutex_lock(&mutex);
 				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				pthread_mutex_unlock(&mutex);
 				
 				if (err == 0)
 					sprintf(respuesta, "17/%s", respuestaInfo);
@@ -1253,9 +1289,11 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(host, p);
 				
+				pthread_mutex_lock(&mutex);
 				int err = CrearPartida(&lista_Conectados, &lista_Partidas, host, sock_conn);
 				int color = AsignaColorJugador(&lista_Partidas, host);
 				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+				pthread_mutex_unlock(&mutex);
 				
 				printf("Color asignado: %d \n",color);
 				sprintf(respuesta, "20/%s/%d/%s", host, err, coloresJugadoresPartida);
@@ -1271,10 +1309,11 @@ void AtenderCliente(void* socket)
 				strcpy(infoInvitados, p);
 				printf("Info: %s \n", infoInvitados);
 				
+				pthread_mutex_lock(&mutex);
 				err = EnviarInvitacion(&lista_Conectados, &lista_Partidas, infoInvitados, sockets_receptores, invitacion);
 				sprintf(respuesta, "21/%s/%d", host, err);
 				
-				sprintf(invitacion, "%s_N_", invitacion);
+				sprintf(invitacion, "%s*", invitacion);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1283,6 +1322,7 @@ void AtenderCliente(void* socket)
 					write(socketUsuario, invitacion, strlen(invitacion));
 					p = strtok(NULL, "/");
 				}
+				pthread_mutex_unlock(&mutex);
 			}
 			else if (codigo == 23)
 			{
@@ -1297,7 +1337,7 @@ void AtenderCliente(void* socket)
 				
 				p = strtok(NULL, "/");
 				strcpy(host, p);
-				
+				pthread_mutex_lock(&mutex);
 				socketHost = BuscarSocket(&lista_Conectados, host);
 				if (socketHost != -1)
 				{
@@ -1325,7 +1365,7 @@ void AtenderCliente(void* socket)
 					{
 						sprintf(actualizacion, "23/%s/%s/%s/%s", host, invitado, decision, coloresJugadoresPartida);
 						
-						sprintf(actualizacion, "%s_N_", actualizacion);
+						sprintf(actualizacion, "%s*", actualizacion);
 						p = strtok(sockets_receptores, "/");
 						while (p != NULL)
 						{
@@ -1341,6 +1381,7 @@ void AtenderCliente(void* socket)
 					else 
 						sprintf(respuesta, "30/%s/1", host);
 				}
+				pthread_mutex_unlock(&mutex);
 			}
 			else if (codigo == 24)
 			{
@@ -1354,10 +1395,12 @@ void AtenderCliente(void* socket)
 				strcpy(expulsado, p);
 				sprintf(expulsion, "24/%s/%s", host, expulsado);
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 				EliminarJugadorPartida(&lista_Partidas, expulsado, host);
+				pthread_mutex_unlock(&mutex);
 				
-				sprintf(expulsion, "%s_N_", expulsion);
+				sprintf(expulsion, "%s*", expulsion);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1381,6 +1424,7 @@ void AtenderCliente(void* socket)
 				strcpy(playerQuit, p);
 				sprintf(mensajeQuit, "25/%s/%s", host, playerQuit);
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 				if (strcmp(playerQuit, host) == 0) {
 					EliminarPartida(&lista_Partidas, host);
@@ -1388,8 +1432,8 @@ void AtenderCliente(void* socket)
 				else {
 					EliminarJugadorPartida(&lista_Partidas, playerQuit, host);
 				}
-				
-				sprintf(mensajeQuit, "%s_N_", mensajeQuit);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajeQuit, "%s*", mensajeQuit);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1416,7 +1460,7 @@ void AtenderCliente(void* socket)
 					JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 					EliminarPartida(&lista_Partidas,host);
 					
-					sprintf(mensaje, "%s_N_", mensaje);
+					sprintf(mensaje, "%s*", mensaje);
 					p = strtok(sockets_receptores, "/");
 					while (p != NULL)
 					{
@@ -1445,9 +1489,10 @@ void AtenderCliente(void* socket)
 				strcpy(chat, p);
 				sprintf(mensajechat, "27/%s/%s/%s", host, jugador, chat);
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				
-				sprintf(mensajechat, "%s_N_", mensajechat);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajechat, "%s*", mensajechat);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1472,15 +1517,16 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				IDcolor = atoi(p);
 				
+				pthread_mutex_lock(&mutex);
 				int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
 				int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas, player, partidaIndex);
 				lista_Partidas.partidas[partidaIndex].colores[jugadorIndex] = IDcolor;
 				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
 				
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				
+				pthread_mutex_unlock(&mutex);
 				sprintf(mensajeColor, "28/%s/%s/%d", host, player, IDcolor);
-				sprintf(mensajeColor, "%s_N_", mensajeColor);
+				sprintf(mensajeColor, "%s*", mensajeColor);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1499,13 +1545,15 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(host, p);
 				
+				pthread_mutex_lock(&mutex);
 				int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
 				actualizarEstadoPartida(&lista_Conectados, &lista_Partidas, partidaIndex, 1);
 				
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				pthread_mutex_unlock(&mutex);
 				
 				sprintf(mensajeiniciopartida, "40/%s", host);
-				sprintf(mensajeiniciopartida, "%s_N_", mensajeiniciopartida);
+				sprintf(mensajeiniciopartida, "%s*", mensajeiniciopartida);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1523,8 +1571,10 @@ void AtenderCliente(void* socket)
 				strcpy(userName, p);
 				sprintf(mensaje,"41/%s",host);
 				
+				pthread_mutex_lock(&mutex);
 				int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
 				int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas,userName,partidaIndex);
+				pthread_mutex_unlock(&mutex);
 				
 				// Check if player is last player in game, next turn is for host, else next turn is for next player
 				if (lista_Partidas.partidas[partidaIndex].numJugadores == jugadorIndex + 1)
@@ -1554,11 +1604,13 @@ void AtenderCliente(void* socket)
 				// Send solution cards info to all players
 				char mensajeCardsSol[50];
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+				pthread_mutex_unlock(&mutex);
 				
 				sprintf(mensajeCardsSol, "44/%s/%s/%s/%s/%s", host, cardsSol, infoJugadoresPartida, coloresJugadoresPartida, cardsPlayers);
-				sprintf(mensajeCardsSol, "%s_N_", mensajeCardsSol);
+				sprintf(mensajeCardsSol, "%s*", mensajeCardsSol);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1586,10 +1638,12 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(position, p);
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				pthread_mutex_unlock(&mutex);
 				
 				sprintf(mensajePosition, "45/%s/%s/%s/%s", host, userName, prePosition, position);
-				sprintf(mensajePosition, "%s_N_", mensajePosition);
+				sprintf(mensajePosition, "%s*", mensajePosition);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1616,9 +1670,11 @@ void AtenderCliente(void* socket)
 				strcpy(cardsGuess, p);
 				sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, cardsGuess);
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				pthread_mutex_unlock(&mutex);
 				
-				sprintf(mensajeGuess, "%s_N_", mensajeGuess);
+				sprintf(mensajeGuess, "%s*", mensajeGuess);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1648,13 +1704,14 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				guessResponse = atoi(p);
 				
+				pthread_mutex_lock(&mutex);
 				// If guess response is not -1, the guess has been answered -> end guess iterations
 				if (guessResponse != -1)
 				{
 					sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, guessResponse);
 					
 					JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-					sprintf(mensajeGuess, "%s_N_", mensajeGuess);
+					sprintf(mensajeGuess, "%s*", mensajeGuess);
 					p = strtok(sockets_receptores, "/");
 					while (p != NULL)
 					{
@@ -1676,7 +1733,7 @@ void AtenderCliente(void* socket)
 						sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, -1);
 						
 						JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-						sprintf(mensajeGuess, "%s_N_", mensajeGuess);
+						sprintf(mensajeGuess, "%s*", mensajeGuess);
 						p = strtok(sockets_receptores, "/");
 						while (p != NULL)
 						{
@@ -1702,6 +1759,7 @@ void AtenderCliente(void* socket)
 						}
 					}
 				}
+				pthread_mutex_unlock(&mutex);
 				
 				strcpy(respuesta, "");
 			}
@@ -1718,8 +1776,10 @@ void AtenderCliente(void* socket)
 				strcpy(playerGuess, p);
 				sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, playerGuess);
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				sprintf(mensajeGuess, "%s_N_", mensajeGuess);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajeGuess, "%s*", mensajeGuess);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1743,8 +1803,10 @@ void AtenderCliente(void* socket)
 				strcpy(playerSolve, p);
 				sprintf(mensajeSolve, "49/%s/%s", host, playerSolve);
 				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				sprintf(mensajeSolve, "%s_N_", mensajeSolve);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajeSolve, "%s*", mensajeSolve);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1771,9 +1833,10 @@ void AtenderCliente(void* socket)
 				strcpy(cardsSolve, p);
 				
 				sprintf(mensajeSolve, "50/%s/%s/%s", host, playerSolve, cardsSolve);
-				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				sprintf(mensajeSolve, "%s_N_", mensajeSolve);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajeSolve, "%s*", mensajeSolve);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1799,9 +1862,10 @@ void AtenderCliente(void* socket)
 				solucionsolve = atoi(p);
 				
 				sprintf(mensajesolucionsolve, "51/%s/%s/%d", host, playerSolve, solucionsolve);
-				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				sprintf(mensajesolucionsolve, "%s_N_", mensajesolucionsolve);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajesolucionsolve, "%s*", mensajesolucionsolve);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1831,13 +1895,13 @@ void AtenderCliente(void* socket)
 				strcpy(day,p);
 				
 				sprintf(mensajeEndGame, "52/%s", host);
-				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
 				InsertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
 				
 				EliminarPartida(&lista_Partidas, host);
-				
-				sprintf(mensajeEndGame, "%s_N_", mensajeEndGame);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajeEndGame, "%s*", mensajeEndGame);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1858,17 +1922,15 @@ void AtenderCliente(void* socket)
 				strcpy(playerLeft, p);
 				
 				sprintf(mensajeEndGame, "53/%s/%s", host, playerLeft);
-				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				
-				sprintf(mensajeEndGame, "%s_N_", mensajeEndGame);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajeEndGame, "%s*", mensajeEndGame);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
 					socketUsuario = atoi(p);
-					if (socketUsuario != sock_conn){
-						write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
-					}
+					write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
 					p = strtok(NULL, "/");
 				}
 				strcpy(respuesta, "");
@@ -1887,9 +1949,10 @@ void AtenderCliente(void* socket)
 				p = strtok(NULL, "/");
 				strcpy(chat, p);
 				sprintf(mensajechat, "54/%s/%s/%s", host, jugador, chat);
-				
+				pthread_mutex_lock(&mutex);
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				sprintf(mensajechat, "%s_N_", mensajechat);
+				pthread_mutex_unlock(&mutex);
+				sprintf(mensajechat, "%s*", mensajechat);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
@@ -1903,29 +1966,33 @@ void AtenderCliente(void* socket)
 			if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47) && (codigo != 48) && (codigo != 49) && (codigo != 50))
 			{
 				printf("Respuesta: %s\n", respuesta);
-				sprintf(respuesta, "%s_N_", respuesta);
+				sprintf(respuesta, "%s*", respuesta);
 				// Enviamos respuesta
 				write(sock_conn, respuesta, strlen(respuesta));		// sock_conn es el socket del host
 			}
 			if (codigo == 2)
 			{
+				pthread_mutex_lock(&mutex);
 				// Disconnection notification already handled in codigo 0 conditional
 				if (BuscarConectado(&lista_Conectados,userName) != -1) {
 					consultaConectados(&lista_Conectados, conectados);
 					sprintf(notificacion, "10/%s",conectados);
-					sprintf(notificacion, "%s_N_", notificacion);
+					sprintf(notificacion, "%s*", notificacion);
 					
 					int j;
 					for (j = 0; j < 100; j++)
 						if (sockets[j] != -1)
 							write(sockets[j], notificacion, strlen(notificacion));
 				}
+				pthread_mutex_unlock(&mutex);
 			}
 			else if (codigo == 40 || codigo == 52)
 			{
+				pthread_mutex_lock(&mutex);
 				consultaConectados(&lista_Conectados, conectados);
+				pthread_mutex_unlock(&mutex);
 				sprintf(notificacion, "10/%s",conectados);
-				sprintf(notificacion, "%s_N_", notificacion);
+				sprintf(notificacion, "%s*", notificacion);
 				
 				int j;
 				for (j = 0; j < 100; j++)
