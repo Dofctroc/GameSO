@@ -70,7 +70,7 @@ namespace ClienteC__Juego
 
         private void menuUsuario_FormClosing(object sender, FormClosingEventArgs e)
         {
-            serverShutdown();
+            serverShutdown(0);
         }
 
         // -------------------- Acciones de Button Click --------------------
@@ -85,7 +85,7 @@ namespace ClienteC__Juego
 
                 if (err == 0)
                 {
-                    string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text;
+                    string mensaje = "2/" + textbox_username.Text + "/" + textbox_password.Text + "_N_";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
@@ -101,7 +101,7 @@ namespace ClienteC__Juego
             {
                 if (err == 0)
                 {
-                    string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text;
+                    string mensaje = "1/" + textbox_username.Text + "/" + textbox_password.Text + "_N_";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
@@ -113,7 +113,7 @@ namespace ClienteC__Juego
             msge = String.Format("~{0}~ Ha cerrado sesión.", username);
             WriteConsole(entry, msge);
 
-            serverShutdown();
+            serverShutdown(0);
             Close();
         }
 
@@ -126,7 +126,7 @@ namespace ClienteC__Juego
             {
                 if (err == 0)
                 {
-                    string mensaje = "3/" + textbox_username.Text + "/" + textbox_password.Text;
+                    string mensaje = "3/" + textbox_username.Text + "/" + textbox_password.Text + "_N_";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                 }
@@ -167,7 +167,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.101"; int puerto = 9075;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -194,24 +194,44 @@ namespace ClienteC__Juego
             return 0;
         }
 
-        public void serverShutdown()
+        public void serverShutdown(int type)
         {
             if (conectado_conServer)
             {
-                conectado_conServer = false;
+                if (type == 0)
+                {
+                    conectado_conServer = false;
 
-                //Mensaje de desconexión
-                string mensaje = "0/" + username;
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
+                    //Mensaje de desconexión
+                    string mensaje = "0/" + username + "_N_";
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
 
-                // Nos desconectamos
-                server.Shutdown(SocketShutdown.Both);
-                server.Close();
-                atender.Abort();
+                    // Nos desconectamos
+                    server.Shutdown(SocketShutdown.Both);
+                    server.Close();
+                    atender.Abort();
 
-                textbox_password.Text = "";
-                textbox_username.Text = "";
+                    textbox_password.Text = "";
+                    textbox_username.Text = "";
+                }
+                else if (type == -1)
+                {
+                    conectado_conServer = false;
+
+                    //Mensaje de desconexión
+                    string mensaje = "-1/" + username + "_N_";
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                    server.Send(msg);
+
+                    // Nos desconectamos
+                    server.Shutdown(SocketShutdown.Both);
+                    server.Close();
+                    atender.Abort();
+
+                    textbox_password.Text = "";
+                    textbox_username.Text = "";
+                }
             }
         }
 
@@ -222,7 +242,7 @@ namespace ClienteC__Juego
                 conectado_conServer = false;
 
                 //Mensaje de desconexión
-                string mensaje = "0/" + userName;
+                string mensaje = "0/" + userName + "_N_";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
@@ -252,7 +272,7 @@ namespace ClienteC__Juego
                         msge = "El nombre de usuario ya existe, pruebe otro nombre.";
                         WriteConsole(entry, msge);
                     }
-                    serverShutdown();
+                    serverShutdown(-1);
                     break;
 
                 case 2:     // Log in
@@ -265,7 +285,7 @@ namespace ClienteC__Juego
                     {
                         msge = mensaje[1];
                         WriteConsole(entry, msge);
-                        serverShutdown();
+                        serverShutdown(-1);
                     }
                     break;
                 case 3:
@@ -278,7 +298,7 @@ namespace ClienteC__Juego
                     {
                         msge = mensaje[1];
                         WriteConsole(entry, msge);
-                        serverShutdown();
+                        serverShutdown(-1);
                     }
                     break;
                 case 10:
@@ -321,141 +341,146 @@ namespace ClienteC__Juego
                 server.Receive(msg2);
                 string msje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 Console.WriteLine(msje);
-                string[] mensaje = msje.Split('/');
-                int codigo = Convert.ToInt32(mensaje[0]);
-                Delegado delegado = new Delegado(textoconsola);
 
-                switch (codigo)
-                {
-                    case 1:     // Sign up
-                        richBox_Control.Invoke(delegado, new object[] { mensaje });
-                        serverShutdown();
-                        break;
-                    case 2:     // Log in
-                        richBox_Control.Invoke(delegado, new object[] { mensaje });
-                        if (mensaje[1] == "0")
-                            this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
-                        else
-                            serverShutdown();
-                        break;
-                    case 3:
-                        richBox_Control.Invoke(delegado, new object[] { mensaje });
-                        if (mensaje[1] == "0")
-                            serverShutdown();
-                        break;
-                    case 7:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 8:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 9:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    // Connected information
-                    case 10:
-                        menuPartida.listaConectados(mensaje[1]);
-                        richBox_Control.Invoke(delegado, new object[] { mensaje });
-                        break;
-                        // Consultations
-                    case 11:
-                        consultas.responseReceived(mensaje, codigo);
-                        break;
-                    case 12:
-                        consultas.responseReceived(mensaje, codigo);
-                        break;
-                    case 13:
-                        consultas.responseReceived(mensaje, codigo);
-                        break;
-                        // Four ranking Consultations
-                    case 14:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 15:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 16:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 17:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                        // In game lobby
-                    case 20:    // Has podido crear partida bien o no
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 21:    // Has podido invitar bien o no
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 22:    // Te han invitado
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 23:    // Te han respondido la invitacion
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 24:    // Te has unido o no a la partida
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 25:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 26:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 27:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 28:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 30:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 40:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 41:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 42:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 43:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 44:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 45:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 46:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 47:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 48:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 49:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 50:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 51:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 52:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 53:
-                        menuPartida.onResponse(mensaje);
-                        break;
-                    case 54:
-                        menuPartida.onResponse(mensaje);
-                        break;
+                string[] mensajes = msje.ToString().Split(new[] { "_N_" }, StringSplitOptions.None);
+                foreach (string mensajesMsg in mensajes) {
+                    if (mensajesMsg != "")
+                    {
+                        // Process each mensaje
+                        Console.WriteLine(mensajesMsg);
+
+                        string[] mensaje = mensajesMsg.Split('/');
+                        int codigo = Convert.ToInt32(mensaje[0]);
+                        Delegado delegado = new Delegado(textoconsola);
+
+                        switch (codigo)
+                        {
+                            case 1:     // Sign up
+                                richBox_Control.Invoke(delegado, new object[] { mensaje });
+                                break;
+                            case 2:     // Log in
+                                richBox_Control.Invoke(delegado, new object[] { mensaje });
+                                if (mensaje[1] == "0")
+                                    this.Invoke((MethodInvoker)delegate { OpenNewForm(); });
+                                break;
+                            case 3:
+                                richBox_Control.Invoke(delegado, new object[] { mensaje });
+                                break;
+                            case 7:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 8:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 9:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            // Connected information
+                            case 10:
+                                menuPartida.listaConectados(mensaje[1]);
+                                richBox_Control.Invoke(delegado, new object[] { mensaje });
+                                break;
+                            // Consultations
+                            case 11:
+                                consultas.responseReceived(mensaje, codigo);
+                                break;
+                            case 12:
+                                consultas.responseReceived(mensaje, codigo);
+                                break;
+                            case 13:
+                                consultas.responseReceived(mensaje, codigo);
+                                break;
+                            // Four ranking Consultations
+                            case 14:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 15:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 16:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 17:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            // In game lobby
+                            case 20:    // Has podido crear partida bien o no
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 21:    // Has podido invitar bien o no
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 22:    // Te han invitado
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 23:    // Te han respondido la invitacion
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 24:    // Te has unido o no a la partida
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 25:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 26:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 27:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 28:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 30:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 40:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 41:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 42:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 43:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 44:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 45:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 46:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 47:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 48:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 49:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 50:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 51:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 52:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 53:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                            case 54:
+                                menuPartida.onResponse(mensaje);
+                                break;
+                        }
+                    }
                 }
             }
         }
@@ -483,14 +508,14 @@ namespace ClienteC__Juego
 
         private void añadirPartidaEXPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string mensaje = "100/" + "Asier" + "/" + 480 + "/" + "Julia" + "/" + 200 + "/" + "01,02,24";
+            string mensaje = "100/" + "Asier" + "/" + 480 + "/" + "Julia" + "/" + 200 + "/" + "01,02,24" + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
 
         private void consultaTiempoEXPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string mensaje = "99/";
+            string mensaje = "99/" + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }

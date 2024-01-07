@@ -970,671 +970,691 @@ void AtenderCliente(void* socket)
 		// para que no escriba lo que hay despues en el buffer
 		peticion[ret] = '\0';
 		printf("Peticion: %s\n", peticion);
-
-		// vamos a ver que quieren
-		char* p = strtok(peticion, "/");
-		int codigo = atoi(p);
-		// Ya tenemos el c?digo de la petici?n
-
-		if (codigo == 0) //peticion de desconexion
-		{
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
+		
+		// En caso de union de mensajes:
+		char *mensajeTokens[10];
+		int mensajeCount = 0;
+		
+		char *trozoMensaje = strtok(peticion, "_N_");
+		while (trozoMensaje != NULL && mensajeCount < 10) {
+			mensajeTokens[mensajeCount] = trozoMensaje;
+			mensajeCount++;
 			
-			// Check if user is at least logged in (Not the case when you sign up)
-			if (BuscarConectado(&lista_Conectados,userName) != -1) {
-				// Check if user is in a game lobby
-				if (BuscarPartidaUsuario(&lista_Partidas, userName) == -1)
-				{
-					// Inform all players of exitting game
-				}
+			trozoMensaje = strtok(NULL, "_N_");
+		}
+		
+		// Procesar y responder los mensajes almacenados en el vector
+		for (int i = 0; i < mensajeCount; i++) {
+			strcpy(peticion, mensajeTokens[i]);
+			printf("Peticion1: %s \n",peticion);
+			
+			// vamos a ver que quieren
+			char* p = strtok(peticion, "/");
+			int codigo = atoi(p);
+			// Ya tenemos el c?digo de la petici?n
+			
+			if (codigo == -1)
+			{
+				terminar = 1;
+			}
+			else if (codigo == 0) //peticion de desconexion
+			{
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
 				
-				// Check if user is hosting a game
-				int partida = BuscarPartidaHost(&lista_Partidas, userName);
-				if (partida != -1)
-				{
-					// Inform all players game is deleted
-					sprintf(mensaje, "26/%s", userName);
+				// Check if user is at least logged in (Not the case when you sign up)
+				if (BuscarConectado(&lista_Conectados,userName) != -1) {
+					// Check if user is in a game lobby
+					if (BuscarPartidaUsuario(&lista_Partidas, userName) == -1)
+					{
+						// Inform all players of exitting game
+					}
 					
-					pthread_mutex_lock(&mutex);
-					int partida = BuscarPartidaHost(&lista_Partidas,userName);
+					// Check if user is hosting a game
+					int partida = BuscarPartidaHost(&lista_Partidas, userName);
 					if (partida != -1)
 					{
-						JugadoresEnPartida(&lista_Partidas, sockets_receptores, userName, infoJugadoresPartida);
-						EliminarPartida(&lista_Partidas,userName);
+						// Inform all players game is deleted
+						sprintf(mensaje, "26/%s", userName);
+						
+						pthread_mutex_lock(&mutex);
+						int partida = BuscarPartidaHost(&lista_Partidas,userName);
+						if (partida != -1)
+						{
+							JugadoresEnPartida(&lista_Partidas, sockets_receptores, userName, infoJugadoresPartida);
+							EliminarPartida(&lista_Partidas,userName);
+							p = strtok(sockets_receptores, "/");
+							while (p != NULL)
+							{
+								socketUsuario = atoi(p);
+								if (socketUsuario != sock_conn)
+									write(socketUsuario, mensaje, strlen(mensaje));
+								p = strtok(NULL, "/");
+							}
+							strcpy(respuesta, mensaje);
+						}
+						pthread_mutex_unlock(&mutex);
+					}
+					
+					// Check if user is in an active game
+					
+					
+					// Finally eliminate that user from conectados
+					EliminarConectado(&lista_Conectados, userName);
+					
+					consultaConectados(&lista_Conectados, conectados);
+					sprintf(notificacion, "10/%s",conectados);
+					int j;
+					for (j = 0; j < 100; j++)
+						if (sockets[j] != -1)
+							write(sockets[j], notificacion, strlen(notificacion));
+				}
+				terminar = 1;
+			}
+			else if (codigo == 1) //do signUp
+			{
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				p = strtok(NULL, "/");
+				strcpy(password, p);
+				char mensajeSignUp[80];
+				consultaSignUp(conn, userName, password, mensajeSignUp);
+				strcpy(respuesta, mensajeSignUp);
+			}
+			else if (codigo == 2) //check logIn
+			{
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				p = strtok(NULL, "/");
+				strcpy(password, p);
+				
+				if (BuscarConectado(&lista_Conectados,userName) != -1) {
+					strcpy(respuesta, "2/Este usuario ya esta conectado");
+				}
+				else{
+					char mensajeLogIn[80];
+					int login = consultaLogIn(conn, userName, password, mensajeLogIn);
+					if (login == 0)
+						PonConectado(&lista_Conectados, userName, sock_conn);
+					strcpy(respuesta, mensajeLogIn);
+				}
+			}
+			else if (codigo == 3)
+			{
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				p = strtok(NULL, "/");
+				strcpy(password, p);
+				char mensajeSignOut[800];
+				EliminarUsuario(conn, userName, password, mensajeSignOut);
+				EliminarConectado(&lista_Conectados, userName);
+				strcpy(respuesta, mensajeSignOut);
+			}
+			else if (codigo == 7)
+			{
+				char mensajeotrainfousuarios[200];
+				strcpy(mensajeotrainfousuarios, "");
+				char listajugadores[200];
+				strcpy(listajugadores, "");
+				
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				ListPlayersWithGames(conn, userName, listajugadores);
+				sprintf(mensajeotrainfousuarios, "7/%s", listajugadores);
+				strcpy(respuesta, mensajeotrainfousuarios);
+			}
+			else if (codigo == 8)
+			{
+				char mensajepartidaconjugador[200];
+				strcpy(mensajepartidaconjugador, "");
+				char partidaslist[200];
+				strcpy(partidaslist, "");
+				char jugador[20];
+				
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				p = strtok(NULL, "/");
+				strcpy(jugador, p);
+				PartidaconJugador(conn, userName, jugador, partidaslist);
+				sprintf(mensajepartidaconjugador, "8/%s", partidaslist);
+				strcpy(respuesta, mensajepartidaconjugador);
+			}
+			else if (codigo == 9)
+			{
+				char lowbound[20];
+				char upbound[20];
+				char infoConsulta[200];
+				p = strtok(NULL, "/");
+				strcpy(lowbound, p);
+				p = strtok(NULL, "/");
+				strcpy(upbound, p);
+				consultaPartidaPeriodoTiempo(conn, lowbound, upbound, infoConsulta);
+				sprintf(respuesta, "9/%s", infoConsulta);
+			}
+			// Residual code from when you could actively ask connected users
+			else if (codigo == 7)
+			{
+				char respuestaInfo[500];
+				p = strtok(NULL, "/");
+				strcpy(partida, p);
+				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				
+				if (err == 0)
+					sprintf(respuesta, "17/%s", respuestaInfo);
+				else
+					sprintf(respuesta, "17/0");
+			}
+			else if (codigo == 8)
+			{
+				char respuestaInfo[500];
+				p = strtok(NULL, "/");
+				strcpy(partida, p);
+				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				
+				if (err == 0)
+					sprintf(respuesta, "17/%s", respuestaInfo);
+				else
+					sprintf(respuesta, "17/0");
+			}
+			else if (codigo == 9)
+			{
+				char respuestaInfo[500];
+				p = strtok(NULL, "/");
+				strcpy(partida, p);
+				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				
+				if (err == 0)
+					sprintf(respuesta, "17/%s", respuestaInfo);
+				else
+					sprintf(respuesta, "17/0");
+			}
+			else if (codigo == 10)
+			{
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				
+				consultaConectados(&lista_Conectados, conectados);
+				sprintf(respuesta, "10/%s", conectados);
+			}
+			else if (codigo == 11)
+			{
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				
+				int puntosTotales = consulta1(conn, userName);
+				sprintf(respuesta, "11/%d", puntosTotales);
+			}
+			else if (codigo == 12)
+			{
+				char puntuaciones[20];
+				p = strtok(NULL, "/");
+				strcpy(partida, p);
+				
+				consulta2(conn, partida, puntuaciones);
+				strcpy(respuesta, puntuaciones);
+			}
+			else if (codigo == 13)
+			{
+				char ganador[20];
+				char partidaID[10];
+				p = strtok(NULL, "/");
+				strcpy(partidaID, p);
+				
+				consulta3(conn, partidaID, ganador);
+				strcpy(respuesta, ganador);
+			}
+			else if (codigo == 14)
+			{
+				char respuestaRanking[1000];
+				err = consultaRanking1(conn,respuestaRanking);
+				
+				if (err == 0)
+					sprintf(respuesta, "14/%s", respuestaRanking);
+				else
+					sprintf(respuesta, "14/0");
+			}
+			else if (codigo == 15)
+			{
+				char respuestaRanking[1000];
+				err = consultaRanking2(conn,respuestaRanking);
+				
+				if (err == 0)
+					sprintf(respuesta, "15/%s", respuestaRanking);
+				else
+					sprintf(respuesta, "15/0");
+			}
+			else if (codigo == 16)
+			{
+				char respuestaInfo[1000];
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				err = consultaInfoJugador(conn, userName ,respuestaInfo);
+				
+				if (err == 0)
+					sprintf(respuesta, "16/%s", respuestaInfo);
+				else
+					sprintf(respuesta, "16/0");
+			}
+			else if (codigo == 17)
+			{
+				char respuestaInfo[1000];
+				p = strtok(NULL, "/");
+				strcpy(partida, p);
+				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				
+				if (err == 0)
+					sprintf(respuesta, "17/%s", respuestaInfo);
+				else
+					sprintf(respuesta, "17/0");
+			}
+			else if (codigo == 20)
+			{
+				char coloresJugadoresPartida[20];
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				
+				int err = CrearPartida(&lista_Conectados, &lista_Partidas, host, sock_conn);
+				int color = AsignaColorJugador(&lista_Partidas, host);
+				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+				
+				printf("Color asignado: %d \n",color);
+				sprintf(respuesta, "20/%s/%d/%s", host, err, coloresJugadoresPartida);
+			}
+			else if (codigo == 21)		// 3/Host/Asier/Julia/Gu... tots els invitados (fins a 8)
+			{
+				char invitacion[20];
+				char sockets_receptores[20];
+				char infoInvitados[80];
+				int err;
+				
+				p = strtok(NULL, "/");
+				strcpy(infoInvitados, p);
+				printf("Info: %s \n", infoInvitados);
+				
+				err = EnviarInvitacion(&lista_Conectados, &lista_Partidas, infoInvitados, sockets_receptores, invitacion);
+				sprintf(respuesta, "21/%s/%d", host, err);
+				
+				sprintf(invitacion, "%s_N_", invitacion);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					printf("Invitacion: %s \n", invitacion);
+					write(socketUsuario, invitacion, strlen(invitacion));
+					p = strtok(NULL, "/");
+				}
+			}
+			else if (codigo == 23)
+			{
+				char invitado[20];
+				char decision[20];
+				char actualizacion[20];
+				char coloresJugadoresPartida[20];
+				int socketHost;
+				int canInvite;
+				strcpy (sockets_receptores,"");
+				strcpy (actualizacion,"");
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				
+				socketHost = BuscarSocket(&lista_Conectados, host);
+				if (socketHost != -1)
+				{
+					p = strtok(NULL, "/");
+					strcpy(invitado, p);
+					p = strtok(NULL, "/");
+					strcpy(decision, p);
+					
+					if (strcmp(decision,"Yes") == 0)
+					{
+						int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
+						if (lista_Partidas.partidas[partidaIndex].numJugadores < 6)
+						{
+							canInvite = 0;
+							PonJugadorPartida(&lista_Conectados, &lista_Partidas, invitado, host);
+							AsignaColorJugador(&lista_Partidas, host);
+						}
+						else
+							canInvite = -1;
+					}
+					
+					JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+					ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+					if (canInvite == 0)
+					{
+						sprintf(actualizacion, "23/%s/%s/%s/%s", host, invitado, decision, coloresJugadoresPartida);
+						
+						sprintf(actualizacion, "%s_N_", actualizacion);
 						p = strtok(sockets_receptores, "/");
 						while (p != NULL)
 						{
 							socketUsuario = atoi(p);
 							if (socketUsuario != sock_conn)
-								write(socketUsuario, mensaje, strlen(mensaje));
+								write(socketUsuario, actualizacion, strlen(actualizacion));
 							p = strtok(NULL, "/");
 						}
-						strcpy(respuesta, mensaje);
 					}
-					pthread_mutex_unlock(&mutex);
-				}
-				
-				// Check if user is in an active game
-				
-				
-				// Finally eliminate that user from conectados
-				EliminarConectado(&lista_Conectados, userName);
-				
-				consultaConectados(&lista_Conectados, conectados);
-				sprintf(notificacion, "10/%s",conectados);
-				int j;
-				for (j = 0; j < 100; j++)
-					if (sockets[j] != -1)
-						write(sockets[j], notificacion, strlen(notificacion));
-			}
-			terminar = 1;
-		}
-		else if (codigo == 1) //do signUp
-		{
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			p = strtok(NULL, "/");
-			strcpy(password, p);
-			char mensajeSignUp[80];
-			consultaSignUp(conn, userName, password, mensajeSignUp);
-			strcpy(respuesta, mensajeSignUp);
-		}
-		else if (codigo == 2) //check logIn
-		{
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			p = strtok(NULL, "/");
-			strcpy(password, p);
-			
-			if (BuscarConectado(&lista_Conectados,userName) != -1) {
-				strcpy(respuesta, "2/Este usuario ya esta conectado");
-			}
-			else{
-				char mensajeLogIn[80];
-				int login = consultaLogIn(conn, userName, password, mensajeLogIn);
-				if (login == 0)
-					PonConectado(&lista_Conectados, userName, sock_conn);
-				strcpy(respuesta, mensajeLogIn);
-			}
-		}
-		else if (codigo == 3)
-		{
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			p = strtok(NULL, "/");
-			strcpy(password, p);
-			char mensajeSignOut[800];
-			EliminarUsuario(conn, userName, password, mensajeSignOut);
-			EliminarConectado(&lista_Conectados, userName);
-			strcpy(respuesta, mensajeSignOut);
-		}
-		else if (codigo == 7)
-		{
-			char mensajeotrainfousuarios[200];
-			strcpy(mensajeotrainfousuarios, "");
-			char listajugadores[200];
-			strcpy(listajugadores, "");
-			
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			ListPlayersWithGames(conn, userName, listajugadores);
-			sprintf(mensajeotrainfousuarios, "7/%s", listajugadores);
-			strcpy(respuesta, mensajeotrainfousuarios);
-		}
-		else if (codigo == 8)
-		{
-			char mensajepartidaconjugador[200];
-			strcpy(mensajepartidaconjugador, "");
-			char partidaslist[200];
-			strcpy(partidaslist, "");
-			char jugador[20];
-			
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			p = strtok(NULL, "/");
-			strcpy(jugador, p);
-			PartidaconJugador(conn, userName, jugador, partidaslist);
-			sprintf(mensajepartidaconjugador, "8/%s", partidaslist);
-			strcpy(respuesta, mensajepartidaconjugador);
-		}
-		else if (codigo == 9)
-		{
-			char lowbound[20];
-			char upbound[20];
-			char infoConsulta[200];
-			p = strtok(NULL, "/");
-			strcpy(lowbound, p);
-			p = strtok(NULL, "/");
-			strcpy(upbound, p);
-			consultaPartidaPeriodoTiempo(conn, lowbound, upbound, infoConsulta);
-			sprintf(respuesta, "9/%s", infoConsulta);
-		}
-		// Residual code from when you could actively ask connected users
-		else if (codigo == 7)
-		{
-			char respuestaInfo[500];
-			p = strtok(NULL, "/");
-			strcpy(partida, p);
-			err = consultaInfoPartida(conn, partida ,respuestaInfo);
-			
-			if (err == 0)
-				sprintf(respuesta, "17/%s", respuestaInfo);
-			else
-				sprintf(respuesta, "17/0");
-		}
-		else if (codigo == 8)
-		{
-			char respuestaInfo[500];
-			p = strtok(NULL, "/");
-			strcpy(partida, p);
-			err = consultaInfoPartida(conn, partida ,respuestaInfo);
-			
-			if (err == 0)
-				sprintf(respuesta, "17/%s", respuestaInfo);
-			else
-				sprintf(respuesta, "17/0");
-		}
-		else if (codigo == 9)
-		{
-			char respuestaInfo[500];
-			p = strtok(NULL, "/");
-			strcpy(partida, p);
-			err = consultaInfoPartida(conn, partida ,respuestaInfo);
-			
-			if (err == 0)
-				sprintf(respuesta, "17/%s", respuestaInfo);
-			else
-				sprintf(respuesta, "17/0");
-		}
-		else if (codigo == 10)
-		{
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			
-			consultaConectados(&lista_Conectados, conectados);
-			sprintf(respuesta, "10/%s", conectados);
-		}
-		else if (codigo == 11)
-		{
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			
-			int puntosTotales = consulta1(conn, userName);
-			sprintf(respuesta, "11/%d", puntosTotales);
-		}
-		else if (codigo == 12)
-		{
-			char puntuaciones[20];
-			p = strtok(NULL, "/");
-			strcpy(partida, p);
-			
-			consulta2(conn, partida, puntuaciones);
-			strcpy(respuesta, puntuaciones);
-		}
-		else if (codigo == 13)
-		{
-			char ganador[20];
-			char partidaID[10];
-			p = strtok(NULL, "/");
-			strcpy(partidaID, p);
-			
-			consulta3(conn, partidaID, ganador);
-			strcpy(respuesta, ganador);
-		}
-		else if (codigo == 14)
-		{
-			char respuestaRanking[1000];
-			err = consultaRanking1(conn,respuestaRanking);
-			
-			if (err == 0)
-				sprintf(respuesta, "14/%s", respuestaRanking);
-			else
-				sprintf(respuesta, "14/0");
-		}
-		else if (codigo == 15)
-		{
-			char respuestaRanking[1000];
-			err = consultaRanking2(conn,respuestaRanking);
-			
-			if (err == 0)
-				sprintf(respuesta, "15/%s", respuestaRanking);
-			else
-				sprintf(respuesta, "15/0");
-		}
-		else if (codigo == 16)
-		{
-			char respuestaInfo[1000];
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			err = consultaInfoJugador(conn, userName ,respuestaInfo);
-			
-			if (err == 0)
-				sprintf(respuesta, "16/%s", respuestaInfo);
-			else
-				sprintf(respuesta, "16/0");
-		}
-		else if (codigo == 17)
-		{
-			char respuestaInfo[1000];
-			p = strtok(NULL, "/");
-			strcpy(partida, p);
-			err = consultaInfoPartida(conn, partida ,respuestaInfo);
-			
-			if (err == 0)
-				sprintf(respuesta, "17/%s", respuestaInfo);
-			else
-				sprintf(respuesta, "17/0");
-		}
-		else if (codigo == 20)
-		{
-			char coloresJugadoresPartida[20];
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			int err = CrearPartida(&lista_Conectados, &lista_Partidas, host, sock_conn);
-			int color = AsignaColorJugador(&lista_Partidas, host);
-			ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
-			printf("Color asignado: %d \n",color);
-			sprintf(respuesta, "20/%s/%d/%s", host, err, coloresJugadoresPartida);
-		}
-		else if (codigo == 21)		// 3/Host/Asier/Julia/Gu... tots els invitados (fins a 8)
-		{
-			char invitacion[20];
-			char sockets_receptores[20];
-			char infoInvitados[80];
-			int err;
-			
-			p = strtok(NULL, "/");
-			strcpy(infoInvitados, p);
-			printf("Info: %s \n", infoInvitados);
-			
-			err = EnviarInvitacion(&lista_Conectados, &lista_Partidas, infoInvitados, sockets_receptores, invitacion);
-			sprintf(respuesta, "21/%s/%d", host, err);
-			
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				printf("Invitacion: %s \n", invitacion);
-				write(socketUsuario, invitacion, strlen(invitacion));
-				p = strtok(NULL, "/");
-			}
-		}
-		else if (codigo == 23)
-		{
-			char invitado[20];
-			char decision[20];
-			char actualizacion[20];
-			char coloresJugadoresPartida[20];
-			int socketHost;
-			int canInvite;
-			strcpy (sockets_receptores,"");
-			strcpy (actualizacion,"");
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			
-			socketHost = BuscarSocket(&lista_Conectados, host);
-			if (socketHost != -1)
-			{
-				p = strtok(NULL, "/");
-				strcpy(invitado, p);
-				p = strtok(NULL, "/");
-				strcpy(decision, p);
-				
-				if (strcmp(decision,"Yes") == 0)
-				{
-					int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
-					if (lista_Partidas.partidas[partidaIndex].numJugadores < 6)
-					{
-						canInvite = 0;
-						PonJugadorPartida(&lista_Conectados, &lista_Partidas, invitado, host);
-						AsignaColorJugador(&lista_Partidas, host);
-					}
-					else
-						canInvite = -1;
-				}
-				
-				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
-				if (canInvite == 0)
-				{
-					sprintf(actualizacion, "23/%s/%s/%s/%s", host, invitado, decision, coloresJugadoresPartida);
 					
-					p = strtok(sockets_receptores, "/");
-					while (p != NULL)
-					{
-						socketUsuario = atoi(p);
-						if (socketUsuario != sock_conn)
-							write(socketUsuario, actualizacion, strlen(actualizacion));
-						p = strtok(NULL, "/");
-					}
+					if (strcmp(decision,"Yes") == 0)
+						sprintf(respuesta, "30/%s/%d/%s/%s", host, canInvite, infoJugadoresPartida, coloresJugadoresPartida);
+					else 
+						sprintf(respuesta, "30/%s/1", host);
 				}
+			}
+			else if (codigo == 24)
+			{
+				char expulsado[20];
+				char expulsion[20];
+				int socketInvitado;
 				
-				if (strcmp(decision,"Yes") == 0)
-					sprintf(respuesta, "30/%s/%d/%s/%s", host, canInvite, infoJugadoresPartida, coloresJugadoresPartida);
-				else 
-					sprintf(respuesta, "30/%s/1", host);
-			}
-		}
-		else if (codigo == 24)
-		{
-			char expulsado[20];
-			char expulsion[20];
-			int socketInvitado;
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(expulsado, p);
-			sprintf(expulsion, "24/%s/%s", host, expulsado);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			EliminarJugadorPartida(&lista_Partidas, expulsado, host);
-			
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn)
-					write(socketUsuario, expulsion, strlen(expulsion));
 				p = strtok(NULL, "/");
-			}
-			
-			strcpy(respuesta, expulsion);
-		}
-		else if (codigo == 25)
-		{
-			char playerQuit[20];
-			char mensajeQuit[20];
-			int socketInvitado;
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(playerQuit, p);
-			sprintf(mensajeQuit, "25/%s/%s", host, playerQuit);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			if (strcmp(playerQuit, host) == 0) {
-				EliminarPartida(&lista_Partidas, host);
-			}
-			else {
-				EliminarJugadorPartida(&lista_Partidas, playerQuit, host);
-			}
-			
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn)
-					write(socketUsuario, mensajeQuit, strlen(mensajeQuit));
+				strcpy(host, p);
 				p = strtok(NULL, "/");
-			}
-			strcpy(respuesta, mensajeQuit);
-		}
-		else if (codigo == 26)
-		{
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			
-			sprintf(mensaje, "25/%s/%s", host, userName);
-			
-			pthread_mutex_lock(&mutex);
-			int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
-			if (partidaIndex != -1)
-			{
+				strcpy(expulsado, p);
+				sprintf(expulsion, "24/%s/%s", host, expulsado);
+				
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-				EliminarPartida(&lista_Partidas,host);
+				EliminarJugadorPartida(&lista_Partidas, expulsado, host);
+				
+				sprintf(expulsion, "%s_N_", expulsion);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
 					socketUsuario = atoi(p);
 					if (socketUsuario != sock_conn)
-						write(socketUsuario, mensaje, strlen(mensaje));
+						write(socketUsuario, expulsion, strlen(expulsion));
 					p = strtok(NULL, "/");
 				}
-				strcpy(respuesta, mensaje);
+				
+				strcpy(respuesta, expulsion);
 			}
-			pthread_mutex_unlock(&mutex);
-		}
-		else if (codigo == 27)
-		{
-			//Jugador envia un mensaje por el chat
-			char expulsion[20];
-			char mensajechat[200];
-			char chat[200];
-			char jugador[20];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(jugador, p);
-			p = strtok(NULL, "/");
-			strcpy(chat, p);
-			sprintf(mensajechat, "27/%s/%s/%s", host, jugador, chat);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
+			else if (codigo == 25)
 			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn)
-					write(socketUsuario, mensajechat, strlen(mensajechat));
+				char playerQuit[20];
+				char mensajeQuit[20];
+				int socketInvitado;
+				
 				p = strtok(NULL, "/");
-			}
-			strcpy(respuesta, mensajechat);
-		}
-		else if (codigo == 28)
-		{
-			char coloresJugadoresPartida[50];
-			char player[20];
-			int IDcolor;
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(player, p);
-			p = strtok(NULL, "/");
-			IDcolor = atoi(p);
-			
-			int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
-			int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas, player, partidaIndex);
-			lista_Partidas.partidas[partidaIndex].colores[jugadorIndex] = IDcolor;
-			ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
-			// Send solution cards info to all players
-			char mensajeColor[50];
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			sprintf(mensajeColor, "28/%s/%s/%d", host, player, IDcolor);
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn)
-					write(socketUsuario, mensajeColor, strlen(mensajeColor));
+				strcpy(host, p);
 				p = strtok(NULL, "/");
-			}
-			
-			// Once all cards info is sent, send message to start turn to the host
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 40)
-		{
-			char mensajeiniciopartida[50];
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			
-			int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
-			actualizarEstadoPartida(&lista_Conectados, &lista_Partidas, partidaIndex, 1);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			sprintf(mensajeiniciopartida, "40/%s", host);
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				write(socketUsuario, mensajeiniciopartida, strlen(mensajeiniciopartida));
-				p = strtok(NULL, "/");
-			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 42)
-		{
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			sprintf(mensaje,"41/%s",host);
-			
-			int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
-			int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas,userName,partidaIndex);
-			
-			// Check if player is last player in game, next turn is for host, else next turn is for next player
-			if (lista_Partidas.partidas[partidaIndex].numJugadores == jugadorIndex + 1)
-			{
-				socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[0].socket;
-				write(socketUsuario, mensaje, strlen(mensaje));
-			}
-			else
-			{
-				socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].socket;
-				write(socketUsuario, mensaje, strlen(mensaje));
-			}
-		}
-		else if (codigo == 43)
-		{
-			char coloresJugadoresPartida[20];
-			char cardsSol[20];
-			char cardsPlayers[100];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(cardsSol, p);
-			p = strtok(NULL, "/");
-			strcpy(cardsPlayers, p);
-			
-			// Send solution cards info to all players
-			char mensajeCardsSol[50];
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			sprintf(mensajeCardsSol, "44/%s/%s/%s/%s/%s", host, cardsSol, infoJugadoresPartida, coloresJugadoresPartida, cardsPlayers);
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn)
-					write(socketUsuario, mensajeCardsSol, strlen(mensajeCardsSol));
-				p = strtok(NULL, "/");
-			}
-			
-			// Once all cards info is sent, send message to start turn to the host
-			sprintf(respuesta, "41/%s/%s", host, coloresJugadoresPartida);
-		}
-		else if (codigo == 45)
-		{
-			char mensajePosition[100];
-			char prePosition[20];
-			char position[20];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			p = strtok(NULL, "/");
-			strcpy(prePosition, p);
-			p = strtok(NULL, "/");
-			strcpy(position, p);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			sprintf(mensajePosition, "45/%s/%s/%s/%s", host, userName, prePosition, position);
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn){
-					write(socketUsuario, mensajePosition, strlen(mensajePosition));
-					printf("Sent message position: %s \n",mensajePosition);
-				}
-				p = strtok(NULL, "/");
-			}
-			
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 46)
-		{
-			char cardsGuess[20];
-			char mensajeGuess[200];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			p = strtok(NULL, "/");
-			strcpy(cardsGuess, p);
-			sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, cardsGuess);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn){
-					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
-					printf("Sent message guess: %s \n",mensajeGuess);
-				}
-				p = strtok(NULL, "/");
-			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 47) // 47/Host/JugX/JugY/Suspect.Weapon.Room/Respuesta
-		{
-			int guessResponse;
-			char cardsGuess[20];
-			char playerGuess[20];
-			char playerResponse[20];
-			char mensajeGuess[200];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(playerGuess, p);
-			p = strtok(NULL, "/");
-			strcpy(playerResponse, p);
-			p = strtok(NULL, "/");
-			guessResponse = atoi(p);
-			
-			// If guess response is not -1, the guess has been answered -> end guess iterations
-			if (guessResponse != -1)
-			{
-				sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, guessResponse);
+				strcpy(playerQuit, p);
+				sprintf(mensajeQuit, "25/%s/%s", host, playerQuit);
 				
 				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				if (strcmp(playerQuit, host) == 0) {
+					EliminarPartida(&lista_Partidas, host);
+				}
+				else {
+					EliminarJugadorPartida(&lista_Partidas, playerQuit, host);
+				}
+				
+				sprintf(mensajeQuit, "%s_N_", mensajeQuit);
 				p = strtok(sockets_receptores, "/");
 				while (p != NULL)
 				{
 					socketUsuario = atoi(p);
-					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+					if (socketUsuario != sock_conn)
+						write(socketUsuario, mensajeQuit, strlen(mensajeQuit));
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, mensajeQuit);
+			}
+			else if (codigo == 26)
+			{
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				
+				sprintf(mensaje, "25/%s/%s", host, userName);
+				
+				pthread_mutex_lock(&mutex);
+				int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
+				if (partidaIndex != -1)
+				{
+					JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+					EliminarPartida(&lista_Partidas,host);
+					
+					sprintf(mensaje, "%s_N_", mensaje);
+					p = strtok(sockets_receptores, "/");
+					while (p != NULL)
+					{
+						socketUsuario = atoi(p);
+						if (socketUsuario != sock_conn)
+							write(socketUsuario, mensaje, strlen(mensaje));
+						p = strtok(NULL, "/");
+					}
+					strcpy(respuesta, mensaje);
+				}
+				pthread_mutex_unlock(&mutex);
+			}
+			else if (codigo == 27)
+			{
+				//Jugador envia un mensaje por el chat
+				char expulsion[20];
+				char mensajechat[200];
+				char chat[200];
+				char jugador[20];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(jugador, p);
+				p = strtok(NULL, "/");
+				strcpy(chat, p);
+				sprintf(mensajechat, "27/%s/%s/%s", host, jugador, chat);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				
+				sprintf(mensajechat, "%s_N_", mensajechat);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn)
+						write(socketUsuario, mensajechat, strlen(mensajechat));
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, mensajechat);
+			}
+			else if (codigo == 28)
+			{
+				char mensajeColor[50];
+				char coloresJugadoresPartida[50];
+				char player[20];
+				int IDcolor;
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(player, p);
+				p = strtok(NULL, "/");
+				IDcolor = atoi(p);
+				
+				int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
+				int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas, player, partidaIndex);
+				lista_Partidas.partidas[partidaIndex].colores[jugadorIndex] = IDcolor;
+				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				
+				sprintf(mensajeColor, "28/%s/%s/%d", host, player, IDcolor);
+				sprintf(mensajeColor, "%s_N_", mensajeColor);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn)
+						write(socketUsuario, mensajeColor, strlen(mensajeColor));
+					p = strtok(NULL, "/");
+				}
+				
+				// Once all cards info is sent, send message to start turn to the host
+				strcpy(respuesta, "");
+			}
+			else if (codigo == 40)
+			{
+				char mensajeiniciopartida[50];
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				
+				int partidaIndex = BuscarPartidaHost(&lista_Partidas, host);
+				actualizarEstadoPartida(&lista_Conectados, &lista_Partidas, partidaIndex, 1);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				
+				sprintf(mensajeiniciopartida, "40/%s", host);
+				sprintf(mensajeiniciopartida, "%s_N_", mensajeiniciopartida);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					write(socketUsuario, mensajeiniciopartida, strlen(mensajeiniciopartida));
 					p = strtok(NULL, "/");
 				}
 				strcpy(respuesta, "");
 			}
-			else
+			else if (codigo == 42)
 			{
-				int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
-				int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas,playerResponse,partidaIndex);
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				sprintf(mensaje,"41/%s",host);
 				
-				// Check if next player to guess is the player who guessed  partida.IndexOf(playerGuess) + 1 == partida.Count && partida.IndexOf(userName) == 0
-				if ( (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].userName,playerGuess) == 0) 
-					|| (jugadorIndex + 1 == lista_Partidas.partidas[partidaIndex].numJugadores && (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[0].userName,playerGuess) == 0)) )
+				int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
+				int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas,userName,partidaIndex);
+				
+				// Check if player is last player in game, next turn is for host, else next turn is for next player
+				if (lista_Partidas.partidas[partidaIndex].numJugadores == jugadorIndex + 1)
 				{
-					sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, -1);
+					socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[0].socket;
+					write(socketUsuario, mensaje, strlen(mensaje));
+				}
+				else
+				{
+					socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].socket;
+					write(socketUsuario, mensaje, strlen(mensaje));
+				}
+			}
+			else if (codigo == 43)
+			{
+				char coloresJugadoresPartida[20];
+				char cardsSol[20];
+				char cardsPlayers[100];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(cardsSol, p);
+				p = strtok(NULL, "/");
+				strcpy(cardsPlayers, p);
+				
+				// Send solution cards info to all players
+				char mensajeCardsSol[50];
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				ColoresJugadoresEnPartida(&lista_Partidas, host, coloresJugadoresPartida);
+				
+				sprintf(mensajeCardsSol, "44/%s/%s/%s/%s/%s", host, cardsSol, infoJugadoresPartida, coloresJugadoresPartida, cardsPlayers);
+				sprintf(mensajeCardsSol, "%s_N_", mensajeCardsSol);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn)
+						write(socketUsuario, mensajeCardsSol, strlen(mensajeCardsSol));
+					p = strtok(NULL, "/");
+				}
+				
+				// Once all cards info is sent, send message to start turn to the host
+				sprintf(respuesta, "41/%s/%s", host, coloresJugadoresPartida);
+			}
+			else if (codigo == 45)
+			{
+				char mensajePosition[100];
+				char prePosition[20];
+				char position[20];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				p = strtok(NULL, "/");
+				strcpy(prePosition, p);
+				p = strtok(NULL, "/");
+				strcpy(position, p);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				
+				sprintf(mensajePosition, "45/%s/%s/%s/%s", host, userName, prePosition, position);
+				sprintf(mensajePosition, "%s_N_", mensajePosition);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn){
+						write(socketUsuario, mensajePosition, strlen(mensajePosition));
+						printf("Sent message position: %s \n",mensajePosition);
+					}
+					p = strtok(NULL, "/");
+				}
+				
+				strcpy(respuesta, "");
+			}
+			else if (codigo == 46)
+			{
+				char cardsGuess[20];
+				char mensajeGuess[200];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				p = strtok(NULL, "/");
+				strcpy(cardsGuess, p);
+				sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, cardsGuess);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				
+				sprintf(mensajeGuess, "%s_N_", mensajeGuess);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn){
+						write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+						printf("Sent message guess: %s \n",mensajeGuess);
+					}
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, "");
+			}
+			else if (codigo == 47) // 47/Host/JugX/JugY/Suspect.Weapon.Room/Respuesta
+			{
+				int guessResponse;
+				char cardsGuess[20];
+				char playerGuess[20];
+				char playerResponse[20];
+				char mensajeGuess[200];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(playerGuess, p);
+				p = strtok(NULL, "/");
+				strcpy(playerResponse, p);
+				p = strtok(NULL, "/");
+				guessResponse = atoi(p);
+				
+				// If guess response is not -1, the guess has been answered -> end guess iterations
+				if (guessResponse != -1)
+				{
+					sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, guessResponse);
 					
 					JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+					sprintf(mensajeGuess, "%s_N_", mensajeGuess);
 					p = strtok(sockets_receptores, "/");
 					while (p != NULL)
 					{
@@ -1646,254 +1666,266 @@ void AtenderCliente(void* socket)
 				}
 				else
 				{
-					sprintf(mensajeGuess, "47/%s/%s", host, playerGuess);
+					int partidaIndex = BuscarPartidaHost(&lista_Partidas,host);
+					int jugadorIndex = BuscarUsuarioPartida(&lista_Partidas,playerResponse,partidaIndex);
 					
-					if (lista_Partidas.partidas[partidaIndex].numJugadores == jugadorIndex + 1)
+					// Check if next player to guess is the player who guessed  partida.IndexOf(playerGuess) + 1 == partida.Count && partida.IndexOf(userName) == 0
+					if ( (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].userName,playerGuess) == 0) 
+						|| (jugadorIndex + 1 == lista_Partidas.partidas[partidaIndex].numJugadores && (strcmp(lista_Partidas.partidas[partidaIndex].jugadores[0].userName,playerGuess) == 0)) )
 					{
-						socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[0].socket;
-						write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+						sprintf(mensajeGuess, "48/%s/%s/%s/%d", host, playerGuess, playerResponse, -1);
+						
+						JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+						sprintf(mensajeGuess, "%s_N_", mensajeGuess);
+						p = strtok(sockets_receptores, "/");
+						while (p != NULL)
+						{
+							socketUsuario = atoi(p);
+							write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+							p = strtok(NULL, "/");
+						}
+						strcpy(respuesta, "");
 					}
 					else
 					{
-						socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].socket;
-						write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+						sprintf(mensajeGuess, "47/%s/%s", host, playerGuess);
+						
+						if (lista_Partidas.partidas[partidaIndex].numJugadores == jugadorIndex + 1)
+						{
+							socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[0].socket;
+							write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+						}
+						else
+						{
+							socketUsuario = lista_Partidas.partidas[partidaIndex].jugadores[jugadorIndex+1].socket;
+							write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+						}
 					}
 				}
+				
+				strcpy(respuesta, "");
 			}
-			
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 48)
-		{
-			char playerGuess[20];
-			char mensajeGuess[200];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(userName, p);
-			p = strtok(NULL, "/");
-			strcpy(playerGuess, p);
-			sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, playerGuess);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
+			else if (codigo == 48)
 			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn){
-					write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
-					printf("Sent message guess: %s \n",mensajeGuess);
+				char playerGuess[20];
+				char mensajeGuess[200];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(userName, p);
+				p = strtok(NULL, "/");
+				strcpy(playerGuess, p);
+				sprintf(mensajeGuess, "46/%s/%s/%s", host, userName, playerGuess);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				sprintf(mensajeGuess, "%s_N_", mensajeGuess);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn){
+						write(socketUsuario, mensajeGuess, strlen(mensajeGuess));
+						printf("Sent message guess: %s \n",mensajeGuess);
+					}
+					p = strtok(NULL, "/");
 				}
-				p = strtok(NULL, "/");
+				strcpy(respuesta, "");
 			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 49)
-		{
-			char playerSolve[20];
-			char mensajeSolve[200];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(playerSolve, p);
-			sprintf(mensajeSolve, "49/%s/%s", host, playerSolve);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
+			else if (codigo == 49)
 			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn){
-					write(socketUsuario, mensajeSolve, strlen(mensajeSolve));
-					printf("Sent message solve: %s \n",mensajeSolve);
+				char playerSolve[20];
+				char mensajeSolve[200];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(playerSolve, p);
+				sprintf(mensajeSolve, "49/%s/%s", host, playerSolve);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				sprintf(mensajeSolve, "%s_N_", mensajeSolve);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn){
+						write(socketUsuario, mensajeSolve, strlen(mensajeSolve));
+						printf("Sent message solve: %s \n",mensajeSolve);
+					}
+					p = strtok(NULL, "/");
 				}
-				p = strtok(NULL, "/");
+				strcpy(respuesta, "");
 			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 50)
-		{
-			char playerSolve[20];
-			char mensajeSolve[200];
-			char cardsSolve[20];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(playerSolve, p);
-			p = strtok(NULL, "/");
-			strcpy(cardsSolve, p);
-			
-			sprintf(mensajeSolve, "50/%s/%s/%s", host, playerSolve, cardsSolve);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
+			else if (codigo == 50)
 			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn){
-					write(socketUsuario, mensajeSolve, strlen(mensajeSolve));
-					printf("Sent message change solve cards: %s \n",mensajeSolve);
+				char playerSolve[20];
+				char mensajeSolve[200];
+				char cardsSolve[20];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(playerSolve, p);
+				p = strtok(NULL, "/");
+				strcpy(cardsSolve, p);
+				
+				sprintf(mensajeSolve, "50/%s/%s/%s", host, playerSolve, cardsSolve);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				sprintf(mensajeSolve, "%s_N_", mensajeSolve);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn){
+						write(socketUsuario, mensajeSolve, strlen(mensajeSolve));
+					}
+					p = strtok(NULL, "/");
 				}
-				p = strtok(NULL, "/");
+				strcpy(respuesta, "");
 			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 51)
-		{
-			char playerSolve[20];
-			int solucionsolve;
-			char mensajesolucionsolve[200];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(playerSolve, p);
-			p = strtok(NULL, "/");
-			solucionsolve = atoi(p);
-			
-			sprintf(mensajesolucionsolve, "51/%s/%s/%d", host, playerSolve, solucionsolve);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
+			else if (codigo == 51)
 			{
-				socketUsuario = atoi(p);
-				write(socketUsuario, mensajesolucionsolve, strlen(mensajesolucionsolve));
-				printf("Sent message change solve cards: %s \n",mensajesolucionsolve);
+				char playerSolve[20];
+				int solucionsolve;
+				char mensajesolucionsolve[200];
+				
 				p = strtok(NULL, "/");
-			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 52)
-		{
-			char winner[20];
-			int durationSecs;
-			int score;
-			char day[20];
-			char mensajeEndGame[200];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			durationSecs = atoi(p);
-			p = strtok(NULL, "/");
-			strcpy(winner, p);
-			p = strtok(NULL, "/");
-			score = atoi(p);
-			p = strtok(NULL,"/");
-			strcpy(day,p);
-			
-			sprintf(mensajeEndGame, "52/%s", host);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			InsertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
-			
-			EliminarPartida(&lista_Partidas, host);
-			
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
-			{
-				socketUsuario = atoi(p);
-				write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
+				strcpy(host, p);
 				p = strtok(NULL, "/");
+				strcpy(playerSolve, p);
+				p = strtok(NULL, "/");
+				solucionsolve = atoi(p);
+				
+				sprintf(mensajesolucionsolve, "51/%s/%s/%d", host, playerSolve, solucionsolve);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				sprintf(mensajesolucionsolve, "%s_N_", mensajesolucionsolve);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					write(socketUsuario, mensajesolucionsolve, strlen(mensajesolucionsolve));
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, "");
 			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 53)
-		{
-			char mensajeEndGame[200];
-			char playerLeft[50];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(playerLeft, p);
-			
-			sprintf(mensajeEndGame, "53/%s/%s", host, playerLeft);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
+			else if (codigo == 52)
 			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn){
+				char winner[20];
+				int durationSecs;
+				int score;
+				char day[20];
+				char mensajeEndGame[200];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				durationSecs = atoi(p);
+				p = strtok(NULL, "/");
+				strcpy(winner, p);
+				p = strtok(NULL, "/");
+				score = atoi(p);
+				p = strtok(NULL,"/");
+				strcpy(day,p);
+				
+				sprintf(mensajeEndGame, "52/%s", host);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				InsertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
+				
+				EliminarPartida(&lista_Partidas, host);
+				
+				sprintf(mensajeEndGame, "%s_N_", mensajeEndGame);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
 					write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
+					p = strtok(NULL, "/");
 				}
-				p = strtok(NULL, "/");
+				strcpy(respuesta, "");
 			}
-			strcpy(respuesta, "");
-		}
-		else if (codigo == 54)
-		{
-			char expulsion[20];
-			char mensajechat[200];
-			char chat[200];
-			char jugador[20];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			strcpy(jugador, p);
-			p = strtok(NULL, "/");
-			strcpy(chat, p);
-			sprintf(mensajechat, "54/%s/%s/%s", host, jugador, chat);
-			
-			JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
-			p = strtok(sockets_receptores, "/");
-			while (p != NULL)
+			else if (codigo == 53)
 			{
-				socketUsuario = atoi(p);
-				if (socketUsuario != sock_conn)
-					write(socketUsuario, mensajechat, strlen(mensajechat));
+				char mensajeEndGame[200];
+				char playerLeft[50];
+				
 				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(playerLeft, p);
+				
+				sprintf(mensajeEndGame, "53/%s/%s", host, playerLeft);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				
+				sprintf(mensajeEndGame, "%s_N_", mensajeEndGame);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn){
+						write(socketUsuario, mensajeEndGame, strlen(mensajeEndGame));
+					}
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, "");
 			}
-			strcpy(respuesta, mensajechat);
-		}
-		else if (codigo == 99)
-		{
-			char infoConsulta[200];
-			consultaPartidaPeriodoTiempo(conn,"2023-01-01","2023-12-31",infoConsulta);
-			strcpy(respuesta,"");
-		}
-		else if (codigo == 100)		// 100/host/dur/win/score/day
-		{
-			char winner[20];
-			int durationSecs;
-			int score;
-			char day[20];
-			char mensajeEndGame[200];
-			
-			p = strtok(NULL, "/");
-			strcpy(host, p);
-			p = strtok(NULL, "/");
-			durationSecs = atoi(p);
-			p = strtok(NULL, "/");
-			strcpy(winner, p);
-			p = strtok(NULL, "/");
-			score = atoi(p);
-			p = strtok(NULL,"/");
-			strcpy(day,p);
-			
-			InsertarPartidaSQL(conn, &lista_Partidas, host, durationSecs, winner, score, day);
-			
-			strcpy(respuesta, "");
-		}
-		if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47) && (codigo != 48) && (codigo != 49) && (codigo != 50))
-		{
-			printf("Respuesta: %s\n", respuesta);
-			// Enviamos respuesta
-			write(sock_conn, respuesta, strlen(respuesta));		// sock_conn es el socket del host
-		}
-		if (codigo == 2)
-		{
-			// Disconnection notification already handled in codigo 0 conditional
-			if (BuscarConectado(&lista_Conectados,userName) != -1) {
+			else if (codigo == 54)
+			{
+				char expulsion[20];
+				char mensajechat[200];
+				char chat[200];
+				char jugador[20];
+				
+				p = strtok(NULL, "/");
+				strcpy(host, p);
+				p = strtok(NULL, "/");
+				strcpy(jugador, p);
+				p = strtok(NULL, "/");
+				strcpy(chat, p);
+				sprintf(mensajechat, "54/%s/%s/%s", host, jugador, chat);
+				
+				JugadoresEnPartida(&lista_Partidas, sockets_receptores, host, infoJugadoresPartida);
+				sprintf(mensajechat, "%s_N_", mensajechat);
+				p = strtok(sockets_receptores, "/");
+				while (p != NULL)
+				{
+					socketUsuario = atoi(p);
+					if (socketUsuario != sock_conn)
+						write(socketUsuario, mensajechat, strlen(mensajechat));
+					p = strtok(NULL, "/");
+				}
+				strcpy(respuesta, mensajechat);
+			}
+			if ((codigo != 0) && (codigo != 4) && (codigo != 40) && (codigo != 42) && (codigo != 45) && (codigo != 47) && (codigo != 48) && (codigo != 49) && (codigo != 50))
+			{
+				printf("Respuesta: %s\n", respuesta);
+				sprintf(respuesta, "%s_N_", respuesta);
+				// Enviamos respuesta
+				write(sock_conn, respuesta, strlen(respuesta));		// sock_conn es el socket del host
+			}
+			if (codigo == 2)
+			{
+				// Disconnection notification already handled in codigo 0 conditional
+				if (BuscarConectado(&lista_Conectados,userName) != -1) {
+					consultaConectados(&lista_Conectados, conectados);
+					sprintf(notificacion, "10/%s",conectados);
+					sprintf(notificacion, "%s_N_", notificacion);
+					
+					int j;
+					for (j = 0; j < 100; j++)
+						if (sockets[j] != -1)
+							write(sockets[j], notificacion, strlen(notificacion));
+				}
+			}
+			else if (codigo == 40 || codigo == 52)
+			{
 				consultaConectados(&lista_Conectados, conectados);
 				sprintf(notificacion, "10/%s",conectados);
+				sprintf(notificacion, "%s_N_", notificacion);
 				
 				int j;
 				for (j = 0; j < 100; j++)
@@ -1901,16 +1933,6 @@ void AtenderCliente(void* socket)
 						write(sockets[j], notificacion, strlen(notificacion));
 			}
 		}
-		/* else if (codigo == 40)
-		{
-			consultaConectados(&lista_Conectados, conectados);
-			sprintf(notificacion, "10/%s",conectados);
-			
-			int j;
-			for (j = 0; j < 100; j++)
-				if (sockets[j] != -1)
-					write(sockets[j], notificacion, strlen(notificacion));
-		} */
 	}
 	// Se acabo el servicio para este cliente
 	// Liberar la posicion de su socket del vector de sockets (cambiando el valor a -1)

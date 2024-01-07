@@ -321,7 +321,7 @@ namespace ClienteC__Juego
                 timer.Stop();
             if (!gameEnded)
             {
-                string mensaje = "53/" + gameHost + "/" + userName;
+                string mensaje = "53/" + gameHost + "/" + userName + "_N_";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
 
@@ -553,8 +553,7 @@ namespace ClienteC__Juego
                 TileTypeCheck();
                 string msgPrePos = prePos.X.ToString() + "." + prePos.Y.ToString();
                 string msgPos = myPos.X.ToString() + "." + myPos.Y.ToString();
-                string mensaje = "45/" + gameHost + "/" + userName + "/" + msgPrePos + "/" + msgPos;
-                Console.WriteLine("Position info sent to server:" + mensaje);
+                string mensaje = "45/" + gameHost + "/" + userName + "/" + msgPrePos + "/" + msgPos + "_N_";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
@@ -760,7 +759,7 @@ namespace ClienteC__Juego
             int puntuationSolve = 200; 
             DateTime fechaActual = DateTime.Now;
             string dia = fechaActual.ToString("dd,MM,yy");
-            string mensaje = "52/" + gameHost + "/" + gameDurationSecs + "/" + playerSolve + "/" + puntuationSolve + "/" + dia;
+            string mensaje = "52/" + gameHost + "/" + gameDurationSecs + "/" + playerSolve + "/" + puntuationSolve + "/" + dia + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -773,7 +772,7 @@ namespace ClienteC__Juego
                 {
                     e.SuppressKeyPress = true;
                     string men = tBox_write.Text;
-                    string mensaje = "54/" + gameHost + "/" + userName + "/" + men;
+                    string mensaje = "54/" + gameHost + "/" + userName + "/" + men + "_N_";
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
                     tBox_write.Clear();
@@ -933,7 +932,7 @@ namespace ClienteC__Juego
                 msgPlyCards2 += ".";
             }
 
-            string mensaje = "43/" + gameHost + "/" + msgSolCards + "/" + msgPlyCards2;
+            string mensaje = "43/" + gameHost + "/" + msgSolCards + "/" + msgPlyCards2 + "_N_";
             Console.WriteLine("Deck info sent to server:" + mensaje);
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
@@ -1183,7 +1182,7 @@ namespace ClienteC__Juego
             string weapon = guessCards[1].ID.ToString();
             string room = guessCards[2].ID.ToString();
 
-            string mensaje = "46/" + gameHost + "/" + userName + "/" + suspect + "." + weapon + "." + room;
+            string mensaje = "46/" + gameHost + "/" + userName + "/" + suspect + "." + weapon + "." + room + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1218,7 +1217,7 @@ namespace ClienteC__Juego
             panel_OtrosGuess.Enabled = false;
             lbl_guessPass.Text = "Not your Turn";
 
-            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + "-1";
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + "-1" + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1228,7 +1227,7 @@ namespace ClienteC__Juego
             pBox_guessCheck1.Visible = true;
             lbl_guessPass.Text = "Not your Turn";
 
-            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[0].ID;
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[0].ID + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1239,7 +1238,7 @@ namespace ClienteC__Juego
             pBox_guessCheck2.Visible = true;
             lbl_guessPass.Text = "Not your Turn";
 
-            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[1].ID;
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[1].ID + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1250,7 +1249,7 @@ namespace ClienteC__Juego
             pBox_guessCheck3.Visible = true;
             lbl_guessPass.Text = "Not your Turn";
 
-            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[2].ID;
+            string mensaje = "47/" + gameHost + "/" + playerGuess + "/" + userName + "/" + guessCards[2].ID + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1280,7 +1279,7 @@ namespace ClienteC__Juego
             }
             if (suspect && weapon && room)
             {
-                string mensaje = "51/" + gameHost + "/" + userName + "/0";
+                string mensaje = "51/" + gameHost + "/" + userName + "/0" + "_N_";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             } 
@@ -1288,7 +1287,7 @@ namespace ClienteC__Juego
             {
                 hasfallado = true;
                 tbox_info.AppendText(String.Format("Player {0} has lost the game", userName + Environment.NewLine));
-                string mensaje = "51/" + gameHost + "/" + userName + "/-1";
+                string mensaje = "51/" + gameHost + "/" + userName + "/-1" + "_N_";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
@@ -1305,7 +1304,7 @@ namespace ClienteC__Juego
             panel_Solve.Enabled = true;
             playerSolve = userName;
 
-            string mensaje = "49/" + gameHost + "/" + userName;
+            string mensaje = "49/" + gameHost + "/" + userName + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
             lbl_solve.Text = userName + "'s Guess";
@@ -1321,7 +1320,7 @@ namespace ClienteC__Juego
 
             tbox_info.AppendText(String.Format("CartasSolve: Suspect: {0}", guessSuspect[countsolve1].ID.ToString() + Environment.NewLine));
 
-            string mensaje = "50/" + gameHost + "/" + userName + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
+            string mensaje = "50/" + gameHost + "/" + userName + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString() + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1335,7 +1334,7 @@ namespace ClienteC__Juego
 
             tbox_info.AppendText(String.Format("CartasSolve: Weapon: {0}", guessWeapon[countsolve2].ID.ToString() + Environment.NewLine));
 
-            string mensaje = "50/" + gameHost + "/" + userName + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString();
+            string mensaje = "50/" + gameHost + "/" + userName + "/" + guessSuspect[countsolve1].ID.ToString() + "." + guessWeapon[countsolve2].ID.ToString() + "." + guessRoom[countsolve3].ID.ToString() + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1360,7 +1359,7 @@ namespace ClienteC__Juego
             myturn = false;
             ComprovarTurno();
 
-            string mensaje = "42/" + gameHost + "/" + userName;
+            string mensaje = "42/" + gameHost + "/" + userName + "_N_";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
@@ -1384,7 +1383,7 @@ namespace ClienteC__Juego
                 btt_solve.Enabled = false;
                 panel_Guess.Enabled = false;
 
-                string mensaje = "42/" + gameHost + "/" + userName;
+                string mensaje = "42/" + gameHost + "/" + userName + "_N_";
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
