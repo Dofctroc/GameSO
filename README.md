@@ -25,6 +25,6 @@ Version 5 comunicada por Qinglin Gu
 URL V5: https://youtu.be/dE4tOSdKTSQ
 
 Version 6 generada por Qinglin Gu
-Version 6 verificada por 
+Version 6 verificada por Júlia Ravn
 Version 6 comunicada por 
 URL V5: 
