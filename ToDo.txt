@@ -1,0 +1,108 @@
+ _____________________________________________________________________________________________
+|											      |
+|---------------------------------- Control de errores: --------------------------------------|
+|_____________________________________________________________________________________________|
+
+
+	----------FUNCIONALIDADES----------
+SIGN DOWN - The user must be able to remove all his data from the database and delete user	|JULIA|
+-/ MULTIPLE GAMES - Player must join/create multiple games
+LEAVE A GAME - Player must willingly leave a joined game			|GU|
+-/ DELETE GAME - Host of a game must be able to delete game
+~/ KICK PLAYER - Host of a game must be able to kick any player anytime
+SOCKET BUFFER GESTION - When a player disconnects, frees the socket to reuse	|ASIER|
+FIND CONSULTA ERROR!!								|ASIER|
+CODE 28 - Host tells all invited players that no more can join			|GU|
+CONSULTA RANKING PARTIDAS							|JULIA|
+
+NORMES JOC		|JULIA|
+VISUAL DESIGN		|ASIER|
+MOVIMENT PER TURNOS	
+CARTES (RANDOMIZAR, REPARTIR, ESCOLLIR TRES DEL DELITO, etc)		
+LOGICA DE DONAR LA SOLUCIO FNAL (GUANYAR O PERDRE)			
+CONTROL ERRORES JOC							
+	ALGU ABANDONA, HOST ABANDONA, S'ACABA LA PARTIDA...		
+
+	----------EXTRA FUNCIONALIDADES----------
+-/ EXTRA CHAT MESSAGES
+-/ GAME & PLAYERS VARIABLES THAT SAVE JOINED GAME DATA IN ~menuPartida~ 
+-/ PENDING INVITED PLAYERS IN GAME LOBBY VARIABLES
+// INVITATION shows up as a time-limitted button to accept, if not, denies invitation
+//	opt1) IF INVITED LOBBY is now full while you do not accept -> you cant accept
+//	opt2) AS HOST there cant be more than 6 (pending invitations + player in lobby)
+
+	----------CONTROL DE ERRORES----------
+When SERVER fails -> control error in client *(Difficult to implement -> optional)
+-/ Only invite other players if hosting a game
+-/ Only invite players not already in the game
+Cannot invite a player if already in two games					|ASIER|
+-/ Increase max length of some C variables
+
+ _______________
+| MY TODO LIST: |
+|_______________|
+
+-/ !!!! Incluir mucha mas mutual exclusion !!!!
+-/ Error: Cuando logIn con usuario ya conectado, desconecta a ese usuario
+	Probar a que lo desconecte el server automaticamente
+LobbyPartida != ActivePartida; 
+	add int variable to Partida (0=Lobby, 1=Active)
+-/ Rename all forms
+	-/ Game form named after host
+-/ Chat in game (igual a menu partida), incluir algunos sucesos de la partida !!!!!!!!!!!!!!!!!!!!!!!
+-/ Error se juntan los mensajes de refresh de tablas
+
+-/ Si ja estas en dos games no puedes aceptar una invitacion
+-/ Treure els toolstripmenus
+-/ Click carta fica el dorso
+Change colors 
+-/ Delete right click code
+-/ Only allow notepad to open once
+-/ Treure creu de room
+-/ Borrar inGame notes al acabar game
+Translate all
+Accept after deleting game
+LogOut in game
+
+Cards:
+1. When clicked, shows dorso of card
+-/ 2. Put card torso on center of the board
+	( Easier logic to go to center ) -> Implement new grid of positions to use when center tile is hovered
+
+-/ Toda la logica de Solve, incluyendo el panel central que se mostrara (simular o igual a guess)
+	Logica cuando todos responden de manera incorrecta
+-/ Toda la logica de acabar una partida
+-/ Player se va de partida voluntariamente (no le echan)
+	Control de player se va de partida
+
+-/ Logica ACABAR:
+	Si fallas: continuas jugando solo para resolver, te llevas 0 puntos
+		El siguiente en ganar se lleva 160 puntos
+	Si aciertas: has ganado, te llevas 200 puntos, partida termina
+
+-/ Al eliminar jugador, color seleccionado no cambia
+-/ Al asignar color, el numero uno no lo tiene en cuenta, lo asigna aunk este asignado
+
+-/ Dibuixar nom de cada room al Paint
+-/ Falla crear partida, luego hacer log out y luego volver a crear
+
+
+-/ Error: data grid falla
+-/ Cada notepad diferente segun la partida
+-/ Acabar datagrids rankings
+
+-/ Añadir foticos a invitation
+
+-/ Change logic when connected users' datagrid is clicked
+-/ Update displayedGame variable when needed and use it
+
+~/ Switch logic of disconnection of player from Client to Server
+		(When player disconnects, send information to all game lobbies they are in, including ongoing games)
+
+-/ Delete the "host" variable in menuPartida as variable usage has changed
+-/ Notification of new incoming message or event in other game
+
+-/ For turns to work, change Enable of the board panel
+-/ Add a End Turn button
+
+

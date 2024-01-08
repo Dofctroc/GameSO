@@ -49,11 +49,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BoardDistribution.cs" />
+    <Compile Include="Card.cs" />
     <Compile Include="consultas.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="consultas.Designer.cs">
       <DependentUpon>consultas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InGameNotes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InGameNotes.Designer.cs">
+      <DependentUpon>InGameNotes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="menuRankings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="menuRankings.Designer.cs">
+      <DependentUpon>menuRankings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="gameBoard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="gameBoard.Designer.cs">
+      <DependentUpon>gameBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="menuUsuario.cs">
       <SubType>Form</SubType>
@@ -67,10 +87,20 @@
     <Compile Include="menuPartida.Designer.cs">
       <DependentUpon>menuPartida.cs</DependentUpon>
     </Compile>
+    <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="consultas.resx">
       <DependentUpon>consultas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InGameNotes.resx">
+      <DependentUpon>InGameNotes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="menuRankings.resx">
+      <DependentUpon>menuRankings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="gameBoard.resx">
+      <DependentUpon>gameBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="menuUsuario.resx">
       <DependentUpon>menuUsuario.cs</DependentUpon>
@@ -80,17 +110,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -99,6 +130,174 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bottonConn2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bottonConn1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fondoDetectiveTile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fondoCluedo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icono_Enviar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icono_Invitar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fondoCluedoPixeled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Board.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CluedoBoard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\Dice6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Dice\DiceEmpty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icono_Notificacion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\NotePad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Exclam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Cross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Interr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\notepad_Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\notepad_IconHovered.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\room9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\suspect6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\weapon6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Crossed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerTiles\playerTile6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerTiles\playerTile1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerTiles\playerTile2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerTiles\playerTile3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerTiles\playerTile4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerTiles\playerTile5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NotePadIcons\Accept.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cards\coveredBack.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

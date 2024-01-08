@@ -1,58 +1,121 @@
 Shiva ports: 75-79
 
-
-Codigos mensaje que envia Cliente:
+ _____________________________________________________________________________________________
+|											      |
+|--------------------------- Codigos mensaje que envia Cliente: ------------------------------|
+|_____________________________________________________________________________________________|
 
 0 - Desconectar
 1 - Peticion de SignUp
 2 - Peticion de LogIn
+3 - Peticion de SignDown		3/nomUsuari/contraseña
 
-3 - Invitacion a partida		3/Host/4(numero de invitados)/Asier/Gu/Julia/Ivan
-4 - Respuesta a invitacion a partida	4/Host/Jo soc Asier/Dic que Si
-5 - Crear una partida			5/Qui la crea
-
+7 - Consulta jugadores partida conmigo	7/userName
+8 - Resultados partidas con JugX	8/userName/JugX
+9 - Consulta partidas en tiempo dado	9/userName/dia1-mes1-año1/dia2-mes2-año2
 10 - Peticion ListaUsuarios
 11 - ComandoInd1 (puntuacion total jugador)
 12 - ComandoInd2 (puntuacion partidas jugadas)
 13 - ComandoInd3 (ganador de partida)
+14 - Consulta Ranking 1			14/
+15 - Consulta Ranking 2			15/
+16 - Consulta infoPlayer		16/
+17 - Consulta infoPartida		17/
+ 
 
+20 - Crear una partida			20/Host			(Host crea una nueva partida)
+21 - Invitacion a partida		21/Host/Jug1.Jug2.Jug3	(JugX son invitados a partida)
+22
+23 - Respuesta a invitacion a partida	23/Host/JugX/Yes-No	(JugX decide unirse o no)
+24 - Expulsar a invitado de partida	24/Host/JugX		(JugX sera expulsado)
+25 - Jugador quiere abandonar partida	25/Host/JugX		(JugX abandona la partida) *
+26 - Eliminar la partida		26/Host			(Host elimina su partida) *
+27 - Jugador envia mensaje por chat	27/Host/JugX/Mensaje	(JugX envia "mensaje" por chat)
+28 - Jugador cambia color en lobby	28/Host/JugX/ColorID
 
-Codigos mensaje que envia Servidor:
+40 - Empieza la partida			40/Host
+41 - 
+42 - Acaba mi turno			42/Host
+43 - Send info cards			43/Host/Sol1.Sol2.Sol3/C1.C2.C3/C1.C2.C3/...
+44 -
+45 - Nueva posicion casilla de JugX	45/Host/JugX/PrePosCol.PosRow/PrePosCol.PosRow
+46 - Envio de Guess de JugX		46/Host/JugX/Suspect.Weapon.Tool
+47 - JugY responde Guess de JugX	47/Host/JugX/JugY/Respuesta
+48 - 
+49 - Solve iniciado			49/Host/JugX
+50 - Cambio en el solve			50/Host/JugX/Suspect.Weapon.Tool
+51 - Solución del solve 		51/Host/JugX/0 --> Good Solution	51/Host/JugX/-1 --> Solution not correct
+52 - Juego termina			52/Host/Duration/Winner/Puntuation
+53 - Juego termina de manera forzada	53/Host
+54 - Mensaje por chat partida		54/Host/JugX/Mensaje
 
-1 - SignUp correcto
-2 - SignUp error
+ _____________________________________________________________________________________________
+|											      |
+|--------------------------- Codigos mensaje que envia Server: -------------------------------|
+|_____________________________________________________________________________________________|
 
-3 - LogIn correcto
-4 - LogIn error contra
-5 - LogIn error usuario
+1 - SignUp correcto			1/0
+1 - SignUp error			1/1
 
+2 - LogIn correcto			2/0
+2 - LogIn error 			2/TextoDeError
+
+3 - SignOut				3/0
+3 - SignOut error 			3/TextoDeError
+
+7 - Consulta jugadores partida conmigo	7/Jug1.Jug2.Jug3......
+8 - Resultados partidas con JugX	8/Partida1ID.Tiempo.Partida2.kudhfuj.dnfkjodn......
+9 - Consulta partidas en tiempo dado	9/partida1.partida2.partida3
 10 - ConsultaConectados
 11 - Consulta1
 12 - Consulta2
 13 - Consulta3
+14 - Consulta Ranking 1			14/...		14/0 -> Error
+15 - Consulta Ranking 2			15/...		15/0 -> Error
+16 - Consulta infoPlayer		16/...		16/0 -> Error
+17 - Consulta infoGame			17/... 		17/0 -> Error
 
-20 - Respuesta a creacion de partida	8/0 -> S'ha creat bé 	8/-1 -> S'ha creat malament
-21 - Respuesta a invitacion a partida	9/0 -> S'ha invitat bé	
-22 - Invitacion a partida		6/T'ha invitat l'Asier
-23 - Respuesta a invitacion a partida	7/L'usuario Asier/Diu que Si
+20 - Respuesta a creacion de partida	20/Host/0 -> Good 	20/-1 -> Error	(SentTo: Host)
+21 - Respuesta a invitacion a partida	21/Host/0 -> Good	21/-1 -> Error	(SentTo: Host)
+22 - Invitacion a partida		22/Host				(SentTo: Invited player)
+/23 - Respuesta a aceptar invitacion	23/Host/JugX/Yes-No 		(SentTo: Host + players in game lobby)
+	En relacion al 30					
+24 - Respuesta a la expulsion		24/Host/JugX	 		(SentTo: Host + players in game lobby + kicked player)
+25 - Mensaje jugador abandona partida	25/Host/JugX			(SentTo: All players in game lobby, not who abandons)
+26 - Host ha eliminado la partida	26/Host				(SentTo: Players in game lobby, not host)
+27 - Reenvia mensaje jugador chat	27/Host/JugX/Mensaje		(SentTo: All players in game lobby)
+/28 - Reenvia nuevo color de JugX	28/Host/JugX/ColorID
+30 - Envia toda la info de partida a la que te unes 	30/Host/0/Host.Jug1.Jug2.Jug3/Color0.Color1.Color2.Color3
+							30/Host/1 	If player denied
+							30/Host/-1	If cant join despite accepting
+								(SentTo: Invited player if accepts)
+
+40 - Notificación inicio game 		40/Host
+41 - Empieza mi turno			41/Host
+42 - 
+43 - Confirm info sent			43/0 or 43/-1
+44 - Notification of all cards		44/Host/Sol1.Sol2.Sol3/Jug1.Jug2.Jug3/C1,C2,C3.C1,C2,C3.C1,C2,C3
+45 - Notificacion nueva pos de JugX	45/Host/JugX/PrePosCol.PrePosRow/PosCol.PosRow
+46 - Envio Guess de JugX		46/Host/JugX/Suspect.Weapon.Room
+47 - Turno de JugY (nuevo)		47/Host/JugX				(No se ha respondido el guess, turno de JugY de intentarlo) (Solo se envia a JugY)
+48 - Respuesta final de JugY		48/Host/JugX/JugY/Respuesta		(Solo si se ha respondido al guess)
+49 - Inicio Solve			49/Host/JugX
+50 - Cambio de carta de solve 		50/Host/JugX/Suspect.Weapon.Room
+51 - Solución del solve 		51/Host/JugX/0 --> Good Solution	51/Host/JugX/-1 --> Solution not correct
+52 - Juego Termina			52/Host
+53 - Juego termina de manera forzada	53/Host/JugX
+54 - Mensaje por chat partida		54/Host/JugX/Mensaje
 
 
+One player MUST only be able to host ONE game
+Now ALL server responses of game lobby MUST have the following structure:
+	CODIGO / HOST / etc...
 
 
+Check/Delete bool variables is hosting and ingame
 
-sockets_receptores: 4/
+bool_HostingGame
+bool_InGame
+partida1 = [host,jug1,jug2,jug3]
+partida2 = []
 
-0 1 2 3 4 ... 15 16 ... 99
-
-4 -> Socket que conecta Asier amb el servidor
-16 -> Socket que conecta Julia amb el servidor
-Si persona del socket 4 conectada -> retorn 
-
-
-Asier -> Invitacio
-
-Server ho rep i mira qui esta i qui no
-Server -> contesta a Asier qui esta i qui no, per saber qui ha rebut la invitacio
-
-Julia/Gu -> reben la invitacio (si estan conectats/inMenu)
-Julia/Gu -> responen la invitacio
