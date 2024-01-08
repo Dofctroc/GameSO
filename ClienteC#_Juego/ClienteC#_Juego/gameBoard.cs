@@ -120,6 +120,8 @@ namespace ClienteC__Juego
             panel_Dados.Size = new Size(panel_Board.Location.X - 20, 130);
             panel_Dados.Location = new Point(panel_Board.Location.X / 2 - panel_Dados.Width / 2, panel_Board.Location.Y);
 
+            tbox_info.Visible = false;
+
             // DICES PANELS DESIGN
             btt_dado.Size = new Size(120, 25);
             lbl_diceRoll.Size = new Size(60, 20);

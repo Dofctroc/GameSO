@@ -118,8 +118,10 @@
             this.dGrid_totScore.ReadOnly = true;
             this.dGrid_totScore.RowHeadersWidth = 51;
             this.dGrid_totScore.RowTemplate.Height = 24;
+            this.dGrid_totScore.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dGrid_totScore.Size = new System.Drawing.Size(251, 281);
             this.dGrid_totScore.TabIndex = 2;
+            this.dGrid_totScore.TabStop = false;
             // 
             // dGrid_user
             // 
@@ -142,9 +144,10 @@
             this.dGrid_user.ReadOnly = true;
             this.dGrid_user.RowHeadersWidth = 51;
             this.dGrid_user.RowTemplate.Height = 24;
-            this.dGrid_user.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dGrid_user.Size = new System.Drawing.Size(251, 250);
+            this.dGrid_user.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.dGrid_user.Size = new System.Drawing.Size(251, 255);
             this.dGrid_user.TabIndex = 3;
+            this.dGrid_user.TabStop = false;
             // 
             // btt_Refresh
             // 
@@ -233,8 +236,10 @@
             this.dGrid_totGames.ReadOnly = true;
             this.dGrid_totGames.RowHeadersWidth = 51;
             this.dGrid_totGames.RowTemplate.Height = 24;
+            this.dGrid_totGames.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dGrid_totGames.Size = new System.Drawing.Size(251, 281);
             this.dGrid_totGames.TabIndex = 3;
+            this.dGrid_totGames.TabStop = false;
             // 
             // gBox_Ind
             // 
@@ -245,7 +250,7 @@
             this.gBox_Ind.Controls.Add(this.dGrid_user);
             this.gBox_Ind.Controls.Add(this.tBox_username);
             this.gBox_Ind.Controls.Add(this.lbl_userName);
-            this.gBox_Ind.Location = new System.Drawing.Point(200, 10);
+            this.gBox_Ind.Location = new System.Drawing.Point(170, 10);
             this.gBox_Ind.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gBox_Ind.Name = "gBox_Ind";
             this.gBox_Ind.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -293,8 +298,9 @@
             this.dGrid_game.RowHeadersWidth = 51;
             this.dGrid_game.RowTemplate.Height = 24;
             this.dGrid_game.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dGrid_game.Size = new System.Drawing.Size(251, 250);
+            this.dGrid_game.Size = new System.Drawing.Size(251, 255);
             this.dGrid_game.TabIndex = 7;
+            this.dGrid_game.TabStop = false;
             // 
             // btt_otherinfo
             // 
@@ -320,11 +326,11 @@
             this.gBox_OtherInfo.Controls.Add(this.dGrid_otherusers);
             this.gBox_OtherInfo.Controls.Add(this.tBox_otherusers);
             this.gBox_OtherInfo.Controls.Add(this.lbl_otherusers);
-            this.gBox_OtherInfo.Location = new System.Drawing.Point(250, 10);
+            this.gBox_OtherInfo.Location = new System.Drawing.Point(218, 10);
             this.gBox_OtherInfo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gBox_OtherInfo.Name = "gBox_OtherInfo";
             this.gBox_OtherInfo.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gBox_OtherInfo.Size = new System.Drawing.Size(808, 352);
+            this.gBox_OtherInfo.Size = new System.Drawing.Size(808, 330);
             this.gBox_OtherInfo.TabIndex = 10;
             this.gBox_OtherInfo.TabStop = false;
             this.gBox_OtherInfo.Text = "Other Info";
@@ -367,9 +373,10 @@
             this.dGrid_othertime.ReadOnly = true;
             this.dGrid_othertime.RowHeadersWidth = 51;
             this.dGrid_othertime.RowTemplate.Height = 24;
-            this.dGrid_othertime.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dGrid_othertime.Size = new System.Drawing.Size(251, 250);
+            this.dGrid_othertime.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dGrid_othertime.Size = new System.Drawing.Size(251, 241);
             this.dGrid_othertime.TabIndex = 10;
+            this.dGrid_othertime.TabStop = false;
             // 
             // tBox_otherplayer
             // 
@@ -409,9 +416,10 @@
             this.dGrid_otherplayer.ReadOnly = true;
             this.dGrid_otherplayer.RowHeadersWidth = 51;
             this.dGrid_otherplayer.RowTemplate.Height = 24;
-            this.dGrid_otherplayer.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dGrid_otherplayer.Size = new System.Drawing.Size(251, 250);
+            this.dGrid_otherplayer.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dGrid_otherplayer.Size = new System.Drawing.Size(251, 241);
             this.dGrid_otherplayer.TabIndex = 7;
+            this.dGrid_otherplayer.TabStop = false;
             // 
             // dGrid_otherusers
             // 
@@ -435,8 +443,9 @@
             this.dGrid_otherusers.RowHeadersWidth = 51;
             this.dGrid_otherusers.RowTemplate.Height = 24;
             this.dGrid_otherusers.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dGrid_otherusers.Size = new System.Drawing.Size(251, 250);
+            this.dGrid_otherusers.Size = new System.Drawing.Size(251, 241);
             this.dGrid_otherusers.TabIndex = 3;
+            this.dGrid_otherusers.TabStop = false;
             // 
             // tBox_otherusers
             // 
@@ -462,14 +471,14 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.BurlyWood;
-            this.ClientSize = new System.Drawing.Size(968, 366);
+            this.ClientSize = new System.Drawing.Size(1041, 352);
             this.Controls.Add(this.gBox_OtherInfo);
-            this.Controls.Add(this.btt_otherinfo);
             this.Controls.Add(this.gBox_Ind);
-            this.Controls.Add(this.gBox_Rank);
+            this.Controls.Add(this.btt_otherinfo);
             this.Controls.Add(this.btt_Refresh);
             this.Controls.Add(this.btt_Rankings);
             this.Controls.Add(this.btt_IndInfo);
+            this.Controls.Add(this.gBox_Rank);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.Name = "menuRankings";

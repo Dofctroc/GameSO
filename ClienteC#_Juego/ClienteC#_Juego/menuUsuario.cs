@@ -81,6 +81,19 @@ namespace ClienteC__Juego
             password = textbox_password.Text;
             if (username != "" &&  password != "")
             {
+                if(username.Length >= 10)
+                {
+                    msge = String.Format("Nombre de usuario introducido demasiado largo, debe ser de menos de 15 caracteres");
+                    WriteConsole(entry, msge);
+                    return;
+                }
+                if(password.Length >= 10)
+                {
+                    msge = String.Format("Contraseña demasiado larga, debe ser de menos de 15 caracteres");
+                    WriteConsole(entry, msge);
+                    return;
+                }
+
                 int err = serverConnect();
 
                 if (err == 0)
@@ -167,7 +180,7 @@ namespace ClienteC__Juego
             //Puertos de acceso a Shiva des de 50075 hasta 50079
 
             //string IP = "10.4.119.5";  int puerto = 50075;     //Shiva
-            string IP = "192.168.56.101"; int puerto = 9075;     //Linux
+            string IP = "192.168.56.102"; int puerto = 9075;     //Linux
 
             IPAddress direc = IPAddress.Parse(IP);
             IPEndPoint ipep = new IPEndPoint(direc, puerto);
@@ -232,27 +245,6 @@ namespace ClienteC__Juego
                     textbox_password.Text = "";
                     textbox_username.Text = "";
                 }
-            }
-        }
-
-        public void serverShutdown(string userName)
-        {
-            if (conectado_conServer)
-            {
-                conectado_conServer = false;
-
-                //Mensaje de desconexión
-                string mensaje = "0/" + userName + "*";
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-
-                // Nos desconectamos
-                server.Shutdown(SocketShutdown.Both);
-                server.Close();
-                atender.Abort();
-
-                textbox_password.Text = "";
-                textbox_username.Text = "";
             }
         }
 
@@ -342,7 +334,7 @@ namespace ClienteC__Juego
                 string msje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                 Console.WriteLine(msje);
 
-                string[] mensajes = msje.ToString().Split(new[] { "*" }, StringSplitOptions.None);
+                string[] mensajes = msje.Split('*');
                 foreach (string mensajesMsg in mensajes) {
                     if (mensajesMsg != "")
                     {

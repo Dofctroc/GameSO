@@ -846,7 +846,7 @@ int EnviarInvitacion(ListaConectados* listaC, ListaPartidas* listaP, char infoIn
 	return 0;
 }
 
-void ListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
+int consultaListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
 	MYSQL_RES* resultado;
 	MYSQL_ROW row;
 	strcpy(listajugadores, "");
@@ -857,7 +857,7 @@ void ListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
 			userName, userName);
 	if (mysql_query(conn, consulta) != 0) {
 		fprintf(stderr, "Error executing the query: %s\n", mysql_error(conn));
-		return;
+		return -1;
 	}
 	resultado = mysql_store_result(conn);
 	printf("List of players %s has played with:\n", userName);
@@ -869,9 +869,10 @@ void ListPlayersWithGames(MYSQL* conn, char userName[], char listajugadores[]) {
 		row = mysql_fetch_row(resultado);
 	}
 	mysql_free_result(resultado);
+	return 0;
 }
 
-void PartidaconJugador(MYSQL* conn, char userName[], char jugador[], char infoPartidas[]) 
+int consultaPartidaconJugador(MYSQL* conn, char userName[], char jugador[], char infoPartidas[]) 
 {
 	MYSQL_RES* resultado;
 	MYSQL_ROW row;
@@ -880,7 +881,7 @@ void PartidaconJugador(MYSQL* conn, char userName[], char jugador[], char infoPa
 	sprintf(consulta, "SELECT Partida.* FROM Partida JOIN PartidasJugadores AS PJ1 ON Partida.ID = PJ1.ID_Partida JOIN PartidasJugadores AS PJ2 ON Partida.ID = PJ2.ID_Partida JOIN Jugador AS Jugador1 ON PJ1.ID_Jugador = Jugador1.ID JOIN Jugador AS Jugador2 ON PJ2.ID_Jugador = Jugador2.ID WHERE Jugador1.userName = '%s' AND Jugador2.userName = '%s';", userName, jugador);
 	if (mysql_query(conn, consulta) != 0) {
 		fprintf(stderr, "Error executing the query: %s\n", mysql_error(conn));
-		return;
+		return -1;
 	}
 	resultado =mysql_store_result(conn);
 	printf ("Consulta: %s \n",consulta);
@@ -893,6 +894,7 @@ void PartidaconJugador(MYSQL* conn, char userName[], char jugador[], char infoPa
 		row = mysql_fetch_row(resultado);
 	}
 	mysql_free_result(resultado);
+	return 0;
 }
 int consultaPartidaPeriodoTiempo(MYSQL* conn, char lowBound[], char upBound[], char infoConsulta[])
 {
@@ -998,7 +1000,6 @@ void AtenderCliente(void* socket)
 			{
 				terminar = 1;
 			}     
-
 			else if (codigo == 0) //peticion de desconexion
 			{
 				p = strtok(NULL, "/");
@@ -1102,23 +1103,22 @@ void AtenderCliente(void* socket)
 			}
 			else if (codigo == 7)
 			{
-				char mensajeotrainfousuarios[200];
-				strcpy(mensajeotrainfousuarios, "");
 				char listajugadores[200];
 				strcpy(listajugadores, "");
 				
 				pthread_mutex_lock(&mutex);
 				p = strtok(NULL, "/");
 				strcpy(userName, p);
-				ListPlayersWithGames(conn, userName, listajugadores);
-				sprintf(mensajeotrainfousuarios, "7/%s", listajugadores);
-				strcpy(respuesta, mensajeotrainfousuarios);
+				err = consultaListPlayersWithGames(conn, userName, listajugadores);
 				pthread_mutex_unlock(&mutex);
+				
+				if (err == 0)
+					sprintf(respuesta, "7/%s", listajugadores);
+				else
+					sprintf(respuesta, "7/0");
 			}
 			else if (codigo == 8)
 			{
-				char mensajepartidaconjugador[200];
-				strcpy(mensajepartidaconjugador, "");
 				char partidaslist[200];
 				strcpy(partidaslist, "");
 				char jugador[20];
@@ -1128,10 +1128,13 @@ void AtenderCliente(void* socket)
 				strcpy(userName, p);
 				p = strtok(NULL, "/");
 				strcpy(jugador, p);
-				PartidaconJugador(conn, userName, jugador, partidaslist);
-				sprintf(mensajepartidaconjugador, "8/%s", partidaslist);
-				strcpy(respuesta, mensajepartidaconjugador);
+				err = consultaPartidaconJugador(conn, userName, jugador, partidaslist);
 				pthread_mutex_unlock(&mutex);
+				
+				if (err == 0)
+					sprintf(respuesta, "8/%s", partidaslist);
+				else
+					sprintf(respuesta, "8/0");
 			}
 			else if (codigo == 9)
 			{
@@ -1144,51 +1147,13 @@ void AtenderCliente(void* socket)
 				strcpy(upbound, p);
 				
 				pthread_mutex_lock(&mutex);
-				consultaPartidaPeriodoTiempo(conn, lowbound, upbound, infoConsulta);
-				sprintf(respuesta, "9/%s", infoConsulta);
-				pthread_mutex_unlock(&mutex);
-			}
-			// Residual code from when you could actively ask connected users
-			else if (codigo == 7)
-			{
-				char respuestaInfo[500];
-				p = strtok(NULL, "/");
-				strcpy(partida, p);
-				
-				pthread_mutex_lock(&mutex);
-				err = consultaInfoPartida(conn, partida ,respuestaInfo);
-				pthread_mutex_unlock(&mutex);
-				if (err == 0)
-					sprintf(respuesta, "17/%s", respuestaInfo);
-				else
-					sprintf(respuesta, "17/0");
-			}
-			else if (codigo == 8)
-			{
-				char respuestaInfo[500];
-				p = strtok(NULL, "/");
-				strcpy(partida, p);
-				pthread_mutex_lock(&mutex);
-				err = consultaInfoPartida(conn, partida ,respuestaInfo);
-				pthread_mutex_unlock(&mutex);
-				if (err == 0)
-					sprintf(respuesta, "17/%s", respuestaInfo);
-				else
-					sprintf(respuesta, "17/0");
-			}
-			else if (codigo == 9)
-			{
-				char respuestaInfo[500];
-				p = strtok(NULL, "/");
-				strcpy(partida, p);
-				pthread_mutex_lock(&mutex);
-				err = consultaInfoPartida(conn, partida ,respuestaInfo);
+				err = consultaPartidaPeriodoTiempo(conn, lowbound, upbound, infoConsulta);
 				pthread_mutex_unlock(&mutex);
 				
 				if (err == 0)
-					sprintf(respuesta, "17/%s", respuestaInfo);
+					sprintf(respuesta, "9/%s", infoConsulta);
 				else
-					sprintf(respuesta, "17/0");
+					sprintf(respuesta, "9/0");
 			}
 			else if (codigo == 10)
 			{

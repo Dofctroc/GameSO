@@ -696,7 +696,7 @@ namespace ClienteC__Juego
                                 break;
                             }
                         }
-                        listaMiPartida(gameIndex, username, true, mensaje[3]);
+                        this.Invoke(new Action(() => { listaMiPartida(gameIndex, username, true, mensaje[3]); }));
 
                         displayedGame = gameIndex;
                         for (int i = 0; i < partidasGroups.Count; i++)
@@ -733,7 +733,7 @@ namespace ClienteC__Juego
                     if (decision == "Yes")
                     {
                         partidas[gameIndex].Add(invitado);
-                        listaMiPartida(gameIndex, invitado, true, mensaje[4]);
+                        this.Invoke(new Action(() => { listaMiPartida(gameIndex, invitado, true, mensaje[4]); }));
 
                         chatMSG = "El usuario " + invitado + " se ha unido a la partida";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.ForestGreen);
@@ -769,7 +769,7 @@ namespace ClienteC__Juego
                     }
                     else
                     {
-                        listaMiPartida(gameIndex, expulsado, false, "nada");
+                        this.Invoke(new Action(() => { listaMiPartida(gameIndex, expulsado, false, "nada"); }));
                         partidas[gameIndex].Remove(expulsado);
 
                         chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
@@ -804,7 +804,7 @@ namespace ClienteC__Juego
                     }
                     else
                     {
-                        listaMiPartida(gameIndex, playerQuit, false, "nada");
+                        this.Invoke(new Action(() => { listaMiPartida(gameIndex, playerQuit, false, "nada"); }));
                         partidas[gameIndex].Remove(playerQuit);
 
                         chatMSG = "The user " + playerQuit + " has quit the game";
@@ -858,7 +858,7 @@ namespace ClienteC__Juego
                                 break;
                             }
                         }
-                        listaMiPartida(gameIndex, mensaje[3], mensaje[4]);
+                        this.Invoke(new Action(() => { listaMiPartida(gameIndex, mensaje[3], mensaje[4]); }));
 
                         displayedGame = gameIndex;
                         for (int i = 0; i < partidasGroups.Count; i++)
