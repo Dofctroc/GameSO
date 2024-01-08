@@ -1,19 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.IO;
 
 namespace ClienteC__Juego
 {
@@ -25,6 +15,8 @@ namespace ClienteC__Juego
         List<string> partida;
         string[] playersColors;
         int gameNum;
+
+        string txtGrid, txtGrid2, txtBox;
 
         System.Windows.Forms.Timer timer;
         int gameDurationSecs;
@@ -43,7 +35,7 @@ namespace ClienteC__Juego
         int rows; int columns; int cornerBoardMargin;
         int tileWidth; int tileHeight;
         int diceRoll, diceRoll1, diceRoll2;
-        bool myturn, hasfallado, gameEnded;
+        bool myturn, hasfallado, gameEnded, notePadOpened;
 
         int countSuspect = 0;
         int countWeapon = 0;
@@ -76,6 +68,7 @@ namespace ClienteC__Juego
             this.Text = "Game of " + gameHost + ", Player is " + userName;
             myturn = false;
             hasfallado = false;
+            notePadOpened = false;
             ComprovarTurno();
 
             // Variables assignment
@@ -286,7 +279,8 @@ namespace ClienteC__Juego
             }
             panel_guess1.BackgroundImage = panel_Solve1.BackgroundImage = guessSuspect[0].image;
             panel_guess2.BackgroundImage = panel_Solve2.BackgroundImage = guessWeapon[0].image;
-            panel_guess3.BackgroundImage = panel_Solve3.BackgroundImage = guessRoom[0].image;
+            panel_guess3.BackgroundImage = Properties.Resources.back;
+            panel_Solve3.BackgroundImage = guessRoom[0].image;
             guessCards = new List<Card> { guessSuspect[0], guessWeapon[0], guessRoom[0] };
 
             tbox_info.AppendText(String.Format("CartasGuess: Suspect: {0}, Weapon: {1}, Room: {2}", guessSuspect[0].ID.ToString(), guessWeapon[0].ID.ToString(), guessRoom[0].ID.ToString()) + Environment.NewLine);
@@ -319,6 +313,16 @@ namespace ClienteC__Juego
 
         private void gameBoard_FormClosing(object sender, FormClosingEventArgs e)
         {
+            for (int i = 0; i < 2; i++)
+            {
+                txtGrid = AppDomain.CurrentDomain.BaseDirectory + @"\notepad_tiles_" + i + ".txt";
+                txtGrid2 = AppDomain.CurrentDomain.BaseDirectory + @"\notepad_names_" + i + ".txt";
+                txtBox = AppDomain.CurrentDomain.BaseDirectory + @"\NotePad_notes_" + i + ".txt";
+                File.WriteAllLines(txtGrid, new string[0]);
+                File.WriteAllLines(txtGrid2, new string[0]);
+                File.WriteAllLines(txtBox, new string[0]);
+            }
+
             if (timer != null)
                 timer.Stop();
             if (!gameEnded)
@@ -559,20 +563,6 @@ namespace ClienteC__Juego
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                 server.Send(msg);
             }
-
-            else if (e.Button == MouseButtons.Right)
-            {
-                for (int row = 0; row < rows; row++)
-                {
-                    for (int col = 0; col < columns; col++)
-                    {
-                        if ((grid[row, col] == clickedPBox) && (grid[row, col].BackgroundImage == null))
-                            grid[row, col].BackgroundImage = Properties.Resources.playerTile2;
-                        else if ((grid[row, col] == clickedPBox) && (grid[row, col].BackgroundImage != null))
-                            grid[row, col].BackgroundImage = null;
-                    }
-                }
-            }
         }
 
         private void movePlayer(Position prePos, PictureBox nextPBox, Position clickedPos)
@@ -611,6 +601,7 @@ namespace ClienteC__Juego
             {
                 string[] tagpic = grid[myPos.X, myPos.Y].Tag.ToString().Split('/');
                 string type = tagpic[0];
+                pBox_check3.Visible = false;
                 if (type == "room")
                 {
                     int numtype = Convert.ToInt32(tagpic[1]);
@@ -659,9 +650,14 @@ namespace ClienteC__Juego
                 {
                     btt_solve.Enabled = true;
                     btt_guess.Enabled = false;
+                    panel_guess3.BackgroundImage = Properties.Resources.back;
                 }
                 else
-                    btt_endturn.Enabled = true;
+                {
+                    if (diceRoll == 0)
+                        btt_endturn.Enabled = true;
+                    panel_guess3.BackgroundImage = Properties.Resources.back;
+                }
             }
         }
 
@@ -741,19 +737,15 @@ namespace ClienteC__Juego
             notepad.BackgroundImage = Properties.Resources.notepad_Icon;
         }
 
-        private void pBox_card1_Click(object sender, EventArgs e)
+        private void pBox_card_Click(object sender, EventArgs e)
         {
             PictureBox card = (PictureBox)sender;
-        }
+            int tag = Convert.ToInt32(card.Tag);
 
-        private void pBox_card2_Click(object sender, EventArgs e)
-        {
-            PictureBox card = (PictureBox)sender;
-        }
-
-        private void pBox_card3_Click(object sender, EventArgs e)
-        {
-            PictureBox card = (PictureBox)sender;
+            if (card.BackgroundImage == myCards[tag].image)
+                card.BackgroundImage = Properties.Resources.back;
+            else
+                card.BackgroundImage = myCards[tag].image;
         }
 
         private void btt_endGame_Click(object sender, EventArgs e)
@@ -799,8 +791,17 @@ namespace ClienteC__Juego
 
         private void pBox_notePad_Click(object sender, EventArgs e)
         {
-            InGameNotes notePad = new InGameNotes(gameNum);
-            notePad.Show();
+            if (!notePadOpened)
+            {
+                InGameNotes notePad = new InGameNotes(this, gameNum);
+                notePad.Show();
+            }
+            notePadOpened = true;
+        }
+
+        public void exitNotePad()
+        {
+            notePadOpened = false;
         }
 
         // -------------------- FUNCTIONS INVOLVING CARDS LOGIC AND WORK -----------------------------------------------------
@@ -1228,6 +1229,12 @@ namespace ClienteC__Juego
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
         }
+
+        private void pBox_card_Click(object sender, MouseEventArgs e)
+        {
+
+        }
+
         private void panel_OtrosGuess1_Click(object sender, EventArgs e)
         {
             panel_OtrosGuess.Enabled = false;
@@ -1314,7 +1321,7 @@ namespace ClienteC__Juego
             string mensaje = "49/" + gameHost + "/" + userName + "*";
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
-            lbl_solve.Text = userName + "'s Guess";
+            lbl_solve.Text = userName + "'s Accusation";
             tbox_info.AppendText(String.Format("Cartas solution: {0} {1} {2}", cardsSolution[0].ID.ToString(), cardsSolution[1].ID.ToString(), cardsSolution[2].ID.ToString() + Environment.NewLine));
         }
 

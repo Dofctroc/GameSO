@@ -30,11 +30,13 @@ namespace ClienteC__Juego
         bool emptyDataFile, emptyDataFile2;     // Booleans that determine if the read datafile is empty or not
 
         PictureBox[,] grid, gridNames;         // Picture Box grids 
+        gameBoard gameBoard;
 
-        public InGameNotes(int partidaNum)
+        public InGameNotes(gameBoard gameBoard, int partidaNum)
         {
             InitializeComponent();
             this.partidaNum = partidaNum;
+            this.gameBoard = gameBoard;
         }
 
         private void InGameNotes_Load(object sender, EventArgs e)
@@ -130,6 +132,7 @@ namespace ClienteC__Juego
 
         private void InGameNotes_FormClosing(object sender, FormClosingEventArgs e)
         {
+            gameBoard.exitNotePad();
             SaveNotepadState();
         }
 

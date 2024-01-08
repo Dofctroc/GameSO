@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgrid_listaInvitar = new System.Windows.Forms.DataGridView();
             this.button_partidanueva = new System.Windows.Forms.Button();
             this.button_LogOut = new System.Windows.Forms.Button();
@@ -67,6 +67,7 @@
             this.menuOpciones = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.strip1_Ranking = new System.Windows.Forms.ToolStripMenuItem();
+            this.consultasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.opcionesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.receiveInviteEXPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openRankingsEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,19 +92,19 @@
             this.dgrid_listaInvitar.AllowUserToDeleteRows = false;
             this.dgrid_listaInvitar.AllowUserToResizeColumns = false;
             this.dgrid_listaInvitar.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgrid_listaInvitar.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle21.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle21.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgrid_listaInvitar.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle21;
             this.dgrid_listaInvitar.ColumnHeadersHeight = 25;
             this.dgrid_listaInvitar.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgrid_listaInvitar.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle22.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle22.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle22.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle22.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle22.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle22.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgrid_listaInvitar.DefaultCellStyle = dataGridViewCellStyle22;
             this.dgrid_listaInvitar.Location = new System.Drawing.Point(780, 280);
             this.dgrid_listaInvitar.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_listaInvitar.Name = "dgrid_listaInvitar";
@@ -122,12 +123,12 @@
             this.button_partidanueva.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.button_partidanueva.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button_partidanueva.Font = new System.Drawing.Font("Modern No. 20", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button_partidanueva.Location = new System.Drawing.Point(48, 73);
+            this.button_partidanueva.Location = new System.Drawing.Point(62, 73);
             this.button_partidanueva.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button_partidanueva.Name = "button_partidanueva";
-            this.button_partidanueva.Size = new System.Drawing.Size(196, 42);
+            this.button_partidanueva.Size = new System.Drawing.Size(166, 42);
             this.button_partidanueva.TabIndex = 21;
-            this.button_partidanueva.Text = "Partida Nueva";
+            this.button_partidanueva.Text = "New Game";
             this.button_partidanueva.UseVisualStyleBackColor = false;
             this.button_partidanueva.Click += new System.EventHandler(this.button_partidanueva_Click);
             // 
@@ -152,19 +153,19 @@
             this.dgrid_miPartida0.AllowUserToDeleteRows = false;
             this.dgrid_miPartida0.AllowUserToResizeColumns = false;
             this.dgrid_miPartida0.AllowUserToResizeRows = false;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgrid_miPartida0.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle23.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle23.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgrid_miPartida0.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle23;
             this.dgrid_miPartida0.ColumnHeadersHeight = 25;
             this.dgrid_miPartida0.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Maroon;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgrid_miPartida0.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle24.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle24.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle24.ForeColor = System.Drawing.Color.Maroon;
+            dataGridViewCellStyle24.SelectionBackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle24.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgrid_miPartida0.DefaultCellStyle = dataGridViewCellStyle24;
             this.dgrid_miPartida0.Location = new System.Drawing.Point(7, 22);
             this.dgrid_miPartida0.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_miPartida0.MultiSelect = false;
@@ -173,9 +174,9 @@
             this.dgrid_miPartida0.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrid_miPartida0.RowHeadersVisible = false;
             this.dgrid_miPartida0.RowHeadersWidth = 50;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgrid_miPartida0.RowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle25.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle25.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgrid_miPartida0.RowsDefaultCellStyle = dataGridViewCellStyle25;
             this.dgrid_miPartida0.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dgrid_miPartida0.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
             this.dgrid_miPartida0.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -195,7 +196,7 @@
             this.button_Jugar.Name = "button_Jugar";
             this.button_Jugar.Size = new System.Drawing.Size(116, 42);
             this.button_Jugar.TabIndex = 28;
-            this.button_Jugar.Text = "Jugar";
+            this.button_Jugar.Text = "Play";
             this.button_Jugar.UseVisualStyleBackColor = false;
             this.button_Jugar.Click += new System.EventHandler(this.button_Jugar_Click);
             // 
@@ -210,7 +211,7 @@
             this.button_Invitar.Name = "button_Invitar";
             this.button_Invitar.Size = new System.Drawing.Size(100, 30);
             this.button_Invitar.TabIndex = 29;
-            this.button_Invitar.Text = "Invitar";
+            this.button_Invitar.Text = "Invite";
             this.button_Invitar.UseVisualStyleBackColor = true;
             this.button_Invitar.Click += new System.EventHandler(this.button_Invitar_Click);
             // 
@@ -220,9 +221,9 @@
             this.dgrid_listaUsuarios.AllowUserToDeleteRows = false;
             this.dgrid_listaUsuarios.AllowUserToResizeColumns = false;
             this.dgrid_listaUsuarios.AllowUserToResizeRows = false;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.dgrid_listaUsuarios.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle26.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle26.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.dgrid_listaUsuarios.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle26;
             this.dgrid_listaUsuarios.ColumnHeadersHeight = 25;
             this.dgrid_listaUsuarios.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgrid_listaUsuarios.GridColor = System.Drawing.SystemColors.ActiveBorder;
@@ -233,9 +234,9 @@
             this.dgrid_listaUsuarios.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrid_listaUsuarios.RowHeadersVisible = false;
             this.dgrid_listaUsuarios.RowHeadersWidth = 50;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.dgrid_listaUsuarios.RowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle27.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle27.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
+            this.dgrid_listaUsuarios.RowsDefaultCellStyle = dataGridViewCellStyle27;
             this.dgrid_listaUsuarios.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgrid_listaUsuarios.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dgrid_listaUsuarios.Size = new System.Drawing.Size(200, 460);
@@ -248,9 +249,9 @@
             this.lbl_userName.AutoSize = true;
             this.lbl_userName.Location = new System.Drawing.Point(12, 40);
             this.lbl_userName.Name = "lbl_userName";
-            this.lbl_userName.Size = new System.Drawing.Size(60, 16);
+            this.lbl_userName.Size = new System.Drawing.Size(42, 16);
             this.lbl_userName.TabIndex = 33;
-            this.lbl_userName.Text = "Usuario: ";
+            this.lbl_userName.Text = "User: ";
             // 
             // textBox_write0
             // 
@@ -475,19 +476,19 @@
             this.dgrid_miPartida1.AllowUserToDeleteRows = false;
             this.dgrid_miPartida1.AllowUserToResizeColumns = false;
             this.dgrid_miPartida1.AllowUserToResizeRows = false;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgrid_miPartida1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle28.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle28.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgrid_miPartida1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle28;
             this.dgrid_miPartida1.ColumnHeadersHeight = 25;
             this.dgrid_miPartida1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.Maroon;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgrid_miPartida1.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle29.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle29.ForeColor = System.Drawing.Color.Maroon;
+            dataGridViewCellStyle29.SelectionBackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle29.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle29.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgrid_miPartida1.DefaultCellStyle = dataGridViewCellStyle29;
             this.dgrid_miPartida1.Location = new System.Drawing.Point(7, 22);
             this.dgrid_miPartida1.Margin = new System.Windows.Forms.Padding(4);
             this.dgrid_miPartida1.MultiSelect = false;
@@ -496,9 +497,9 @@
             this.dgrid_miPartida1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgrid_miPartida1.RowHeadersVisible = false;
             this.dgrid_miPartida1.RowHeadersWidth = 50;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.Black;
-            this.dgrid_miPartida1.RowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle30.SelectionBackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle30.SelectionForeColor = System.Drawing.Color.Black;
+            this.dgrid_miPartida1.RowsDefaultCellStyle = dataGridViewCellStyle30;
             this.dgrid_miPartida1.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dgrid_miPartida1.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
             this.dgrid_miPartida1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -539,7 +540,7 @@
             this.optionsToolStripMenuItem});
             this.menuOpciones.Location = new System.Drawing.Point(0, 0);
             this.menuOpciones.Name = "menuOpciones";
-            this.menuOpciones.Size = new System.Drawing.Size(1093, 30);
+            this.menuOpciones.Size = new System.Drawing.Size(1093, 26);
             this.menuOpciones.TabIndex = 45;
             this.menuOpciones.Text = "menuStrip1";
             // 
@@ -547,18 +548,26 @@
             // 
             this.optionsToolStripMenuItem.BackColor = System.Drawing.Color.Peru;
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.strip1_Ranking});
+            this.strip1_Ranking,
+            this.consultasToolStripMenuItem});
             this.optionsToolStripMenuItem.Font = new System.Drawing.Font("ROG Fonts", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(106, 26);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // strip1_Ranking
             // 
             this.strip1_Ranking.Name = "strip1_Ranking";
-            this.strip1_Ranking.Size = new System.Drawing.Size(187, 26);
+            this.strip1_Ranking.Size = new System.Drawing.Size(206, 26);
             this.strip1_Ranking.Text = "Rankings";
             this.strip1_Ranking.Click += new System.EventHandler(this.strip1_Ranking_Click);
+            // 
+            // consultasToolStripMenuItem
+            // 
+            this.consultasToolStripMenuItem.Name = "consultasToolStripMenuItem";
+            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.consultasToolStripMenuItem.Text = "Consults";
+            this.consultasToolStripMenuItem.Click += new System.EventHandler(this.consultasToolStripMenuItem_Click);
             // 
             // opcionesToolStripMenuItem1
             // 
@@ -682,5 +691,6 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem strip1_Ranking;
         private System.Windows.Forms.Button btt_Quit;
+        private System.Windows.Forms.ToolStripMenuItem consultasToolStripMenuItem;
     }
 }

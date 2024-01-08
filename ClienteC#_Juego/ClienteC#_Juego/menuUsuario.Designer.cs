@@ -37,15 +37,9 @@
             this.lbl_controlPanel = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.opcionesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tableroToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.notePadEXPERIMENTALToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rankingsEXPERIMENTALToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.consultasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controlPanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.richBox_Control = new System.Windows.Forms.RichTextBox();
             this.button_signOut = new System.Windows.Forms.Button();
-            this.añadirPartidaEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.consultaTiempoEXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -145,49 +139,15 @@
             // 
             this.opcionesToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.opcionesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tableroToolStripMenuItem,
-            this.notePadEXPERIMENTALToolStripMenuItem,
-            this.rankingsEXPERIMENTALToolStripMenuItem,
-            this.añadirPartidaEXPToolStripMenuItem,
-            this.consultaTiempoEXPToolStripMenuItem,
-            this.consultasToolStripMenuItem,
             this.controlPanelToolStripMenuItem});
             this.opcionesToolStripMenuItem.Name = "opcionesToolStripMenuItem";
-            this.opcionesToolStripMenuItem.Size = new System.Drawing.Size(85, 24);
-            this.opcionesToolStripMenuItem.Text = "Opciones";
-            // 
-            // tableroToolStripMenuItem
-            // 
-            this.tableroToolStripMenuItem.Name = "tableroToolStripMenuItem";
-            this.tableroToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
-            this.tableroToolStripMenuItem.Text = "Tablero (EXPERIMENTAL)";
-            this.tableroToolStripMenuItem.Click += new System.EventHandler(this.tableroToolStripMenuItem_Click);
-            // 
-            // notePadEXPERIMENTALToolStripMenuItem
-            // 
-            this.notePadEXPERIMENTALToolStripMenuItem.Name = "notePadEXPERIMENTALToolStripMenuItem";
-            this.notePadEXPERIMENTALToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
-            this.notePadEXPERIMENTALToolStripMenuItem.Text = "NotePad (EXPERIMENTAL)";
-            this.notePadEXPERIMENTALToolStripMenuItem.Click += new System.EventHandler(this.notePadEXPERIMENTALToolStripMenuItem_Click);
-            // 
-            // rankingsEXPERIMENTALToolStripMenuItem
-            // 
-            this.rankingsEXPERIMENTALToolStripMenuItem.Name = "rankingsEXPERIMENTALToolStripMenuItem";
-            this.rankingsEXPERIMENTALToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
-            this.rankingsEXPERIMENTALToolStripMenuItem.Text = "Rankings (EXPERIMENTAL)";
-            this.rankingsEXPERIMENTALToolStripMenuItem.Click += new System.EventHandler(this.rankingsEXPERIMENTALToolStripMenuItem_Click);
-            // 
-            // consultasToolStripMenuItem
-            // 
-            this.consultasToolStripMenuItem.Name = "consultasToolStripMenuItem";
-            this.consultasToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
-            this.consultasToolStripMenuItem.Text = "Consultas";
-            this.consultasToolStripMenuItem.Click += new System.EventHandler(this.consultasToolStripMenuItem_Click);
+            this.opcionesToolStripMenuItem.Size = new System.Drawing.Size(75, 24);
+            this.opcionesToolStripMenuItem.Text = "Options";
             // 
             // controlPanelToolStripMenuItem
             // 
             this.controlPanelToolStripMenuItem.Name = "controlPanelToolStripMenuItem";
-            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
+            this.controlPanelToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.controlPanelToolStripMenuItem.Text = "Control Panel";
             this.controlPanelToolStripMenuItem.Click += new System.EventHandler(this.controlPanelToolStripMenuItem_Click);
             // 
@@ -217,20 +177,6 @@
             this.button_signOut.Text = "Sign Out";
             this.button_signOut.UseVisualStyleBackColor = false;
             this.button_signOut.Click += new System.EventHandler(this.button_signOut_Click);
-            // 
-            // añadirPartidaEXPToolStripMenuItem
-            // 
-            this.añadirPartidaEXPToolStripMenuItem.Name = "añadirPartidaEXPToolStripMenuItem";
-            this.añadirPartidaEXPToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
-            this.añadirPartidaEXPToolStripMenuItem.Text = "Añadir Partida (EXP)";
-            this.añadirPartidaEXPToolStripMenuItem.Click += new System.EventHandler(this.añadirPartidaEXPToolStripMenuItem_Click);
-            // 
-            // consultaTiempoEXPToolStripMenuItem
-            // 
-            this.consultaTiempoEXPToolStripMenuItem.Name = "consultaTiempoEXPToolStripMenuItem";
-            this.consultaTiempoEXPToolStripMenuItem.Size = new System.Drawing.Size(267, 26);
-            this.consultaTiempoEXPToolStripMenuItem.Text = "ConsultaTiempo (EXP)";
-            this.consultaTiempoEXPToolStripMenuItem.Click += new System.EventHandler(this.consultaTiempoEXPToolStripMenuItem_Click);
             // 
             // menuUsuario
             // 
@@ -272,14 +218,8 @@
         private System.Windows.Forms.Label lbl_controlPanel;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem opcionesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem consultasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem controlPanelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem tableroToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem notePadEXPERIMENTALToolStripMenuItem;
         private System.Windows.Forms.RichTextBox richBox_Control;
         private System.Windows.Forms.Button button_signOut;
-        private System.Windows.Forms.ToolStripMenuItem rankingsEXPERIMENTALToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem añadirPartidaEXPToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem consultaTiempoEXPToolStripMenuItem;
     }
 }

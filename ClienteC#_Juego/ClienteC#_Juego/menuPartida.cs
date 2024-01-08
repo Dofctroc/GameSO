@@ -77,7 +77,7 @@ namespace ClienteC__Juego
 
             tableros = new List<gameBoard> { tablero0, tablero1 };
 
-            lbl_userName.Text = "Usuario: " + username;
+            lbl_userName.Text = "User: " + username;
             displayedGame = 0;
 
             // Data grid de la lista de usuarios
@@ -706,11 +706,11 @@ namespace ClienteC__Juego
                                 partidasGroups[i].Visible = false;
 
                         partidasChats[gameIndex].Text = "";
-                        chatMSG = "Has creado una nueva partida";
+                        chatMSG = "You have created a new game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
                     }
                     else
-                        MessageBox.Show("Error al crear la partida, vuelva a intentarlo.");
+                        Console.WriteLine("Error creating game, try again");
                     break;
                 case 21: // Servidor confirma que se ha invitado a los seleccionados
                     if (Convert.ToInt32(mensaje[2]) == 0)
@@ -735,7 +735,7 @@ namespace ClienteC__Juego
                         partidas[gameIndex].Add(invitado);
                         this.Invoke(new Action(() => { listaMiPartida(gameIndex, invitado, true, mensaje[4]); }));
 
-                        chatMSG = "El usuario " + invitado + " se ha unido a la partida";
+                        chatMSG = "User " + invitado + " has joined the game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.ForestGreen);
 
                         if (displayedGame != gameIndex)
@@ -743,7 +743,7 @@ namespace ClienteC__Juego
                     }
                     else
                     {
-                        chatMSG = "El usuario " + invitado + " ha rechazado la invitación";
+                        chatMSG = "User " + invitado + " has denied your invitation";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
                     }
                     pendingInvitation.Remove(invitado);
@@ -757,7 +757,7 @@ namespace ClienteC__Juego
 
                         // partidasGroups[gameIndex].Visible = false;
 
-                        chatMSG = "El host " + nameHost + " te ha expulsado de la partida";
+                        chatMSG = "Host " + nameHost + " kicked you out of the game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
 
                         displayedGame = gameIndex;
@@ -772,7 +772,7 @@ namespace ClienteC__Juego
                         this.Invoke(new Action(() => { listaMiPartida(gameIndex, expulsado, false, "nada"); }));
                         partidas[gameIndex].Remove(expulsado);
 
-                        chatMSG = "El usuario " + expulsado + " ha sido expulsado de la partida";
+                        chatMSG = "User " + expulsado + " was kicked out of the game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
 
                         if (displayedGame != gameIndex)
@@ -786,7 +786,7 @@ namespace ClienteC__Juego
                         partidas[gameIndex].Clear();
                         partidasDataGrids[gameIndex].Rows.Clear();
 
-                        chatMSG = "El host " + nameHost + " ha eliminado la partida";
+                        chatMSG = "Host " + nameHost + " deleted the game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
                     }
                     else if (username == playerQuit)
@@ -807,7 +807,7 @@ namespace ClienteC__Juego
                         this.Invoke(new Action(() => { listaMiPartida(gameIndex, playerQuit, false, "nada"); }));
                         partidas[gameIndex].Remove(playerQuit);
 
-                        chatMSG = "The user " + playerQuit + " has quit the game";
+                        chatMSG = "User " + playerQuit + " has quit the game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
 
                         if (displayedGame != gameIndex)
@@ -825,7 +825,7 @@ namespace ClienteC__Juego
                         partidas[gameIndex].Clear();
                         partidasDataGrids[gameIndex].Rows.Clear();
 
-                        chatMSG = "El host " + nameHost + " ha eliminado la partida";
+                        chatMSG = "Host " + nameHost + " has deleted the game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.Crimson);
                     }
                     break;
@@ -868,7 +868,7 @@ namespace ClienteC__Juego
                                 partidasGroups[i].Visible = false;
 
                         partidasChats[gameIndex].Text = "";
-                        chatMSG = "Te has unido a la partida de " + nameHost;
+                        chatMSG = "You have joined " + nameHost + "'s game";
                         WriteInChatTITLE(gameIndex, chatMSG, Color.DarkGreen);
                     }
                     else if (mensaje[2] == "-1")
@@ -1044,9 +1044,15 @@ namespace ClienteC__Juego
 
             if (clickedPBox.BackColor == Color.Green)
             {
-                string mensaje2 = "23/" + hostName + "/" + username + "/Yes" + "*";
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
-                server.Send(msg);
+                if (partidas[0].Count == 0 || partidas[1].Count == 0)
+                {
+                    string mensaje2 = "23/" + hostName + "/" + username + "/Yes" + "*";
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje2);
+                    server.Send(msg);
+                }
+                else {
+                    // Add code for already in two games
+                }
             }
             else
             {
@@ -1099,6 +1105,12 @@ namespace ClienteC__Juego
         {
             PictureBox hoveredPBox = (PictureBox)sender;
             hoveredPBox.BackgroundImage = null;
+        }
+
+        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            consultas consultas = new consultas(server);
+            consultas.ShowDialog();
         }
 
         private void dgrid_dataGrid_SelectionChanged(object sender, EventArgs e)

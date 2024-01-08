@@ -15,14 +15,12 @@ namespace ClienteC__Juego
 {
     public partial class consultas : Form
     {
-        bool conectado_conServer;
         Socket server;
 
-        public consultas(bool conectado_conServer, Socket server)
+        public consultas(Socket server)
         {
             InitializeComponent();
             CheckForIllegalCrossThreadCalls = false;
-            this.conectado_conServer = conectado_conServer;
             this.server = server;
         }
 

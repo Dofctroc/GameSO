@@ -81,13 +81,13 @@
             this.pBox_card7 = new System.Windows.Forms.PictureBox();
             this.pBox_card6 = new System.Windows.Forms.PictureBox();
             this.pBox_card5 = new System.Windows.Forms.PictureBox();
-            this.pBox_card4 = new System.Windows.Forms.PictureBox();
             this.pBox_card3 = new System.Windows.Forms.PictureBox();
             this.pBox_card2 = new System.Windows.Forms.PictureBox();
             this.pBox_card1 = new System.Windows.Forms.PictureBox();
             this.pBox_notePad = new System.Windows.Forms.PictureBox();
             this.panel_Board = new System.Windows.Forms.Panel();
             this.pBox_Sol = new System.Windows.Forms.PictureBox();
+            this.pBox_card4 = new System.Windows.Forms.PictureBox();
             this.gBox_chat.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_sendText)).BeginInit();
             this.panel_Guess.SuspendLayout();
@@ -113,13 +113,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pBox_card4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notePad)).BeginInit();
             this.panel_Board.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_Sol)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_card4)).BeginInit();
             this.SuspendLayout();
             // 
             // btt_dado
@@ -184,7 +184,7 @@
             this.richBox_read.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.richBox_read.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richBox_read.Location = new System.Drawing.Point(7, 20);
-            this.richBox_read.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richBox_read.Margin = new System.Windows.Forms.Padding(4);
             this.richBox_read.Name = "richBox_read";
             this.richBox_read.ReadOnly = true;
             this.richBox_read.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -198,7 +198,7 @@
             this.tBox_write.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tBox_write.Font = new System.Drawing.Font("Calibri", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tBox_write.Location = new System.Drawing.Point(63, 199);
-            this.tBox_write.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tBox_write.Margin = new System.Windows.Forms.Padding(4);
             this.tBox_write.Multiline = true;
             this.tBox_write.Name = "tBox_write";
             this.tBox_write.Size = new System.Drawing.Size(126, 25);
@@ -710,7 +710,6 @@
             // 
             this.pBox_card9.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
             this.pBox_card9.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card9.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card9.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card9.Location = new System.Drawing.Point(1061, 329);
             this.pBox_card9.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -718,12 +717,13 @@
             this.pBox_card9.Size = new System.Drawing.Size(101, 140);
             this.pBox_card9.TabIndex = 53;
             this.pBox_card9.TabStop = false;
+            this.pBox_card9.Tag = "8";
+            this.pBox_card9.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_card8
             // 
             this.pBox_card8.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
             this.pBox_card8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card8.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card8.Location = new System.Drawing.Point(1061, 185);
             this.pBox_card8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -731,12 +731,13 @@
             this.pBox_card8.Size = new System.Drawing.Size(101, 140);
             this.pBox_card8.TabIndex = 52;
             this.pBox_card8.TabStop = false;
+            this.pBox_card8.Tag = "7";
+            this.pBox_card8.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_card7
             // 
             this.pBox_card7.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
             this.pBox_card7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card7.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card7.Location = new System.Drawing.Point(1061, 38);
             this.pBox_card7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -744,12 +745,13 @@
             this.pBox_card7.Size = new System.Drawing.Size(101, 140);
             this.pBox_card7.TabIndex = 51;
             this.pBox_card7.TabStop = false;
+            this.pBox_card7.Tag = "6";
+            this.pBox_card7.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_card6
             // 
             this.pBox_card6.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
             this.pBox_card6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card6.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card6.Location = new System.Drawing.Point(955, 329);
             this.pBox_card6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -757,12 +759,13 @@
             this.pBox_card6.Size = new System.Drawing.Size(101, 140);
             this.pBox_card6.TabIndex = 50;
             this.pBox_card6.TabStop = false;
+            this.pBox_card6.Tag = "5";
+            this.pBox_card6.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_card5
             // 
             this.pBox_card5.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
             this.pBox_card5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card5.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card5.Location = new System.Drawing.Point(955, 185);
             this.pBox_card5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -770,25 +773,13 @@
             this.pBox_card5.Size = new System.Drawing.Size(101, 140);
             this.pBox_card5.TabIndex = 49;
             this.pBox_card5.TabStop = false;
-            // 
-            // pBox_card4
-            // 
-            this.pBox_card4.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
-            this.pBox_card4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pBox_card4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pBox_card4.Location = new System.Drawing.Point(955, 38);
-            this.pBox_card4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pBox_card4.Name = "pBox_card4";
-            this.pBox_card4.Size = new System.Drawing.Size(101, 140);
-            this.pBox_card4.TabIndex = 48;
-            this.pBox_card4.TabStop = false;
+            this.pBox_card5.Tag = "4";
+            this.pBox_card5.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_card3
             // 
             this.pBox_card3.BackgroundImage = global::ClienteC__Juego.Properties.Resources.room1;
             this.pBox_card3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card3.Location = new System.Drawing.Point(847, 330);
             this.pBox_card3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -796,13 +787,13 @@
             this.pBox_card3.Size = new System.Drawing.Size(101, 140);
             this.pBox_card3.TabIndex = 20;
             this.pBox_card3.TabStop = false;
-            this.pBox_card3.Click += new System.EventHandler(this.pBox_card3_Click);
+            this.pBox_card3.Tag = "2";
+            this.pBox_card3.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_card2
             // 
             this.pBox_card2.BackgroundImage = global::ClienteC__Juego.Properties.Resources.weapon1;
             this.pBox_card2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card2.Location = new System.Drawing.Point(847, 185);
             this.pBox_card2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -810,13 +801,13 @@
             this.pBox_card2.Size = new System.Drawing.Size(101, 140);
             this.pBox_card2.TabIndex = 19;
             this.pBox_card2.TabStop = false;
-            this.pBox_card2.Click += new System.EventHandler(this.pBox_card2_Click);
+            this.pBox_card2.Tag = "1";
+            this.pBox_card2.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_card1
             // 
             this.pBox_card1.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
             this.pBox_card1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pBox_card1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pBox_card1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pBox_card1.Location = new System.Drawing.Point(847, 38);
             this.pBox_card1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -824,7 +815,8 @@
             this.pBox_card1.Size = new System.Drawing.Size(101, 140);
             this.pBox_card1.TabIndex = 18;
             this.pBox_card1.TabStop = false;
-            this.pBox_card1.Click += new System.EventHandler(this.pBox_card1_Click);
+            this.pBox_card1.Tag = "0";
+            this.pBox_card1.Click += new System.EventHandler(this.pBox_card_Click);
             // 
             // pBox_notePad
             // 
@@ -866,6 +858,20 @@
             this.pBox_Sol.TabIndex = 0;
             this.pBox_Sol.TabStop = false;
             // 
+            // pBox_card4
+            // 
+            this.pBox_card4.BackgroundImage = global::ClienteC__Juego.Properties.Resources.suspect1;
+            this.pBox_card4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pBox_card4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pBox_card4.Location = new System.Drawing.Point(954, 38);
+            this.pBox_card4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.pBox_card4.Name = "pBox_card4";
+            this.pBox_card4.Size = new System.Drawing.Size(101, 140);
+            this.pBox_card4.TabIndex = 57;
+            this.pBox_card4.TabStop = false;
+            this.pBox_card4.Tag = "3";
+            this.pBox_card4.Click += new System.EventHandler(this.pBox_card_Click);
+            // 
             // gameBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -874,6 +880,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(1519, 639);
+            this.Controls.Add(this.pBox_card4);
             this.Controls.Add(this.panel_Solve);
             this.Controls.Add(this.panel_OtrosGuess);
             this.Controls.Add(this.pBox_card9);
@@ -881,7 +888,6 @@
             this.Controls.Add(this.pBox_card7);
             this.Controls.Add(this.pBox_card6);
             this.Controls.Add(this.pBox_card5);
-            this.Controls.Add(this.pBox_card4);
             this.Controls.Add(this.tbox_info);
             this.Controls.Add(this.btt_endturn);
             this.Controls.Add(this.panel_Dados);
@@ -929,13 +935,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pBox_card4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_card1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox_notePad)).EndInit();
             this.panel_Board.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pBox_Sol)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBox_card4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -974,7 +980,6 @@
         private System.Windows.Forms.PictureBox pBox_check2;
         private System.Windows.Forms.PictureBox pBox_check1;
         private System.Windows.Forms.Button btt_endturn;
-        private System.Windows.Forms.PictureBox pBox_card4;
         private System.Windows.Forms.PictureBox pBox_card5;
         private System.Windows.Forms.PictureBox pBox_card6;
         private System.Windows.Forms.PictureBox pBox_card9;
@@ -1003,6 +1008,7 @@
         private System.Windows.Forms.Label lbl_solve2;
         private System.Windows.Forms.Label lbl_solve1;
         private System.Windows.Forms.PictureBox pBox_Sol;
+        private System.Windows.Forms.PictureBox pBox_card4;
     }
 }
 

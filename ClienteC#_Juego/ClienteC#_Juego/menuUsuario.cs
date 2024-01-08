@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.IO;
-using System.Xml.Linq;
 
 namespace ClienteC__Juego
 {
@@ -146,29 +139,10 @@ namespace ClienteC__Juego
             }
         }
 
-        private void consultasToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (conectado_conServer)
-            {
-                consultas = new consultas(conectado_conServer, server);
-                consultas.ShowDialog();
-            }
-        }
-
         private void controlPanelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lbl_controlPanel.Visible = !lbl_controlPanel.Visible;
             richBox_Control.Visible = !richBox_Control.Visible;
-        }
-
-        private void tableroToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void notePadEXPERIMENTALToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InGameNotes notePad = new InGameNotes(0);
-            notePad.Show();
         }
 
         // -------------------- Funciones del formulario --------------------
@@ -490,26 +464,6 @@ namespace ClienteC__Juego
 
             // Set the form's location
             this.Location = new Point(x, y);
-        }
-
-        private void rankingsEXPERIMENTALToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            menuRankings rankings = new menuRankings(server, username);
-            rankings.Show();
-        }
-
-        private void añadirPartidaEXPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string mensaje = "100/" + "Asier" + "/" + 480 + "/" + "Julia" + "/" + 200 + "/" + "01,02,24" + "*";
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
-        }
-
-        private void consultaTiempoEXPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string mensaje = "99/" + "*";
-            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-            server.Send(msg);
         }
     }
 }

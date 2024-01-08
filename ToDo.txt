@@ -42,16 +42,27 @@ Cannot invite a player if already in two games					|ASIER|
 | MY TODO LIST: |
 |_______________|
 
-!!!! Incluir mucha mas mutual exclusion !!!!
-Error: Cuando logIn con usuario ya conectado, desconecta a ese usuario
+-/ !!!! Incluir mucha mas mutual exclusion !!!!
+-/ Error: Cuando logIn con usuario ya conectado, desconecta a ese usuario
 	Probar a que lo desconecte el server automaticamente
 LobbyPartida != ActivePartida; 
 	add int variable to Partida (0=Lobby, 1=Active)
-Rename all forms
+-/ Rename all forms
 	-/ Game form named after host
-Chat in game (igual a menu partida), incluir algunos sucesos de la partida !!!!!!!!!!!!!!!!!!!!!!!
-Error se juntan los mensajes de refresh de tablas
+-/ Chat in game (igual a menu partida), incluir algunos sucesos de la partida !!!!!!!!!!!!!!!!!!!!!!!
+-/ Error se juntan los mensajes de refresh de tablas
 
+-/ Si ja estas en dos games no puedes aceptar una invitacion
+-/ Treure els toolstripmenus
+-/ Click carta fica el dorso
+Change colors 
+-/ Delete right click code
+-/ Only allow notepad to open once
+-/ Treure creu de room
+-/ Borrar inGame notes al acabar game
+Translate all
+Accept after deleting game
+LogOut in game
 
 Cards:
 1. When clicked, shows dorso of card
